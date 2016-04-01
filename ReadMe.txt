@@ -20,7 +20,7 @@ Input:
 
 Output:
 	A list of nodes per community, space delimited.
-	Each line stands for a diffrent community.
+	Each line stands for a different community.
 	Example:
 	1 2 3 4
 	2 3 4
