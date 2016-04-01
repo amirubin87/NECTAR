@@ -1,12 +1,13 @@
 # NECTAR
 Node-centric ovErlapping Community deTection AlgoRithm
 
-This repository contains two implementations of the NECTAR algorithm as described is: TDOO.
-1. NECTAR_W aims to maximize WOCC.
-2. NECTAR_Q aims to maximize the overlapping version of modularity Q_e. 
+This repository contains two implementations of the NECTAR algorithm as described in: TDOO.
+1. NECTAR_W - aims to maximize WOCC.
+2. NECTAR_Q - aims to maximize the overlapping version of modularity Q_e. 
 
 Input:
 	A list of undirected edges, tab or space delimited.
+	
 	Example:
 	2	1
 	3	1
@@ -14,10 +15,12 @@ Input:
 	4	1
 	4	2
 	4	3
+	
 	Notice that in case the input contains both '1 2' and '2 1' the edge will be taken into account only once. 
 
 Output:
 	A list of nodes per community, space delimited.
+	Each line stands for a diffrent community.
 	Example:
 	1 2 3 4
 	2 3 4
