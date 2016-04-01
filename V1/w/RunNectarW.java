@@ -4,12 +4,12 @@ import java.io.IOException;
 public class RunNectarW {
 
 	public static void main(String[] args) throws IOException {		
-		if (args.length <3){
+		if (args.length <2){
 			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 ");
 		}
 		else{
-			String pathToGraph = "C:/Users/t-amirub/Desktop/net/karate/net.txt";
-			String outputPath = "C:/Users/t-amirub/Desktop/net/karate/";
+			String pathToGraph = "";
+			String outputPath = "";
 			double[] betas = {2.0,3.0};
 			int firstPartMode = 0;
 			double alpha = 0.8;

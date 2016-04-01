@@ -5,13 +5,13 @@ public class RunNectarQ {
 	
 
 	public static void main(String[] args) throws IOException {		
-		if (args.length <3){
+		if (args.length <2){
 			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20");
 		}
 		else{
 			String pathToGraph = "";
 			String outputPath = "";
-			double[] betas = {1.1};
+			double[] betas = {1.1,1.2};
 			double alpha = 0.8;
 			int iteratioNumToStartMerge = 6;
 			int maxIterationsToRun = 20;
