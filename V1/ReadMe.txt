@@ -1,9 +1,6 @@
-# NECTAR
-Node-centric ovErlapping Community deTection AlgoRithm
-
-This repository contains two implementations of the NECTAR algorithm as described in: TDOO.
-1. NECTAR_W - aims to maximize WOCC.
-2. NECTAR_Q - aims to maximize the overlapping version of modularity Q_e. 
+This folder contains two java implemented version to the NECTAR algorithm as described in  TODO.
+1. (w) - NECTAR_W - aims to maximize WOCC.
+2. (q) - NECTAR_Q - aims to maximize the overlapping version of modularity Q_e. 
 
 Input:
 	A list of undirected edges, tab or space delimited.

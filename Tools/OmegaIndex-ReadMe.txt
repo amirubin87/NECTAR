@@ -1,4 +1,4 @@
-A java implementation to calculate Omega-Index of two given networks partitioning into communities, 
+A java implementation to calculate the Omega-Index of two given networks partitioning into communities, 
 as presented in "Overlapping Community Detection in Networks: The State-of-the-Art and Comparative Study".
 
 Input is two files containing lists of nodes. Each line describes a community.
