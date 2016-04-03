@@ -143,7 +143,7 @@ public class NectarQ {
 		List<Integer> copyOfC2= new ArrayList<>(metaData.com2nodes.get(c2));
 	    for (Integer node : copyOfC1){
 	        metaData.Update_Weights_Remove(c1, node);
-	        metaData.SymbolicRemoveNodeFromComm(node,c2);
+	        metaData.SymbolicRemoveNodeFromComm(node,c1);
 	        if(!copyOfC2.contains(node)){
 	        	metaData.Update_Weights_Add(c2, node);
 	        	metaData.SymbolicAddNodeToComm(node,c2);
