@@ -31,17 +31,38 @@ def FindBestMatchingInComms1(trueComm, Comms1):
             best = f1
     return best
 
-def ClacPartialAverageF1Part1(Comms1,GroundTruth):
+def CalcPartialAverageF1Part1(Comms1,GroundTruth):
     ans = 0
     for c1 in Comms1:
         ans = ans + FindBestMatchingInGroundTruth(c1, GroundTruth)
     return ans / (2*len(Comms1))
 
-def ClacPartialAverageF1Part2(Comms1, GroundTruth):
+def CalcPartialAverageF1Part2(Comms1, GroundTruth):
     ans = 0
     for trueComm in GroundTruth:
         ans = ans + FindBestMatchingInComms1(trueComm, Comms1)
     return ans / (2*len(GroundTruth))
+	
+def AverageF1(Comms1Path,GroundTruthPath, outputPath):
+    Comms1File = open(Comms1Path, 'r')
+    ListOfComms1 = Comms1File.readlines()
+    Comms1File.close()
 
-def AverageF1(Comms1,GroundTruth):
-    return ClacPartialAverageF1Part1(Comms1, GroundTruth)+ ClacPartialAverageF1Part2(Comms1, GroundTruth)
+    Comms1 = []
+    for nodes in ListOfComms1:
+      Comms1.append(set(nodes.replace(' \n', '').split(' ')))
+
+    GroundTruthFile = open(GroundTruthPath, 'r')
+    ListOfGroundTruthComms = GroundTruthFile.readlines()
+    GroundTruthFile.close()
+
+    GroundTruth = []
+    for nodes in ListOfGroundTruthComms:
+      GroundTruth.append(set(nodes.replace(' \n', '').split(' ')))
+
+    part1 = CalcPartialAverageF1Part1(Comms1, GroundTruth)
+    part2 = CalcPartialAverageF1Part2(Comms1, GroundTruth)
+    ans = part1 + part2
+    output = open(outputPath, 'a')
+    output.write( 'AverageF1Score:\t' + str(ans))
+    output.close()
