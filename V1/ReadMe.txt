@@ -40,8 +40,8 @@ Parameters:
 			Choose one of the following three three:
 				0: First we sort the nodes by their clustering coefficient, then we iterate them by descending order. 
 				   For each node, if not placed in a community, we take all neighbors which haven't been placed in a community and join them all to a new community. 
-				3: Each 3-sized clique is a community.
-				4: Each 4-sized clique is a community.
+				3: 3-sized non-overlapping cliques are used. 
+				4: 4-sized non-overlapping cliques are used.
 			Notice that using '3' or '4' may cost with a long initialization time.			
 		percentageOfStableNodes (95) - the algorithm will stop when this percentage of nodes have stabled (e.g. haven't changed any community in the last iteration).
 
