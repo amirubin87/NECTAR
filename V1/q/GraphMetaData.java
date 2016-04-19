@@ -34,16 +34,16 @@ public class GraphMetaData {
         m = graph.size();
     
         for (Integer node : graph.nodes()){
-            Intersection_c1_c2.put(count, new HashMap<Integer, Integer>());
+            Intersection_c1_c2.put(node, new HashMap<Integer, Integer>());
             Set<Integer> comm = new HashSet<Integer>();
             comm.add(node);
-            com2nodes.put(count, comm);
+            com2nodes.put(node, comm);
             Set<Integer> commId = new HashSet<Integer>();
-            commId.add(count);
+            commId.add(node);
             node2coms.put(node, commId);
             double nodeDegree = graph.degree(node);
             K_v.put(node, nodeDegree);
-            Sigma_c.put(count, nodeDegree);
+            Sigma_c.put(node, nodeDegree);
             //Size_c.put(count, 1);
             count++;
         }

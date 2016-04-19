@@ -32,12 +32,12 @@ public class GraphExtendedMetaData {
     	Integer count = 0;
     
         for (Integer node : graph.nodes()){
-            Intersection_c1_c2.put(count, new HashMap<Integer, Integer>());
+            Intersection_c1_c2.put(node, new HashMap<Integer, Integer>());
             Set<Integer> comm = new HashSet<Integer>();
             comm.add(node);
-            com2nodes.put(count, comm);
+            com2nodes.put(node, comm);
             Set<Integer> commId = new HashSet<Integer>();
-            commId.add(count);
+            commId.add(node);
             node2coms.put(node, commId);          
             count++;
         }
@@ -205,7 +205,7 @@ public class GraphExtendedMetaData {
         }        
         
 		// Symbolic add
-	    for (Integer comm : comms){
+	    for (Integer comm : comms){	    	
 	        com2nodes.get(comm).add(node);	        
 	    }
 	    

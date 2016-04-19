@@ -60,7 +60,7 @@ public class UndirectedUnweightedGraph {
 	
 	private double ClustringPerNode(Integer node) {
 		int d = (int) degree(node);
-		if (d <1){
+		if (d <=1){
 			return 0;
 		}		
 		return (double)(2*T.get(node))/(double)(d*(d-1));

@@ -31,7 +31,7 @@ public class UndirectedUnweightedGraph {
 				uNeig = new HashSet<Integer>();
 				neighbors.put(u, uNeig);
 			}
-			if(!vNeig.contains(u)){
+			if(v!=u && !vNeig.contains(u)){
 				vNeig.add(u);
 				uNeig.add(v);
 				number_of_edges++;

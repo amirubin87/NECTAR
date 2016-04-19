@@ -53,6 +53,7 @@ public class NectarW {
 		System.out.println("Get meta data");
 		this.ORIGINALmetaData = new GraphExtendedMetaData(g,firstPart,true);
 		this.metaData = this.ORIGINALmetaData;
+		
 	}
 	
 	public NectarW(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{
@@ -67,7 +68,7 @@ public class NectarW {
 		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);	
 		System.out.println(firstPart.entrySet());
 		this.ORIGINALmetaData = new GraphExtendedMetaData(g,firstPart,true);
-		this.metaData = this.ORIGINALmetaData; 
+		this.metaData = this.ORIGINALmetaData; 		
 	}
 	
 	public void FindCommunities() throws IOException{
@@ -103,7 +104,7 @@ public class NectarW {
 	                comms_inc.put(neighborComm, inc);
 	            }	            
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
-	           
+	            
 	            boolean shouldMergeComms = amountOfScans>iteratioNumToStartMerge;
 				Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, shouldMergeComms );
 	            boolean haveMergedComms = false;
@@ -118,7 +119,7 @@ public class NectarW {
         }    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
-	    }	    
+	    }
 	    return metaData.com2nodes;
 	}	  
 	
@@ -155,11 +156,12 @@ public class NectarW {
 	    	bestImp = Math.max(bestImp, imp);
 	    }
 	    Set<Integer> bestComs = new HashSet<Integer>();
-	    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
+       	for(Entry<Integer, Double> entry: comms_imps.entrySet()){
 	    		 if (entry.getValue()*betta >= bestImp){
 	    				 bestComs.add(entry.getKey());
 	    		 }
 	    }
+	    
 	    return bestComs;
 	}	
 

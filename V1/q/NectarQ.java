@@ -77,8 +77,7 @@ public class NectarQ {
 	                double inc= Calc_Modularity_Improvement(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);
 	            }
-	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
-	            
+	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);	            
 	            Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new);
 	            boolean haveMergedComms = false;
 	            if(amountOfScans>iteratioNumToStartMerge){
@@ -94,7 +93,8 @@ public class NectarQ {
         }    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR {0} TIMES.",maxIterationsToRun));
-	    }	    
+	    }
+	    
 	    return metaData.com2nodes;
 	}	            
 
@@ -115,12 +115,13 @@ public class NectarQ {
 	    for( double imp : comms_imps.values()){
 	    	bestImp = Math.max(bestImp, imp);
 	    }
+	    
 	    Set<Integer> bestComs = new HashSet<Integer>();
-	    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
-	    		 if (entry.getValue()*betta >= bestImp){
-	    				 bestComs.add(entry.getKey());
-	    		 }
-	    }
+		    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
+		    		 if (entry.getValue()*betta >= bestImp){
+		    				 bestComs.add(entry.getKey());
+		    		 }
+		    }
 	    return bestComs;
 	}	
 	
