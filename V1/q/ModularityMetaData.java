@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class GraphMetaData {
+public class ModularityMetaData {
 	UndirectedUnweightedGraph g;
     public double m;
     public Map<Integer, Double> K_v;
@@ -16,7 +16,7 @@ public class GraphMetaData {
     public Map<Integer, Set<Integer>> node2coms;
     
     //cons
-    public GraphMetaData(){
+    public ModularityMetaData(){
     	m=0;
     	K_v = new HashMap<Integer, Double>();
     	K_v_c = new HashMap<Integer, Map<Integer,Double>>();
@@ -26,7 +26,7 @@ public class GraphMetaData {
     	node2coms = new HashMap<Integer, Set<Integer>>();
     }
     
-    public GraphMetaData(UndirectedUnweightedGraph graph){        
+    public ModularityMetaData(UndirectedUnweightedGraph graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g=graph;
@@ -60,7 +60,7 @@ public class GraphMetaData {
         }
     }
         
-    public GraphMetaData(GraphMetaData ORIGINALmetaData) {
+    public ModularityMetaData(ModularityMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
     	m= ORIGINALmetaData.m;
     	K_v = Utills.CopyMapIntDouble(ORIGINALmetaData.K_v);

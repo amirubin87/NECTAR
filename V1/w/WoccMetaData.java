@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class GraphExtendedMetaData {
+public class WoccMetaData {
 	UndirectedUnweightedGraph g;    
     public Map<Integer, Long> T;
     public Map<Integer, Set<Integer>> VT;  
@@ -15,7 +15,7 @@ public class GraphExtendedMetaData {
     public Map<Integer, Set<Integer>> node2coms;
     
     //cons
-    public GraphExtendedMetaData(){
+    public WoccMetaData(){
     	Intersection_c1_c2 = new HashMap<Integer, Map<Integer, Integer>>();
     	T = new HashMap<Integer, Long>();
     	VT = new HashMap<Integer, Set<Integer>>();
@@ -23,7 +23,7 @@ public class GraphExtendedMetaData {
     	node2coms = new HashMap<Integer, Set<Integer>>();
     }
     
-    public GraphExtendedMetaData(UndirectedUnweightedGraph graph){        
+    public WoccMetaData(UndirectedUnweightedGraph graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g = graph;
@@ -44,7 +44,7 @@ public class GraphExtendedMetaData {
 
     }
 
-    public GraphExtendedMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms){
+    public WoccMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms){
     	this(); 
     	g = graph;
     	T = graph.Triangles();   
@@ -62,7 +62,7 @@ public class GraphExtendedMetaData {
         }
     }
     
-    public GraphExtendedMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms, boolean partitionIsFromFile){
+    public WoccMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms, boolean partitionIsFromFile){
     	this(); 
     	g = graph;
     	T = graph.Triangles();   
@@ -113,7 +113,7 @@ public class GraphExtendedMetaData {
         }
     }
     
-	public GraphExtendedMetaData(GraphExtendedMetaData ORIGINALmetaData) {
+	public WoccMetaData(WoccMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
     	T=Utills.CopyMapIntLong(ORIGINALmetaData.T);
     	VT=Utills.CopyMapIntSet(ORIGINALmetaData.VT);
@@ -282,19 +282,19 @@ public class GraphExtendedMetaData {
         
 	}
                     
-	public void SymbolicClearComm(Integer comm){    	
+	private void SymbolicClearComm(Integer comm){    	
     	Set<Integer> nodes = new HashSet<Integer>(com2nodes.get(comm));
     	for (Integer node: nodes){
     		SymbolicRemoveNodeFromComm(node, comm);
     	}
     }
     
-	public void SymbolicRemoveNodeFromComm(Integer node,Integer comm){
+	private void SymbolicRemoveNodeFromComm(Integer node,Integer comm){
         node2coms.get(node).remove(comm);
         com2nodes.get(comm).remove(node);        
     }
     
-	public void SymbolicAddNodeToComm(Integer node, Integer comm) {
+	private void SymbolicAddNodeToComm(Integer node, Integer comm) {
 		node2coms.get(node).add(comm);
 		com2nodes.get(comm).add(node);		
 	}
