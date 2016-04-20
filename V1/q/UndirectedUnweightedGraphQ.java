@@ -8,12 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class UndirectedUnweightedGraph {	
+public class UndirectedUnweightedGraphQ {	
 	private Set<Integer> nodes;
 	private Map<Integer,Set<Integer>> neighbors;
 	private double number_of_edges;
 	
-	public UndirectedUnweightedGraph(Path p) throws IOException{
+	public UndirectedUnweightedGraphQ(Path p) throws IOException{
 		List<String> lines= Files.readAllLines(p);
 		nodes = new HashSet<Integer>();
 		neighbors = new HashMap<Integer,Set<Integer>>();

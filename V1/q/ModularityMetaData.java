@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ModularityMetaData {
-	UndirectedUnweightedGraph g;
+	UndirectedUnweightedGraphQ g;
     public double m;
     public Map<Integer, Double> K_v;
     public Map<Integer, Map<Integer, Double>> K_v_c;
@@ -26,7 +26,7 @@ public class ModularityMetaData {
     	node2coms = new HashMap<Integer, Set<Integer>>();
     }
     
-    public ModularityMetaData(UndirectedUnweightedGraph graph){        
+    public ModularityMetaData(UndirectedUnweightedGraphQ graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g=graph;
@@ -63,12 +63,12 @@ public class ModularityMetaData {
     public ModularityMetaData(ModularityMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
     	m= ORIGINALmetaData.m;
-    	K_v = Utills.CopyMapIntDouble(ORIGINALmetaData.K_v);
-    	K_v_c = Utills.CopyMapIntMapIntDouble(ORIGINALmetaData.K_v_c);
-    	Intersection_c1_c2 = Utills.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
-    	Sigma_c = Utills.CopyMapIntDouble(ORIGINALmetaData.Sigma_c);
-    	com2nodes = Utills.CopyMapIntSet(ORIGINALmetaData.com2nodes);
-    	node2coms = Utills.CopyMapIntSet(ORIGINALmetaData.node2coms);
+    	K_v = UtillsQ.CopyMapIntDouble(ORIGINALmetaData.K_v);
+    	K_v_c = UtillsQ.CopyMapIntMapIntDouble(ORIGINALmetaData.K_v_c);
+    	Intersection_c1_c2 = UtillsQ.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
+    	Sigma_c = UtillsQ.CopyMapIntDouble(ORIGINALmetaData.Sigma_c);
+    	com2nodes = UtillsQ.CopyMapIntSet(ORIGINALmetaData.com2nodes);
+    	node2coms = UtillsQ.CopyMapIntSet(ORIGINALmetaData.node2coms);
 	}
 
 	public void ClearCommsOfNode(Integer node){

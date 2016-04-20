@@ -15,7 +15,7 @@ import java.util.Set;
 public class NectarQ {
 	public ModularityMetaData ORIGINALmetaData;
 	public ModularityMetaData metaData;
-	public UndirectedUnweightedGraph g;
+	public UndirectedUnweightedGraphQ g;
 	public double[] betas;
 	public double alpha;
 	public String outputPath;
@@ -30,7 +30,7 @@ public class NectarQ {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;
-		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));
+		this.g = new UndirectedUnweightedGraphQ(Paths.get(pathToGraph));
 		this.ORIGINALmetaData = new ModularityMetaData(g);
 		
 	}

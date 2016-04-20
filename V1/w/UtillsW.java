@@ -1,4 +1,4 @@
-package q;
+package w;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-public class Utills {
+public class UtillsW {
 	
 	 
     public static int IntersectionSize(Set<Integer> set1, Set<Integer> set2) {
@@ -22,6 +22,22 @@ public class Utills {
 		for(Integer i : small){			
 				if(big.contains(i)){
 					ans++;
+				}
+			}		
+		return ans;
+	}
+    
+    public static Set<Integer> Intersection(Set<Integer> set1, Set<Integer> set2) {
+    	Set<Integer> ans = new HashSet<>();
+		Set<Integer> small = set1;
+		Set<Integer> big = set2;
+		if(set2.size() < set1.size()){
+			small = set2;
+			big = set1;
+		}
+		for(Integer i : small){			
+				if(big.contains(i)){
+					ans.add(i);
 				}
 			}		
 		return ans;
@@ -63,6 +79,14 @@ public class Utills {
 		return copy;
 	}
 
+	public static Map<Integer, Long> CopyMapIntLong(Map<Integer, Long> source) {
+		Map<Integer, Long> copy = new HashMap<Integer, Long>();
+		for( Entry<Integer, Long> entry: source.entrySet()){
+			copy.put(entry.getKey(), entry.getValue());
+		}
+		return copy;
+	}
+	
 	public static Map<Integer, Map<Integer, Double>> CopyMapIntMapIntDouble(Map<Integer, Map<Integer, Double>> source) {
 		Map<Integer, Map<Integer, Double>> copy = new HashMap<Integer, Map<Integer, Double>>();
 		for( Entry<Integer, Map<Integer, Double>> entry: source.entrySet()){

@@ -15,7 +15,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 public class NectarW {
-	UndirectedUnweightedGraph g;
+	UndirectedUnweightedGraphW g;
 	public double[] betas;
 	public double alpha;
 	public String outputPath;
@@ -35,7 +35,7 @@ public class NectarW {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;
-		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));		
+		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));		
 		Map<Integer, Set<Integer>> firstPart;
 		System.out.println("Get first part");
 		if (firstPartMode == 0){
@@ -64,7 +64,7 @@ public class NectarW {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;
-		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));
+		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));
 		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);	
 		System.out.println(firstPart.entrySet());
 		this.ORIGINALmetaData = new WoccMetaData(g,firstPart,true);
@@ -184,7 +184,7 @@ public class NectarW {
 		writer.close();	
 	}
 
-	public static Map<Integer,Set<Integer>> GetFirstPartition(UndirectedUnweightedGraph G){
+	public static Map<Integer,Set<Integer>> GetFirstPartition(UndirectedUnweightedGraphW G){
 		Map<Integer,Set<Integer>> result = new HashMap<>();
 		Map<Integer, Double> CC = G.Clustring();		
 	    Map<Integer, Double> sorted_CC = MapUtil.sortByValue(CC);
@@ -244,13 +244,13 @@ public class NectarW {
 
 	private int calcVTWithoutComm(Set<Integer> commMembers, int node) {		
 		Set<Integer> nodesWithTriangle = metaData.VT.get(node);
-		return nodesWithTriangle.size() - Utills.IntersectionSize(nodesWithTriangle, commMembers);
+		return nodesWithTriangle.size() - UtillsW.IntersectionSize(nodesWithTriangle, commMembers);
 	}
 
 	private long calcT(Set<Integer> commMembers, int node) {
 		long t=0;
 	    Set<Integer> neighbours = g.neighbors(node);
-	    Set<Integer> neighInComm = Utills.Intersection(commMembers, neighbours);
+	    Set<Integer> neighInComm = UtillsW.Intersection(commMembers, neighbours);
 	    for (int v : neighInComm){
 	        for (int u : neighInComm){
 	            if (u > v && g.get_edge_weight(u,v)>0){
@@ -279,7 +279,7 @@ public class NectarW {
 	    return comm2Nodes;
 	}
 	
-	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques4(UndirectedUnweightedGraph G){
+	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques4(UndirectedUnweightedGraphW G){
 		Set<Integer> hasComm = new HashSet<>();
 		boolean vHasComm=false;
 		Map<Integer,Set<Integer>> result = new HashMap<>();
@@ -297,13 +297,13 @@ public class NectarW {
 	    			break;
 	    		}
 	    		if(!hasComm.contains(u)){
-	    			Set<Integer> UVNeigh= Utills.Intersection(vNeigh, G.neighbors(u));
+	    			Set<Integer> UVNeigh= UtillsW.Intersection(vNeigh, G.neighbors(u));
 	    			for(int w:UVNeigh){
 	    				if(vHasComm || w<u){
 	    	    			break;
 	    	    		}
 	    				if(!hasComm.contains(w)){	
-	    					for(int z : Utills.Intersection(UVNeigh, G.neighbors(w))){
+	    					for(int z : UtillsW.Intersection(UVNeigh, G.neighbors(w))){
 	    						if(vHasComm  || z<w){
 	    			    			break;
 	    			    		}
@@ -333,7 +333,7 @@ public class NectarW {
 	}
 	
 	
-	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques3(UndirectedUnweightedGraph G){
+	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques3(UndirectedUnweightedGraphW G){
 		Set<Integer> hasComm = new HashSet<>();
 		boolean vHasComm=false;
 		Map<Integer,Set<Integer>> result = new HashMap<>();
@@ -351,7 +351,7 @@ public class NectarW {
 	    			break;
 	    		}
 	    		if(!hasComm.contains(u)){
-	    			Set<Integer> UVNeigh= Utills.Intersection(vNeigh, G.neighbors(u));
+	    			Set<Integer> UVNeigh= UtillsW.Intersection(vNeigh, G.neighbors(u));
 	    			for(int w:UVNeigh){
 	    				if(vHasComm){
 	    	    			break;

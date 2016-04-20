@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class WoccMetaData {
-	UndirectedUnweightedGraph g;    
+	UndirectedUnweightedGraphW g;    
     public Map<Integer, Long> T;
     public Map<Integer, Set<Integer>> VT;  
     public Map<Integer, Map<Integer, Integer>> Intersection_c1_c2;        
@@ -23,7 +23,7 @@ public class WoccMetaData {
     	node2coms = new HashMap<Integer, Set<Integer>>();
     }
     
-    public WoccMetaData(UndirectedUnweightedGraph graph){        
+    public WoccMetaData(UndirectedUnweightedGraphW graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g = graph;
@@ -44,7 +44,7 @@ public class WoccMetaData {
 
     }
 
-    public WoccMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms){
+    public WoccMetaData(UndirectedUnweightedGraphW graph, Map<Integer,Set<Integer>> comms){
     	this(); 
     	g = graph;
     	T = graph.Triangles();   
@@ -62,7 +62,7 @@ public class WoccMetaData {
         }
     }
     
-    public WoccMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms, boolean partitionIsFromFile){
+    public WoccMetaData(UndirectedUnweightedGraphW graph, Map<Integer,Set<Integer>> comms, boolean partitionIsFromFile){
     	this(); 
     	g = graph;
     	T = graph.Triangles();   
@@ -91,7 +91,7 @@ public class WoccMetaData {
         			int AcommId = AcommIdAndNodes.getKey();
         			int BcommId = BcommIdAndNodes.getKey();
         			if (AcommId < BcommId){
-        				int intersectionSize = Utills.IntersectionSize(AcommIdAndNodes.getValue(), BcommIdAndNodes.getValue());
+        				int intersectionSize = UtillsW.IntersectionSize(AcommIdAndNodes.getValue(), BcommIdAndNodes.getValue());
         				Map<Integer, Integer> AcommDictionary = Intersection_c1_c2.get(AcommId);
         				AcommDictionary.put(BcommId, intersectionSize);
         			}
@@ -115,11 +115,11 @@ public class WoccMetaData {
     
 	public WoccMetaData(WoccMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
-    	T=Utills.CopyMapIntLong(ORIGINALmetaData.T);
-    	VT=Utills.CopyMapIntSet(ORIGINALmetaData.VT);
-    	Intersection_c1_c2 = Utills.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
-    	com2nodes = Utills.CopyMapIntSet(ORIGINALmetaData.com2nodes);
-    	node2coms = Utills.CopyMapIntSet(ORIGINALmetaData.node2coms);
+    	T=UtillsW.CopyMapIntLong(ORIGINALmetaData.T);
+    	VT=UtillsW.CopyMapIntSet(ORIGINALmetaData.VT);
+    	Intersection_c1_c2 = UtillsW.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
+    	com2nodes = UtillsW.CopyMapIntSet(ORIGINALmetaData.com2nodes);
+    	node2coms = UtillsW.CopyMapIntSet(ORIGINALmetaData.node2coms);
 	}
 
 	public void ClearCommsOfNode(Integer node){

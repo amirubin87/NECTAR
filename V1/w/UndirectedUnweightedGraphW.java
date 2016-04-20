@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class UndirectedUnweightedGraph {	
+public class UndirectedUnweightedGraphW {	
 	private Set<Integer> nodes;
 	private Map<Integer,Set<Integer>> neighbors;
 	private double number_of_edges;
@@ -17,7 +17,7 @@ public class UndirectedUnweightedGraph {
 	private Map<Integer, Set<Integer>> VT;
 	private int MaxNodeId=0;
 	
-	public UndirectedUnweightedGraph(Path p) throws IOException{
+	public UndirectedUnweightedGraphW(Path p) throws IOException{
 		List<String> lines= Files.readAllLines(p,StandardCharsets.UTF_8);
 		System.out.println("All graph lines read.");
 		nodes = new HashSet<Integer>();
