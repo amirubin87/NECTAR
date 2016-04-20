@@ -23,8 +23,8 @@ public class NectarW {
 	public int maxIterationsToRun;
 	public int percentageOfStableNodes;
 	public String pathToGraph;
-	public GraphExtendedMetaData ORIGINALmetaData;
-	public GraphExtendedMetaData metaData;
+	public WoccMetaData ORIGINALmetaData;
+	public WoccMetaData metaData;
 	
 	public NectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode) throws IOException{
 		
@@ -51,7 +51,7 @@ public class NectarW {
 			throw new RuntimeException("param firstPartMode must be on of 0=CC, 3=clique 3, 4=clique 4");
 		}		
 		System.out.println("Get meta data");
-		this.ORIGINALmetaData = new GraphExtendedMetaData(g,firstPart,true);
+		this.ORIGINALmetaData = new WoccMetaData(g,firstPart,true);
 		this.metaData = this.ORIGINALmetaData;
 		
 	}
@@ -67,7 +67,7 @@ public class NectarW {
 		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));
 		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);	
 		System.out.println(firstPart.entrySet());
-		this.ORIGINALmetaData = new GraphExtendedMetaData(g,firstPart,true);
+		this.ORIGINALmetaData = new WoccMetaData(g,firstPart,true);
 		this.metaData = this.ORIGINALmetaData; 		
 	}
 	
@@ -77,7 +77,7 @@ public class NectarW {
 			System.out.println("                       Input: " + pathToGraph);
 			System.out.println("                       betta: " + betta);
 			// Create a copy of the original meta data
-			metaData = new GraphExtendedMetaData(ORIGINALmetaData);
+			metaData = new WoccMetaData(ORIGINALmetaData);
 			Map<Integer,Set<Integer>> comms = FindCommunities(betta);
 			WriteToFile(comms, betta);
 		}
@@ -124,11 +124,9 @@ public class NectarW {
 	}	  
 	
 	private boolean FindAndMergeComms (Map<Integer[],Double> commsCouplesIntersectionRatio, int amountOfScans){
-	    boolean haveMergedComms = false;	    
-	    double use =alpha;
+	    boolean haveMergedComms = false;
 	    for (Entry<Integer[],Double > c1c2intersectionRate : commsCouplesIntersectionRatio.entrySet()){	    	
-	        if(amountOfScans==1) use= 0.75;
-	    	if(c1c2intersectionRate.getValue()>use){
+	    	if(c1c2intersectionRate.getValue()>alpha){
 	        	Integer[] c1c2 = c1c2intersectionRate.getKey();
 	        	MergeComms(c1c2);
 	        	haveMergedComms = true;

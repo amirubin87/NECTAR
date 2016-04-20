@@ -13,8 +13,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class NectarQ {
-	public GraphMetaData ORIGINALmetaData;
-	public GraphMetaData metaData;
+	public ModularityMetaData ORIGINALmetaData;
+	public ModularityMetaData metaData;
 	public UndirectedUnweightedGraph g;
 	public double[] betas;
 	public double alpha;
@@ -31,7 +31,7 @@ public class NectarQ {
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;
 		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));
-		this.ORIGINALmetaData = new GraphMetaData(g);
+		this.ORIGINALmetaData = new ModularityMetaData(g);
 		
 	}
 	
@@ -41,7 +41,7 @@ public class NectarQ {
 			System.out.println("                       Input: " + pathToGraph);
 			System.out.println("                       betta: " + betta);
 			// Create a copy of the original meta data
-			metaData = new GraphMetaData(ORIGINALmetaData);			
+			metaData = new ModularityMetaData(ORIGINALmetaData);			
 			Map<Integer,Set<Integer>> comms = FindCommunities(betta);
 			WriteToFile(comms, betta);
 		}
@@ -50,7 +50,7 @@ public class NectarQ {
 	private void WriteToFile(Map<Integer, Set<Integer>> comms, double betta) throws FileNotFoundException, UnsupportedEncodingException {
 		PrintWriter writer = new PrintWriter(outputPath + betta + ".txt", "UTF-8");
 		for ( Set<Integer> listOfNodes : comms.values()){
-			if(listOfNodes.size()>0){
+			if(listOfNodes.size()>2){
 				for(int node : listOfNodes){
 					writer.print(node + " ");
 				}
