@@ -37,7 +37,7 @@ Parameters:
 				4: 4-sized non-overlapping cliques are used.
 			Notice that using '3' or '4' may cost with a long initialization time.			
 		percentageOfStableNodes (95) - only supported when WOCC is used. The algorithm will stop when this percentage of nodes have stabled (e.g. haven't changed any community in the last iteration).
-
+		* this version includes additional debug parameters and outputs.
 Usage examples:
 	java -jar NECTAR./net.txt ./
 			These  are examples with the minimum parameters needed.

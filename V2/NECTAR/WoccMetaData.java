@@ -190,8 +190,8 @@ public class WoccMetaData {
 	    }
 	}
 
-	public Map<Integer[],Double> SetCommsForNode(Integer node, Set<Integer> comms, boolean shouldMergeComms){		
-    	
+	public Map<Integer[],Double> SetCommsForNode(Integer node, Set<Integer> comms, boolean shouldMergeComms, boolean calcOutput){		
+    	// When going to Multy thread todo - arrange this method!
 		UpdateIntersectionRatioAdd(comms);
 		
 		Map<Integer[],Double> commsCouplesIntersectionRatio = new HashMap<Integer[],Double>();
@@ -226,6 +226,15 @@ public class WoccMetaData {
 	    
 
 	    return commsCouplesIntersectionRatio;
+    }
+	
+	public void SetCommsForNodeNoMerge(Integer node, Set<Integer> comms){
+
+		// Symbolic add
+	    for (Integer comm : comms){
+	        com2nodes.get(comm).add(node);	        
+	    }
+	    node2coms.put(node, comms);
     }
 
 	public void AddCommForNode(int node, int c1){

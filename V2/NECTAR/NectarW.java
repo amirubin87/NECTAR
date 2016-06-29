@@ -1,5 +1,7 @@
 package NECTAR;
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
@@ -25,17 +27,23 @@ public class NectarW {
 	public String pathToGraph;
 	public WoccMetaData ORIGINALmetaData;
 	public WoccMetaData metaData;
+	public PrintWriter runTimeLog;
+	public long startTime;
 	
 	public NectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode) throws IOException{
-		
+		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));		
+		this.startTime = System.currentTimeMillis();
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.betas= betas;
 		this.alpha = alpha;
 		this.outputPath =outputPath;
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
-		this.pathToGraph = pathToGraph;
+		this.pathToGraph = pathToGraph;				
 		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));		
+		
+		TakeTime();
+		
 		Map<Integer, Set<Integer>> firstPart;
 		System.out.println("Get first part");
 		if (firstPartMode == 0){
@@ -49,38 +57,136 @@ public class NectarW {
 		}
 		else{
 			throw new RuntimeException("param firstPartMode must be on of 0=CC, 3=clique 3, 4=clique 4");
-		}		
+		}	
+		TakeTime();
 		System.out.println("Get meta data");
 		this.ORIGINALmetaData = new WoccMetaData(g,firstPart,true);
-		this.metaData = this.ORIGINALmetaData;
-		
+		TakeTime();
+		this.metaData = this.ORIGINALmetaData;		
+	}
+
+	private void TakeTime() {
+		long endTime   = System.currentTimeMillis();
+		long totalTime = endTime - startTime;
+		runTimeLog.println(totalTime/1000);
+		startTime = endTime;
 	}
 	
-	public NectarW(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{
+	public NectarW(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{		
+		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.betas= betas;
 		this.alpha = alpha;
 		this.outputPath =outputPath;
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
-		this.pathToGraph = pathToGraph;
-		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));
-		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);	
+		this.pathToGraph = pathToGraph;		
+		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));		
+		TakeTime();
+		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);
+		TakeTime();		
 		System.out.println(firstPart.entrySet());
 		this.ORIGINALmetaData = new WoccMetaData(g,firstPart,true);
+		TakeTime();
 		this.metaData = this.ORIGINALmetaData; 		
 	}
 	
-	public void FindCommunities() throws IOException{
+	public void FindCommunities(boolean runMultyThreaded) throws IOException{
 		for (double betta : betas){
 			System.out.println("");
 			System.out.println("                       Input: " + pathToGraph);
 			System.out.println("                       betta: " + betta);
 			// Create a copy of the original meta data
 			metaData = new WoccMetaData(ORIGINALmetaData);
-			Map<Integer,Set<Integer>> comms = FindCommunities(betta);
-			WriteToFile(comms, betta);
+			Map<Integer,Set<Integer>> comms;
+			if(runMultyThreaded){
+				TakeTime();
+				comms = FindCommunitiesMultyThreaded(betta);
+			}
+			else{
+				TakeTime();
+				comms = FindCommunities(betta);
+			}			
+			TakeTime();
+			WriteToFile(comms, betta);			
+			TakeTime();
+			runTimeLog.println("DONE Beta");
 		}
+		runTimeLog.println("DONE");
+		runTimeLog.close();
+	}
+	
+	private Map<Integer,Set<Integer>> FindCommunitiesMultyThreaded(double betta) throws FileNotFoundException, UnsupportedEncodingException{
+	    /*int numOfStableNodes = 0;
+	    int amountOfScans = 0;
+	    int n = g.number_of_nodes();
+	    while (numOfStableNodes < n && amountOfScans < maxIterationsToRun){
+	    	System.out.println("Input: " +pathToGraph + " betta: " + betta + "            Num of iterations: " + amountOfScans);
+	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
+            numOfStableNodes = 0;
+            amountOfScans++;
+            Map<Integer, Set<Integer>> OLDnode2comms = new HashMap<Integer, Set<Integer>>();
+            Map<Integer, Set<Integer>> NEWnode2comms = new HashMap<Integer, Set<Integer>>();
+            
+            // Find new comms for each node
+	        for (Integer node : g.nodes()){
+	            Set<Integer> c_v_original = metaData.node2coms.get(node);
+
+	            // Remove from all comms
+	            metaData.ClearCommsOfNode(node);
+	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
+	            Set<Integer> neighborComms = Find_Neighbor_Comms(node);
+	            for (Integer neighborComm : neighborComms){
+	                double inc= Calc_Modularity_Improvement(neighborComm, node);
+	                comms_inc.put(neighborComm, inc);
+	            }
+	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
+	            
+	            // Store old comms.
+	            OLDnode2comms.put(node, c_v_original);
+	            
+	            // Store new comms.
+	            NEWnode2comms.put(node, c_v_new);
+	                    
+	            boolean shouldMergeComms = amountOfScans>iteratioNumToStartMerge;
+	            // Return node to commms
+	            metaData.SetCommsForNode((Integer)node, c_v_original,shouldMergeComms,false);
+	        }
+	        
+	        Set<Set<Integer>> changedComms = new HashSet<>();
+            // Move nodes to new comms
+	        for (Integer node : g.nodes()){       	
+	        	
+	        	// Remove from all comms
+	            metaData.ClearCommsOfNode(node);
+	            Set<Integer> c_v_original = OLDnode2comms.get((Integer)node);
+	        	Set<Integer> c_v_new = NEWnode2comms.get((Integer)node);
+	        	
+	        	changedComms.add(c_v_new);
+    			metaData.SetCommsForNodeNoMerge(node, c_v_new);
+    			if (c_v_new.equals(c_v_original)){
+	            	numOfStableNodes++;
+	            }
+	        }
+	        
+	        // Merge comms.
+            Map<Integer[],Double> commsCouplesIntersectionRatio = scanChangedComms(changedComms);
+            
+            boolean haveMergedComms = false;
+            if(amountOfScans>iteratioNumToStartMerge){
+        	   haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio);
+            }
+            
+            if (haveMergedComms){
+        		numOfStableNodes--;
+            }            
+	    } 
+        	   
+	    if (amountOfScans >= maxIterationsToRun){
+	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
+	    }*/
+	    
+	    return metaData.com2nodes;
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException {
@@ -88,13 +194,19 @@ public class NectarW {
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
 	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;
+	    
+	    long Sec1Time = 0;
+	    long Sec2Time = 0;
+	    long Sec3Time = 0;	    	    
+	    
 	    while (amountOfScans <5 || (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
 	    	System.out.println("Input: " +pathToGraph + " betta: " + betta + "            Num of iter: " + amountOfScans);
 	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
 	    	amountOfScans++;
 	    	for (Integer node : g.nodes()){
-	    		
+	    		////////////////////////////////////   Section 1
+	    		startTime = System.currentTimeMillis();
 	            Set<Integer> c_v_original = metaData.node2coms.get(node);	            
 	            metaData.ClearCommsOfNode(node);
 	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
@@ -105,9 +217,17 @@ public class NectarW {
 	            }	            
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	            
+	            Sec1Time += (System.currentTimeMillis() - startTime);
+	            
+	            /////////////////////////////////////////    Section 2
+	            startTime = System.currentTimeMillis();
 	            boolean shouldMergeComms = amountOfScans>iteratioNumToStartMerge;
-				Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, shouldMergeComms );
+				Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, shouldMergeComms,true );
 	            boolean haveMergedComms = false;
+	            Sec2Time += (System.currentTimeMillis() - startTime);
+	            
+        		///////////////////////////////////////    Section 3
+	            startTime = System.currentTimeMillis();
 	            if(shouldMergeComms){
 	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio,amountOfScans);
 	            }	            
@@ -115,11 +235,16 @@ public class NectarW {
 	            if (!haveMergedComms && c_v_new.equals(c_v_original)){
 	            	numOfStableNodes++;
 	            }
+	            Sec3Time += (System.currentTimeMillis() - startTime);
+	            
 	        }
         }    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
-	    }
+	    }	    
+	    runTimeLog.println(Sec1Time/(1000));
+	    runTimeLog.println(Sec2Time/(1000));
+	    runTimeLog.println(Sec3Time/(1000));	    
 	    return metaData.com2nodes;
 	}	  
 	
@@ -331,7 +456,6 @@ public class NectarW {
 	    }
 	    return result;
 	}
-	
 	
 	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques3(UndirectedUnweightedGraphW G){
 		Set<Integer> hasComm = new HashSet<>();

@@ -1,5 +1,8 @@
 package NECTAR;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -14,17 +17,20 @@ public class RunNectar {
 
 	public static void main(String[] args) throws IOException {		
 		if (args.length <2){
-			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2,2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 ");
+			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2,2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 runMultyThreaded=false dynamicChoose=true useModularity=false");
 		}
 		else{
 			String pathToGraph = "";
 			String outputPath = "";
-			double[] betas = {1.1,1.2,2.0,3.0};
-			int firstPartMode = 0;
+			double[] betas = {1.1,1.2,2.0,3.0};				
 			double alpha = 0.8;
 			int iteratioNumToStartMerge = 6;
 			int maxIterationsToRun = 20;
-			int percentageOfStableNodes = 100;
+			int firstPartMode = 0;
+			int percentageOfStableNodes = 95;
+			boolean runMultyThreaded = false;
+			boolean dynamicChoose = true;   
+			boolean useModularity = false;
 			
 			if (args.length > 0)
 				pathToGraph = args[0];		
@@ -54,6 +60,18 @@ public class RunNectar {
 				}
 			}
 			
+			if(args.length > 8){
+				runMultyThreaded = Boolean.parseBoolean(args[8]);				
+			}
+			
+			if(args.length > 9){
+				dynamicChoose = Boolean.parseBoolean(args[9]);				
+			}
+			
+			if(args.length > 10){
+				useModularity = Boolean.parseBoolean(args[10]);				
+			}
+			
 			String betasString = "";
 			for (double d: betas){
 				betasString = betasString + d + " ";
@@ -67,20 +85,33 @@ public class RunNectar {
 			System.out.println("first Part mode:      "+firstPartMode);
 			System.out.println("maxIterationsToRun:      "+maxIterationsToRun);
 			System.out.println("percentageOfStableNodes: "+percentageOfStableNodes);
+			System.out.println("runMultyThreaded: "+runMultyThreaded);
+			System.out.println("dynamicChoose: "+dynamicChoose);
+			System.out.println("useModularity: "+useModularity);
 
 			System.out.println("");
 			List<Edge> edges = GetEdgesList(pathToGraph);
 			double trianglesRate = TrianglesRate(edges);
 			
+			WriteToFile("./Triangles.txt", pathToGraph + " " + trianglesRate);
+			
+			if(!dynamicChoose & useModularity){
+				trianglesRate = 1;
+			}
+			
+			if(!dynamicChoose & !useModularity){
+				trianglesRate = 10;
+			}
+			 
 			if(trianglesRate > 5){
 				System.out.println("                         Using WOCC.");
 				NectarW nectarW = new NectarW(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode);				
-				nectarW.FindCommunities();
+				nectarW.FindCommunities(runMultyThreaded);
 			}
 			else{
 				System.out.println("                         Using Modularity.");
 				NectarQ nectarQ= new NectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun);
-				nectarQ.FindCommunities();			
+				nectarQ.FindCommunities(runMultyThreaded);			
 			}
 		}
 	}
@@ -147,5 +178,11 @@ public class RunNectar {
 			}
 		}		
 		return (double)(triangles/6)/(double)nodes;
+	}
+	
+	private static void WriteToFile(String path, String msg) throws IOException {
+		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path, true)));				
+		out.println(msg);
+		out.close();	
 	}
 }
