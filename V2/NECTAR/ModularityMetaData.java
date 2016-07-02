@@ -157,6 +157,7 @@ public class ModularityMetaData {
         	if(edgesWeightFromNodeToC == null){
         		edgesWeightFromNodeToC = 0D;
         	}
+        	
             Sigma_c.put(c, Sigma_c.get(c) - K_v.get(node) + edgesWeightFromNodeToC);
             
             for ( Integer neighbour : neighbors){

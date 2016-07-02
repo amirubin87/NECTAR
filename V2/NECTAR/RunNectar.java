@@ -15,9 +15,9 @@ import java.util.Set;
 
 public class RunNectar {
 
-	public static void main(String[] args) throws IOException {		
+	public static void main(String[] args) throws IOException, InterruptedException {		
 		if (args.length <2){
-			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2,2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 runMultyThreaded=false dynamicChoose=true useModularity=false");
+			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2,2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 runMultyThreaded=false numOfThreads=5 dynamicChoose=true useModularity=false");
 		}
 		else{
 			String pathToGraph = "";
@@ -29,6 +29,7 @@ public class RunNectar {
 			int firstPartMode = 0;
 			int percentageOfStableNodes = 95;
 			boolean runMultyThreaded = false;
+			int numOfThreads = 5;
 			boolean dynamicChoose = true;   
 			boolean useModularity = false;
 			
@@ -65,11 +66,16 @@ public class RunNectar {
 			}
 			
 			if(args.length > 9){
-				dynamicChoose = Boolean.parseBoolean(args[9]);				
+				numOfThreads = Integer.parseInt(args[9]);				
 			}
 			
+			
 			if(args.length > 10){
-				useModularity = Boolean.parseBoolean(args[10]);				
+				dynamicChoose = Boolean.parseBoolean(args[10]);				
+			}
+			
+			if(args.length > 11){
+				useModularity = Boolean.parseBoolean(args[11]);				
 			}
 			
 			String betasString = "";
@@ -86,6 +92,7 @@ public class RunNectar {
 			System.out.println("maxIterationsToRun:      "+maxIterationsToRun);
 			System.out.println("percentageOfStableNodes: "+percentageOfStableNodes);
 			System.out.println("runMultyThreaded: "+runMultyThreaded);
+			System.out.println("numOfThreads: "+numOfThreads);
 			System.out.println("dynamicChoose: "+dynamicChoose);
 			System.out.println("useModularity: "+useModularity);
 
@@ -111,7 +118,7 @@ public class RunNectar {
 			else{
 				System.out.println("                         Using Modularity.");
 				NectarQ nectarQ= new NectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun);
-				nectarQ.FindCommunities(runMultyThreaded);			
+				nectarQ.FindCommunities(runMultyThreaded, numOfThreads);			
 			}
 		}
 	}

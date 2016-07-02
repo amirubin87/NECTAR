@@ -1,4 +1,9 @@
 package NECTAR;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+
+import java.util.concurrent.Executors;
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -50,7 +55,7 @@ public class NectarQ {
 		startTime = endTime;
 	}
 	
-	public void FindCommunities(boolean runMultyThreaded) throws FileNotFoundException, UnsupportedEncodingException{
+	public void FindCommunities(boolean runMultyThreaded, int numOfThreads) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException{
 		for (double betta : betas){
 			System.out.println("");
 			System.out.println("                       Input: " + pathToGraph);
@@ -59,15 +64,19 @@ public class NectarQ {
 			metaData = new ModularityMetaData(ORIGINALmetaData);
 			Map<Integer,Set<Integer>> comms;
 			if(runMultyThreaded){
+				//1
 				TakeTime();
-				comms = FindCommunitiesMultyThreaded(betta);
+				comms = FindCommunitiesMultyThreaded(betta, numOfThreads);
 			}
 			else{
+				//1
 				TakeTime();
 				comms = FindCommunities(betta);
 			}
+			//5
 			TakeTime();
 			WriteToFile(comms, betta);
+			//6
 			TakeTime();
 			runTimeLog.println("DONE Beta");
 		}
@@ -88,7 +97,7 @@ public class NectarQ {
 		writer.close();	
 	}
 
-	private Map<Integer,Set<Integer>> FindCommunitiesMultyThreaded(double betta) throws FileNotFoundException, UnsupportedEncodingException{
+	private Map<Integer,Set<Integer>> FindCommunitiesMultyThreaded(double betta, int numOfThreads) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException{
 	    int numOfStableNodes = 0;
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
@@ -97,32 +106,15 @@ public class NectarQ {
 	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
             numOfStableNodes = 0;
             amountOfScans++;
-            Map<Integer, Set<Integer>> OLDnode2comms = new HashMap<Integer, Set<Integer>>();
-            Map<Integer, Set<Integer>> NEWnode2comms = new HashMap<Integer, Set<Integer>>();
+            Map<Integer, Set<Integer>> OLDnode2comms = new ConcurrentHashMap <Integer, Set<Integer>>();
+            Map<Integer, Set<Integer>> NEWnode2comms = new ConcurrentHashMap <Integer, Set<Integer>>();
+            
+            
             
             // Find new comms for each node
-	        for (Integer node : g.nodes()){
-	            Set<Integer> c_v_original = metaData.node2coms.get(node);
-
-	            // Remove from all comms
-	            metaData.ClearCommsOfNode(node);
-	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
-	            Set<Integer> neighborComms = Find_Neighbor_Comms(node);
-	            for (Integer neighborComm : neighborComms){
-	                double inc= Calc_Modularity_Improvement(neighborComm, node);
-	                comms_inc.put(neighborComm, inc);
-	            }
-	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
-	            
-	            // Store old comms.
-	            OLDnode2comms.put(node, c_v_original);
-	            
-	            // Store new comms.
-	            NEWnode2comms.put(node, c_v_new);
-	            
-	            metaData.SetCommsForNode((Integer)node, c_v_original,false);
-	        }
-	        
+            FindCommsForNodesMultyThreaded(numOfThreads, betta, OLDnode2comms, NEWnode2comms);
+            
+            
 	        Set<Set<Integer>> changedComms = new HashSet<>();
             // Move nodes to new comms
 	        for (Integer node : g.nodes()){       	
@@ -157,6 +149,19 @@ public class NectarQ {
 	    }
 	    
 	    return metaData.com2nodes;
+	}
+
+	private void FindCommsForNodesMultyThreaded(int threads, double betta, Map<Integer, Set<Integer>> OLDnode2comms,
+			Map<Integer, Set<Integer>> NEWnode2comms) {
+		ExecutorService executor = Executors.newFixedThreadPool(threads);
+		for (Integer node : g.nodes()){            
+		    Runnable worker = new FindBestCommForNodeWorker(node, betta, metaData,  OLDnode2comms, NEWnode2comms);
+		    executor.execute(worker);
+		}
+		executor.shutdown();
+		while (!executor.isTerminated()) {            	
+		}
+		System.out.println("			Finished all nodes");
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException{
@@ -214,8 +219,11 @@ public class NectarQ {
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
 	    }
+	    //2
 	    runTimeLog.println(Sec1Time/(1000));
+	    //3
 	    runTimeLog.println(Sec2Time/(1000));
+	    //4
 	    runTimeLog.println(Sec3Time/(1000));
 	    
 	    return metaData.com2nodes;

@@ -45,3 +45,8 @@ $RECYCLE.BIN/
 Network Trash Folder
 Temporary Items
 .apdisk
+.settings/org.eclipse.jdt.core.prefs
+.classpath
+Triangles.txt
+NectarQ-runTime.log
+NectarW-runTime.log
