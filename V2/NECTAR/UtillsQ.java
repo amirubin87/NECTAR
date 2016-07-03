@@ -1,11 +1,13 @@
 package NECTAR;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map.Entry;
 
 public class UtillsQ {
@@ -48,7 +50,7 @@ public class UtillsQ {
 	}
 
 	public static Map<Integer, Double> CopyMapIntDouble(Map<Integer, Double> source) {
-		Map<Integer, Double> copy = new HashMap<Integer, Double>();
+		Map<Integer, Double> copy = new ConcurrentHashMap<Integer, Double>();
 		for( Entry<Integer, Double> entry: source.entrySet()){
 			copy.put(entry.getKey(), entry.getValue());
 		}
@@ -56,7 +58,7 @@ public class UtillsQ {
 	}
 	
 	public static Map<Integer, Integer> CopyMapIntInt(Map<Integer, Integer> source) {
-		Map<Integer, Integer> copy = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> copy = new ConcurrentHashMap<Integer, Integer>();
 		for( Entry<Integer, Integer> entry: source.entrySet()){
 			copy.put(entry.getKey(), entry.getValue());
 		}
@@ -64,7 +66,7 @@ public class UtillsQ {
 	}
 
 	public static Map<Integer, Map<Integer, Double>> CopyMapIntMapIntDouble(Map<Integer, Map<Integer, Double>> source) {
-		Map<Integer, Map<Integer, Double>> copy = new HashMap<Integer, Map<Integer, Double>>();
+		Map<Integer, Map<Integer, Double>> copy = new ConcurrentHashMap<Integer, Map<Integer, Double>>();
 		for( Entry<Integer, Map<Integer, Double>> entry: source.entrySet()){
 			copy.put(entry.getKey(), CopyMapIntDouble(entry.getValue()));
 		}
@@ -72,7 +74,7 @@ public class UtillsQ {
 	}
 
 	public static Map<Integer, Set<Integer>> CopyMapIntSet(Map<Integer, Set<Integer>> source) {
-		Map<Integer, Set<Integer>> copy = new HashMap<Integer, Set<Integer>>();
+		Map<Integer, Set<Integer>> copy = new ConcurrentHashMap<Integer, Set<Integer>>();
 		for( Entry<Integer, Set<Integer>> entry: source.entrySet()){
 			copy.put(entry.getKey(), CloneSet(entry.getValue()));
 		}
@@ -80,7 +82,7 @@ public class UtillsQ {
 	}
 
 	public static Map<Integer, Map<Integer, Integer>> CopyMapIntMapIntInt(Map<Integer, Map<Integer, Integer>> source) {
-		Map<Integer, Map<Integer, Integer>> copy = new HashMap<Integer, Map<Integer, Integer>>();
+		Map<Integer, Map<Integer, Integer>> copy = new ConcurrentHashMap<Integer, Map<Integer, Integer>>();
 		for( Entry<Integer, Map<Integer, Integer>> entry: source.entrySet()){
 			copy.put(entry.getKey(), CopyMapIntInt(entry.getValue()));
 		}
@@ -88,7 +90,7 @@ public class UtillsQ {
 	}
 	
 	public static <T> Set<T> CloneSet(Set<T> source) {
-		Set<T> copy = new HashSet<T>(source.size()); 
+		Set<T> copy = Collections.synchronizedSet(new HashSet<T>(source.size())); 
 		Iterator<T> iterator = source.iterator();
 		while(iterator.hasNext()){ 
 			copy.add((T) iterator.next()); 

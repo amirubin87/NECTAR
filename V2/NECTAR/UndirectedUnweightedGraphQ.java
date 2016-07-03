@@ -2,11 +2,12 @@ package NECTAR;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UndirectedUnweightedGraphQ {	
 	private Set<Integer> nodes;
@@ -15,20 +16,20 @@ public class UndirectedUnweightedGraphQ {
 	
 	public UndirectedUnweightedGraphQ(Path p) throws IOException{
 		List<String> lines= Files.readAllLines(p);
-		nodes = new HashSet<Integer>();
-		neighbors = new HashMap<Integer,Set<Integer>>();
+		nodes = Collections.synchronizedSet(new HashSet<Integer>());
+		neighbors = new ConcurrentHashMap<Integer,Set<Integer>>();
 		for (String line : lines){
 			String[] parts = line.split(" |\t");
 			Integer v = Integer.parseInt(parts[0].trim());
 			Integer u = Integer.parseInt(parts[1].trim());
 			Set<Integer> vNeig= neighbors.get(v);
 			if(vNeig == null){
-				vNeig = new HashSet<Integer>();
+				vNeig = Collections.synchronizedSet(new HashSet<Integer>());
 				neighbors.put(v, vNeig);
 			}
 			Set<Integer> uNeig= neighbors.get(u);
 			if(uNeig == null){
-				uNeig = new HashSet<Integer>();
+				uNeig = Collections.synchronizedSet(new HashSet<Integer>());
 				neighbors.put(u, uNeig);
 			}
 			if(v!=u && !vNeig.contains(u)){

@@ -16,8 +16,23 @@ import java.util.Set;
 public class RunNectar {
 
 	public static void main(String[] args) throws IOException, InterruptedException {		
+		long startTime   = System.currentTimeMillis();
+		
 		if (args.length <2){
-			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2,2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 runMultyThreaded=false numOfThreads=5 dynamicChoose=true useModularity=false");
+			System.out.println("Input parameteres for NECTAR: "
+					+ "pathToGraph  "
+					+ "outputPath  "
+					+ "betas=1.1,1.2,2.0,3.0  "
+					+ "alpha=0.8  "
+					+ "iteratioNumToStartMerge=6  "
+					+ "maxIterationsToRun=20 "
+					+ "firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) "
+					+ "percentageOfStableNodes=95 "
+					+ "runMultyThreaded=true "
+					+ "numOfThreads=8 "
+					+ "dynamicChoose=true "
+					+ "useModularity=false "
+					+ "debug=false");
 		}
 		else{
 			String pathToGraph = "";
@@ -28,10 +43,11 @@ public class RunNectar {
 			int maxIterationsToRun = 20;
 			int firstPartMode = 0;
 			int percentageOfStableNodes = 95;
-			boolean runMultyThreaded = false;
-			int numOfThreads = 5;
+			boolean runMultyThreaded = true;
+			int numOfThreads = 8;
 			boolean dynamicChoose = true;   
 			boolean useModularity = false;
+			boolean debug = false;
 			
 			if (args.length > 0)
 				pathToGraph = args[0];		
@@ -78,6 +94,10 @@ public class RunNectar {
 				useModularity = Boolean.parseBoolean(args[11]);				
 			}
 			
+			if(args.length > 12){
+				debug = Boolean.parseBoolean(args[12]);				
+			}
+			
 			String betasString = "";
 			for (double d: betas){
 				betasString = betasString + d + " ";
@@ -95,12 +115,14 @@ public class RunNectar {
 			System.out.println("numOfThreads: "+numOfThreads);
 			System.out.println("dynamicChoose: "+dynamicChoose);
 			System.out.println("useModularity: "+useModularity);
+			System.out.println("debug mode: "+debug);
+			
 
 			System.out.println("");
 			List<Edge> edges = GetEdgesList(pathToGraph);
 			double trianglesRate = TrianglesRate(edges);
-			
-			WriteToFile("./Triangles.txt", pathToGraph + " " + trianglesRate);
+			if (debug)
+				WriteToFile("./Triangles.txt", pathToGraph + " " + trianglesRate);
 			
 			if(!dynamicChoose & useModularity){
 				trianglesRate = 1;
@@ -112,15 +134,19 @@ public class RunNectar {
 			 
 			if(trianglesRate > 5){
 				System.out.println("                         Using WOCC.");
-				NectarW nectarW = new NectarW(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode);				
-				nectarW.FindCommunities(runMultyThreaded);
+				NectarW nectarW = new NectarW(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);				
+				nectarW.FindCommunities(runMultyThreaded, numOfThreads);
 			}
 			else{
 				System.out.println("                         Using Modularity.");
-				NectarQ nectarQ= new NectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun);
+				NectarQ nectarQ= new NectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun, percentageOfStableNodes, debug);
 				nectarQ.FindCommunities(runMultyThreaded, numOfThreads);			
 			}
 		}
+		
+		long endTime   = System.currentTimeMillis();
+		long totalTime = endTime - startTime;
+		System.out.println(totalTime/1000);
 	}
 
 	private static double[] ParseDoubleArray(String string) {

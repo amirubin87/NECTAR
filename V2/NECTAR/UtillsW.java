@@ -1,35 +1,28 @@
 package NECTAR;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map.Entry;
 
 public class UtillsW {
 	
 	 
-    public static int IntersectionSize(Set<Integer> set1, Set<Integer> set2) {
-		int ans = 0;
-		Set<Integer> small = set1;
-		Set<Integer> big = set2;
-		if(set2.size() < set1.size()){
-			small = set2;
-			big = set1;
-		}
-		for(Integer i : small){			
-				if(big.contains(i)){
-					ans++;
-				}
-			}		
-		return ans;
+    public static int IntersectionSize(Set<Integer> set1, Set<Integer> set2) {			
+		return Intersection(set1, set2).size();
 	}
     
     public static Set<Integer> Intersection(Set<Integer> set1, Set<Integer> set2) {
+    	Set<Integer> small = new HashSet<Integer>();
     	Set<Integer> ans = new HashSet<>();
-		Set<Integer> small = set1;
+    	synchronized (set1) {
+    	    small = new HashSet(set1); //preferably use generics
+    	}		
 		Set<Integer> big = set2;
 		if(set2.size() < set1.size()){
 			small = set2;
@@ -64,7 +57,7 @@ public class UtillsW {
 	}
 
 	public static Map<Integer, Double> CopyMapIntDouble(Map<Integer, Double> source) {
-		Map<Integer, Double> copy = new HashMap<Integer, Double>();
+		Map<Integer, Double> copy = new ConcurrentHashMap<Integer, Double>();
 		for( Entry<Integer, Double> entry: source.entrySet()){
 			copy.put(entry.getKey(), entry.getValue());
 		}
@@ -72,7 +65,7 @@ public class UtillsW {
 	}
 	
 	public static Map<Integer, Integer> CopyMapIntInt(Map<Integer, Integer> source) {
-		Map<Integer, Integer> copy = new HashMap<Integer, Integer>();
+		Map<Integer, Integer> copy = new ConcurrentHashMap<Integer, Integer>();
 		for( Entry<Integer, Integer> entry: source.entrySet()){
 			copy.put(entry.getKey(), entry.getValue());
 		}
@@ -80,7 +73,7 @@ public class UtillsW {
 	}
 
 	public static Map<Integer, Long> CopyMapIntLong(Map<Integer, Long> source) {
-		Map<Integer, Long> copy = new HashMap<Integer, Long>();
+		Map<Integer, Long> copy = new ConcurrentHashMap<Integer, Long>();
 		for( Entry<Integer, Long> entry: source.entrySet()){
 			copy.put(entry.getKey(), entry.getValue());
 		}
@@ -88,7 +81,7 @@ public class UtillsW {
 	}
 	
 	public static Map<Integer, Map<Integer, Double>> CopyMapIntMapIntDouble(Map<Integer, Map<Integer, Double>> source) {
-		Map<Integer, Map<Integer, Double>> copy = new HashMap<Integer, Map<Integer, Double>>();
+		Map<Integer, Map<Integer, Double>> copy = new ConcurrentHashMap<Integer, Map<Integer, Double>>();
 		for( Entry<Integer, Map<Integer, Double>> entry: source.entrySet()){
 			copy.put(entry.getKey(), CopyMapIntDouble(entry.getValue()));
 		}
@@ -96,7 +89,7 @@ public class UtillsW {
 	}
 
 	public static Map<Integer, Set<Integer>> CopyMapIntSet(Map<Integer, Set<Integer>> source) {
-		Map<Integer, Set<Integer>> copy = new HashMap<Integer, Set<Integer>>();
+		Map<Integer, Set<Integer>> copy = new ConcurrentHashMap<Integer, Set<Integer>>();
 		for( Entry<Integer, Set<Integer>> entry: source.entrySet()){
 			copy.put(entry.getKey(), CloneSet(entry.getValue()));
 		}
@@ -104,7 +97,7 @@ public class UtillsW {
 	}
 
 	public static Map<Integer, Map<Integer, Integer>> CopyMapIntMapIntInt(Map<Integer, Map<Integer, Integer>> source) {
-		Map<Integer, Map<Integer, Integer>> copy = new HashMap<Integer, Map<Integer, Integer>>();
+		Map<Integer, Map<Integer, Integer>> copy = new ConcurrentHashMap<Integer, Map<Integer, Integer>>();
 		for( Entry<Integer, Map<Integer, Integer>> entry: source.entrySet()){
 			copy.put(entry.getKey(), CopyMapIntInt(entry.getValue()));
 		}
@@ -112,7 +105,7 @@ public class UtillsW {
 	}
 	
 	public static <T> Set<T> CloneSet(Set<T> source) {
-		Set<T> copy = new HashSet<T>(source.size()); 
+		Set<T> copy = Collections.synchronizedSet(new HashSet<T>(source.size())); 
 		Iterator<T> iterator = source.iterator();
 		while(iterator.hasNext()){ 
 			copy.add((T) iterator.next()); 

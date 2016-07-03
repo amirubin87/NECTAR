@@ -1,10 +1,12 @@
 package NECTAR;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
+//import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WoccMetaData {
 	UndirectedUnweightedGraphW g;    
@@ -16,11 +18,11 @@ public class WoccMetaData {
     
     //cons
     public WoccMetaData(){
-    	Intersection_c1_c2 = new HashMap<Integer, Map<Integer, Integer>>();
-    	T = new HashMap<Integer, Long>();
-    	VT = new HashMap<Integer, Set<Integer>>();
-    	com2nodes = new HashMap<Integer, Set<Integer>>();
-    	node2coms = new HashMap<Integer, Set<Integer>>();
+    	Intersection_c1_c2 = new ConcurrentHashMap<Integer, Map<Integer, Integer>>();
+    	T = new ConcurrentHashMap<Integer, Long>();
+    	VT = new ConcurrentHashMap<Integer, Set<Integer>>();
+    	com2nodes = new ConcurrentHashMap<Integer, Set<Integer>>();
+    	node2coms = new ConcurrentHashMap<Integer, Set<Integer>>();
     }
     
     public WoccMetaData(UndirectedUnweightedGraphW graph){        
@@ -32,11 +34,11 @@ public class WoccMetaData {
     	Integer count = 0;
     
         for (Integer node : graph.nodes()){
-            Intersection_c1_c2.put(node, new HashMap<Integer, Integer>());
-            Set<Integer> comm = new HashSet<Integer>();
+            Intersection_c1_c2.put(node, new ConcurrentHashMap<Integer, Integer>());
+            Set<Integer> comm = Collections.synchronizedSet(new HashSet<Integer>());
             comm.add(node);
             com2nodes.put(node, comm);
-            Set<Integer> commId = new HashSet<Integer>();
+            Set<Integer> commId = Collections.synchronizedSet(new HashSet<Integer>());
             commId.add(node);
             node2coms.put(node, commId);          
             count++;
@@ -44,7 +46,7 @@ public class WoccMetaData {
 
     }
 
-    public WoccMetaData(UndirectedUnweightedGraphW graph, Map<Integer,Set<Integer>> comms){
+    /*public WoccMetaData(UndirectedUnweightedGraphW graph, Map<Integer,Set<Integer>> comms){
     	this(); 
     	g = graph;
     	T = graph.Triangles();   
@@ -53,16 +55,16 @@ public class WoccMetaData {
         	int commID =comm.getKey();
         	Set<Integer> nodes =comm.getValue();        
             com2nodes.put(commID,nodes);
-            Intersection_c1_c2.put(commID,new HashMap<>());
+            Intersection_c1_c2.put(commID,new ConcurrentHashMap<>());
             for (int node : nodes){
-            		Set<Integer> commInSet = new HashSet<>();
+            		Set<Integer> commInSet = Collections.synchronizedSet(new HashSet<>();
             		commInSet.add(commID);
 	                node2coms.put(node,commInSet);
             }
         }
-    }
+    }*/
     
-    public WoccMetaData(UndirectedUnweightedGraphW graph, Map<Integer,Set<Integer>> comms, boolean partitionIsFromFile){
+    public WoccMetaData(UndirectedUnweightedGraphW graph, Map<Integer,Set<Integer>> comms, boolean commsMayOverlap){
     	this(); 
     	g = graph;
     	T = graph.Triangles();   
@@ -74,18 +76,17 @@ public class WoccMetaData {
         	maxCommIDSeen = Math.max(maxCommIDSeen, commID);
         	Set<Integer> nodes =comm.getValue();        
             com2nodes.put(commID,nodes);
-            Intersection_c1_c2.put(commID,new HashMap<>());
+            Intersection_c1_c2.put(commID,new ConcurrentHashMap<>());
             for (int node : nodes){
             		Set<Integer> commsNodeIsIn = node2coms.get(node);
             		if(commsNodeIsIn == null){
-	            		commsNodeIsIn = new HashSet<>();	            		
+	            		commsNodeIsIn = Collections.synchronizedSet(new HashSet<>());	            		
 		                node2coms.put(node,commsNodeIsIn);
             		}
         			commsNodeIsIn.add(commID);            		
             }
         }
-        
-        if(partitionIsFromFile){
+        if(commsMayOverlap){
         	for( Entry<Integer, Set<Integer>> AcommIdAndNodes: com2nodes.entrySet()){
         		for( Entry<Integer, Set<Integer>> BcommIdAndNodes: com2nodes.entrySet()){
         			int AcommId = AcommIdAndNodes.getKey();
@@ -101,16 +102,17 @@ public class WoccMetaData {
         	for(int node : g.nodes()){
         		Set<Integer> nodesComms = node2coms.get(node);
         		if(nodesComms == null){
-        			nodesComms = new HashSet<>();
+        			nodesComms = Collections.synchronizedSet(new HashSet<>());
         			nodesComms.add(commID);
         			node2coms.put(node,nodesComms);
-        			Set<Integer> nodeInSet = new HashSet<>();
+        			Set<Integer> nodeInSet = Collections.synchronizedSet(new HashSet<>());
         			nodeInSet.add(node);
         			com2nodes.put(commID, nodeInSet);
         			commID++;
         		}
         	}
         }
+        
     }
     
 	public WoccMetaData(WoccMetaData ORIGINALmetaData) {
@@ -133,7 +135,7 @@ public class WoccMetaData {
             com2nodes.get(comm).remove(node);
         }
 
-        node2coms.put(node, new HashSet<Integer>());
+        node2coms.put(node, Collections.synchronizedSet(new HashSet<Integer>()));
     }
    
 	private void UpdateIntersectionRatioRemove(Set<Integer> c_v) {
@@ -152,7 +154,11 @@ public class WoccMetaData {
         		
         		Integer min = Math.min(x, y);
         		Integer max = Math.max(x, y);
-        		Intersection_c1_c2.get(min).put(max, Intersection_c1_c2.get(min).get(max)-1);
+        		Integer intersection = Intersection_c1_c2.get(min).get(max);
+        		if (intersection == null){
+        			intersection =1;
+        		}
+        		Intersection_c1_c2.get(min).put(max, -1);
         	}
         }		
 	}
@@ -174,7 +180,7 @@ public class WoccMetaData {
 	    		Integer highComm = Math.max(x, y);	
 		        Map<Integer,Integer> lowCommDic = Intersection_c1_c2.get(lowComm);
 			    if ( lowCommDic == null){
-			    	lowCommDic = new HashMap<Integer, Integer>();
+			    	lowCommDic = new ConcurrentHashMap<Integer, Integer>();
 		            Intersection_c1_c2.put(lowComm, lowCommDic);
 			    }	    
 			    
@@ -194,7 +200,7 @@ public class WoccMetaData {
     	// When going to Multy thread todo - arrange this method!
 		UpdateIntersectionRatioAdd(comms);
 		
-		Map<Integer[],Double> commsCouplesIntersectionRatio = new HashMap<Integer[],Double>();
+		Map<Integer[],Double> commsCouplesIntersectionRatio = new ConcurrentHashMap<Integer[],Double>();
 	    
 		// Find intersection ration for merge
         Integer[] commsArray = new Integer[comms.size()];
@@ -228,8 +234,9 @@ public class WoccMetaData {
 	    return commsCouplesIntersectionRatio;
     }
 	
-	public void SetCommsForNodeNoMerge(Integer node, Set<Integer> comms){
-
+	public void SetCommsForNodeNoMergeForWorker(Integer node, Set<Integer> comms){
+		UpdateIntersectionRatioAdd(comms);
+		
 		// Symbolic add
 	    for (Integer comm : comms){
 	        com2nodes.get(comm).add(node);	        
@@ -250,7 +257,7 @@ public class WoccMetaData {
 
             Map<Integer,Integer> lowCommDic = Intersection_c1_c2.get(lowComm);
 		    if ( lowCommDic == null){
-		    	lowCommDic = new HashMap<Integer, Integer>();
+		    	lowCommDic = new ConcurrentHashMap<Integer, Integer>();
 	            Intersection_c1_c2.put(lowComm, lowCommDic);
 		    }	    
 		    
@@ -292,7 +299,7 @@ public class WoccMetaData {
 	}
                     
 	private void SymbolicClearComm(Integer comm){    	
-    	Set<Integer> nodes = new HashSet<Integer>(com2nodes.get(comm));
+    	Set<Integer> nodes = Collections.synchronizedSet(new HashSet<Integer>(com2nodes.get(comm)));
     	for (Integer node: nodes){
     		SymbolicRemoveNodeFromComm(node, comm);
     	}

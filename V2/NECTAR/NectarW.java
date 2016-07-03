@@ -9,12 +9,16 @@ import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class NectarW {
 	UndirectedUnweightedGraphW g;
@@ -62,7 +66,8 @@ public class NectarW {
 		}	
 		TakeTime();
 		System.out.println("Get meta data");
-		this.ORIGINALmetaData = new WoccMetaData(g,firstPart,true);
+		boolean commsMayOverlap = (firstPartMode != 0);
+		this.ORIGINALmetaData = new WoccMetaData(g,firstPart, commsMayOverlap);
 		TakeTime();
 		this.metaData = this.ORIGINALmetaData;		
 	}
@@ -91,12 +96,13 @@ public class NectarW {
 		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);
 		TakeTime();		
 		System.out.println(firstPart.entrySet());
-		this.ORIGINALmetaData = new WoccMetaData(g,firstPart,true);
+		boolean commsMayOverlap = true;
+		this.ORIGINALmetaData = new WoccMetaData(g,firstPart, commsMayOverlap);
 		TakeTime();
 		this.metaData = this.ORIGINALmetaData; 		
 	}
 	
-	public void FindCommunities(boolean runMultyThreaded) throws IOException{
+	public void FindCommunities(boolean runMultyThreaded, int numOfThreads) throws IOException{
 		for (double betta : betas){
 			System.out.println("");
 			System.out.println("                       Input: " + pathToGraph);
@@ -106,7 +112,7 @@ public class NectarW {
 			Map<Integer,Set<Integer>> comms;
 			if(runMultyThreaded){
 				TakeTime();
-				comms = FindCommunitiesMultyThreaded(betta);
+				comms = FindCommunitiesMultyThreaded(betta, numOfThreads);
 			}
 			else{
 				TakeTime();
@@ -124,66 +130,20 @@ public class NectarW {
 		}
 	}
 	
-	private Map<Integer,Set<Integer>> FindCommunitiesMultyThreaded(double betta) throws FileNotFoundException, UnsupportedEncodingException{
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("");
-		System.out.println("                No multy threaded version for this yet. Executing single thread.");
-		System.out.println("");
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-	    return FindCommunities(betta);
-		/*int numOfStableNodes = 0;
+	private Map<Integer,Set<Integer>> FindCommunitiesMultyThreaded(double betta, int numOfThreads) throws FileNotFoundException, UnsupportedEncodingException{
+		AtomicInteger numOfStableNodes = new AtomicInteger(0);
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
-	    while (numOfStableNodes < n && amountOfScans < maxIterationsToRun){
-	    	System.out.println("Input: " +pathToGraph + " betta: " + betta + "            Num of iterations: " + amountOfScans);
-	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
-            numOfStableNodes = 0;
+	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;	    
+	    while (numOfStableNodes.intValue() < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){
+	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iterations: " + amountOfScans);
+	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
+            numOfStableNodes = new AtomicInteger(0);
             amountOfScans++;
-            Map<Integer, Set<Integer>> OLDnode2comms = new HashMap<Integer, Set<Integer>>();
-            Map<Integer, Set<Integer>> NEWnode2comms = new HashMap<Integer, Set<Integer>>();
+            Set<Set<Integer>> changedComms = Collections.synchronizedSet(new HashSet<Set<Integer>>());            
             
             // Find new comms for each node
-	        for (Integer node : g.nodes()){
-	            Set<Integer> c_v_original = metaData.node2coms.get(node);
-
-	            // Remove from all comms
-	            metaData.ClearCommsOfNode(node);
-	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
-	            Set<Integer> neighborComms = Find_Neighbor_Comms(node);
-	            for (Integer neighborComm : neighborComms){
-	                double inc= Calc_Modularity_Improvement(neighborComm, node);
-	                comms_inc.put(neighborComm, inc);
-	            }
-	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
-	            
-	            // Store old comms.
-	            OLDnode2comms.put(node, c_v_original);
-	            
-	            // Store new comms.
-	            NEWnode2comms.put(node, c_v_new);
-	                    
-	            boolean shouldMergeComms = amountOfScans>iteratioNumToStartMerge;
-	            // Return node to commms
-	            metaData.SetCommsForNode((Integer)node, c_v_original,shouldMergeComms,false);
-	        }
-	        
-	        Set<Set<Integer>> changedComms = new HashSet<>();
-            // Move nodes to new comms
-	        for (Integer node : g.nodes()){       	
-	        	
-	        	// Remove from all comms
-	            metaData.ClearCommsOfNode(node);
-	            Set<Integer> c_v_original = OLDnode2comms.get((Integer)node);
-	        	Set<Integer> c_v_new = NEWnode2comms.get((Integer)node);
-	        	
-	        	changedComms.add(c_v_new);
-    			metaData.SetCommsForNodeNoMerge(node, c_v_new);
-    			if (c_v_new.equals(c_v_original)){
-	            	numOfStableNodes++;
-	            }
-	        }
+            SetCommsForNodesMultyThreaded(numOfThreads, betta, changedComms, numOfStableNodes);
 	        
 	        // Merge comms.
             Map<Integer[],Double> commsCouplesIntersectionRatio = scanChangedComms(changedComms);
@@ -194,15 +154,71 @@ public class NectarW {
             }
             
             if (haveMergedComms){
-        		numOfStableNodes--;
+        		numOfStableNodes.decrementAndGet();
             }            
 	    } 
-        	   
+	    System.out.println("Number of stable nodes: " + numOfStableNodes);	   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
-	    }*/
+	    }
 	    
-	    //return metaData.com2nodes;
+	    return metaData.com2nodes;
+	}
+	
+	private boolean FindAndMergeComms (Map<Integer[],Double> commsCouplesIntersectionRatio){
+	    boolean haveMergedComms = false;	    
+	    for (Entry<Integer[],Double > c1c2intersectionRate : commsCouplesIntersectionRatio.entrySet()){	    	
+	        if(c1c2intersectionRate.getValue()>alpha){
+	        	Integer[] c1c2 = c1c2intersectionRate.getKey();
+	        	//System.out.println("          MERGED" + c1c2intersectionRate.getValue());
+	        	MergeComms(c1c2);
+	        	haveMergedComms = true;
+	        }
+	    }
+	    return haveMergedComms;
+	}
+
+	private Map<Integer[], Double> scanChangedComms(Set<Set<Integer>> changedComms) {
+		
+		Map<Integer[],Double> commsCouplesIntersectionRatio = new HashMap<Integer[],Double>();
+	    for( Set<Integer> comms : changedComms){
+			
+	    	// Find intersection ratio for merge
+	        Integer[] commsArray = new Integer[comms.size()];
+	        int k = 0;
+	        for(Integer comm : comms){
+	        	commsArray[k] = comm;
+	        	k++;      	
+	        }        		        
+		    for (int i = 0; i <commsArray.length ; i ++){
+		    	for (int j = i+1; j < commsArray.length ; j++){
+		    		int x = commsArray[i];
+		    		int y = commsArray[j];
+		    		Integer lowComm = Math.min(x, y);
+		    		Integer highComm = Math.max(x, y);
+		    		Integer intersection = metaData.Intersection_c1_c2.get(lowComm).get(highComm); 
+		    		double intersectionRatio = 0;
+		    		if ( intersection !=null){
+		    			intersectionRatio = (double)metaData.Intersection_c1_c2.get(lowComm).get(highComm)/(double)Math.min(metaData.com2nodes.get(lowComm).size(), metaData.com2nodes.get(highComm).size());
+		    		}
+			        Integer[] sortedComms= new Integer[]{lowComm,highComm};
+			        commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
+		    	}
+		    }
+	    }    
+
+	    return commsCouplesIntersectionRatio;
+    }
+	
+	private void SetCommsForNodesMultyThreaded(int threads, double betta, Set<Set<Integer>> changedComms, AtomicInteger numOfStableNodes) {
+		ExecutorService executor = Executors.newFixedThreadPool(threads);
+		for (Integer node : g.nodes()){            
+		    Runnable worker = new WoccWorker(node, betta, metaData, changedComms, numOfStableNodes);
+		    executor.execute(worker);
+		}
+		executor.shutdown();
+		while (!executor.isTerminated()) {            	
+		}	
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException {

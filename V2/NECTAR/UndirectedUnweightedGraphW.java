@@ -3,11 +3,12 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class UndirectedUnweightedGraphW {	
 	private Set<Integer> nodes;
@@ -20,8 +21,8 @@ public class UndirectedUnweightedGraphW {
 	public UndirectedUnweightedGraphW(Path p) throws IOException{
 		List<String> lines= Files.readAllLines(p,StandardCharsets.UTF_8);
 		System.out.println("All graph lines read.");
-		nodes = new HashSet<Integer>();
-		neighbors = new HashMap<Integer,Set<Integer>>();
+		nodes = Collections.synchronizedSet(new HashSet<Integer>());
+		neighbors = new ConcurrentHashMap<Integer,Set<Integer>>();
 		for (String line : lines){
 			String[] parts = line.split(" |\t");
 			Integer v = Integer.parseInt(parts[0].trim());
@@ -33,12 +34,12 @@ public class UndirectedUnweightedGraphW {
 			
 			Set<Integer> vNeig= neighbors.get(v);
 			if(vNeig == null){
-				vNeig = new HashSet<Integer>();
+				vNeig = Collections.synchronizedSet(new HashSet<Integer>());
 				neighbors.put(v, vNeig);
 			}
 			Set<Integer> uNeig= neighbors.get(u);
 			if(uNeig == null){
-				uNeig = new HashSet<Integer>();
+				uNeig = Collections.synchronizedSet(new HashSet<Integer>());
 				neighbors.put(u, uNeig);
 			}
 			if(v!=u && !vNeig.contains(u)){
@@ -67,7 +68,7 @@ public class UndirectedUnweightedGraphW {
 	}
 	
 	public Map<Integer,Double> Clustring() {
-		Map<Integer,Double> ans = new HashMap<>();
+		Map<Integer,Double> ans = new ConcurrentHashMap<>();
 		for(int node:nodes){
 			ans.put(node, ClustringPerNode(node));
 		}
@@ -111,12 +112,12 @@ public class UndirectedUnweightedGraphW {
 	}
 	
     private Map<Integer, Long> CalcTrianglesAndVT() {
-    	T = new HashMap<Integer, Long>();    	 
-    	VT = new HashMap<Integer, Set<Integer>>();
+    	T = new ConcurrentHashMap<Integer, Long>();    	 
+    	VT = new ConcurrentHashMap<Integer, Set<Integer>>();
     	
     	for(int v : nodes){    		
     		T.put(v,(long) 0);    		
-    		VT.put(v,new HashSet<>());
+    		VT.put(v,Collections.synchronizedSet(new HashSet<>()));
     	}
     	Set<Integer> vTriangle, uTriangle, wTriangle;    	
     	for(int v : nodes){

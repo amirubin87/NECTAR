@@ -1,6 +1,6 @@
 package NECTAR;
 
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -35,11 +35,11 @@ public class ModularityMetaData {
         m = graph.size();
     
         for (Integer node : graph.nodes()){
-            Intersection_c1_c2.put(node, new HashMap<Integer, Integer>());
-            Set<Integer> comm = new HashSet<Integer>();
+            Intersection_c1_c2.put(node, new ConcurrentHashMap<Integer, Integer>());
+            Set<Integer> comm = Collections.synchronizedSet(new HashSet<Integer>());
             comm.add(node);
             com2nodes.put(node, comm);
-            Set<Integer> commId = new HashSet<Integer>();
+            Set<Integer> commId = Collections.synchronizedSet(new HashSet<Integer>());
             commId.add(node);
             node2coms.put(node, commId);
             double nodeDegree = graph.degree(node);
@@ -51,7 +51,7 @@ public class ModularityMetaData {
 
         for (Integer node : graph.nodes()){
             if (K_v_c.get(node) == null){
-                K_v_c.put(node, new HashMap<Integer, Double>());
+                K_v_c.put(node, new ConcurrentHashMap<Integer, Double>());
             }
             for (Integer neighbour : graph.neighbors(node)){
             	Integer comm = node2coms.get(neighbour).iterator().next();
@@ -83,13 +83,13 @@ public class ModularityMetaData {
             com2nodes.get(comm).remove(node);
         }
 
-        node2coms.put(node, new HashSet<Integer>());
+        node2coms.put(node, Collections.synchronizedSet(new HashSet<Integer>()));
     }
    
 	public Map<Integer[],Double> SetCommsForNode(Integer node, Set<Integer> comms, boolean calcOutput){
 		Update_Weights_Add(comms,node, false);
     	
-		Map<Integer[],Double> commsCouplesIntersectionRatio = new HashMap<Integer[],Double>();
+		Map<Integer[],Double> commsCouplesIntersectionRatio = new ConcurrentHashMap<Integer[],Double>();
 	    
 		// Symbolic add
 	    for (Integer comm : comms){
@@ -134,7 +134,7 @@ public class ModularityMetaData {
     }
 
     public void SymbolicClearComm(Integer comm){    	
-    	Set<Integer> nodes = new HashSet<Integer>(com2nodes.get(comm));
+    	Set<Integer> nodes = Collections.synchronizedSet(new HashSet<Integer>(com2nodes.get(comm)));
     	for (Integer node: nodes){
     		SymbolicRemoveNodeFromComm(node, comm);
     	}
@@ -237,7 +237,7 @@ public class ModularityMetaData {
 	    		Integer highComm = Math.max(x, y);	
 		        Map<Integer,Integer> lowCommDic = Intersection_c1_c2.get(lowComm);
 			    if ( lowCommDic == null){
-			    	lowCommDic = new HashMap<Integer, Integer>();
+			    	lowCommDic = new ConcurrentHashMap<Integer, Integer>();
 		            Intersection_c1_c2.put(lowComm, lowCommDic);
 			    }	    
 			    
@@ -264,7 +264,7 @@ public class ModularityMetaData {
     	if(com2nodes.get(c).contains(node)){
     		return;
     	}
-    	Set<Integer> c_v = new HashSet<Integer>();
+    	Set<Integer> c_v = Collections.synchronizedSet(new HashSet<Integer>());
     	c_v.add(c);
     	Update_Weights_Add(c_v,node, true);
     }
@@ -274,7 +274,7 @@ public class ModularityMetaData {
     		return;
     	}
     	
-    	Set<Integer> c_v = new HashSet<Integer>();
+    	Set<Integer> c_v = Collections.synchronizedSet(new HashSet<Integer>());
     	c_v.add(c);
     	Update_Weights_Remove(c_v,node,true);    	
     }
@@ -298,7 +298,7 @@ public class ModularityMetaData {
 				int highComm = Math.max(c, comm);
 		        Map<Integer,Integer> lowCommDic = Intersection_c1_c2.get(lowComm);
 			    if ( lowCommDic == null){
-			    	lowCommDic = new HashMap<Integer, Integer>();
+			    	lowCommDic = new ConcurrentHashMap<Integer, Integer>();
 		            Intersection_c1_c2.put(lowComm, lowCommDic);
 			    }	    
 			    
