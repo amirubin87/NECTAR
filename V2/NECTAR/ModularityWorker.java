@@ -5,35 +5,38 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class FindBestCommForNodeWorker implements Runnable {
+public class ModularityWorker implements Runnable {
 
 	    private Integer node;
 	    private double betta;
 	    private ModularityMetaData metaData;
-	    private Map<Integer, Set<Integer>> OLDnode2comms;
-	    private Map<Integer, Set<Integer>> NEWnode2comms;
-
-	    public FindBestCommForNodeWorker(Integer n, double betta, ModularityMetaData metaData, Map<Integer, Set<Integer>> OLDnode2comms, Map<Integer, Set<Integer>> NEWnode2comms){
+	    private Set<Set<Integer>> changedComms;
+	    private AtomicInteger numOfStableNodes;
+	    
+	    public ModularityWorker(Integer n, double betta, ModularityMetaData metaData, Set<Set<Integer>> changedComms,
+	    		AtomicInteger numOfStableNodes){
 	        this.node=n;
 	        this.betta = betta;
 	        this.metaData = metaData;
-	        this.OLDnode2comms = OLDnode2comms;
-	        this.NEWnode2comms = NEWnode2comms;
+	        this.changedComms = changedComms;
+	        this.numOfStableNodes = numOfStableNodes;
 	    }
 
 	    @Override
 	    public void run() {
 	        //System.out.println(Thread.currentThread().getName()+" Start. node = "+node);
-	        findBestCommForNode();
+	        SetBestCommForNode();
 	        //System.out.println(Thread.currentThread().getName()+" End.");
 	    }
 
-	    private void findBestCommForNode() {
+	    private void SetBestCommForNode() {
+	    	
             Set<Integer> c_v_original = metaData.node2coms.get(node);
 
             // Remove from all comms
-            // TODO_ make thread safe! metaData.ClearCommsOfNode(node);
+            metaData.ClearCommsOfNode(node);
             Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
             Set<Integer> neighborComms = Find_Neighbor_Comms(node);
             for (Integer neighborComm : neighborComms){
@@ -41,14 +44,11 @@ public class FindBestCommForNodeWorker implements Runnable {
                 comms_inc.put(neighborComm, inc);
             }
             Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
-            
-            // Store old comms.
-            OLDnode2comms.put(node, c_v_original);
-            
-            // Store new comms.
-            NEWnode2comms.put(node, c_v_new);
-            
-            //TODO_ make thread safe! metaData.SetCommsForNode((Integer)node, c_v_original,false);
+            changedComms.add(c_v_new);
+            metaData.SetCommsForNodeNoMerge(node, c_v_new);
+            if (c_v_new.equals(c_v_original)){
+            	numOfStableNodes.getAndIncrement();
+            }
 	    }
 	    
 	    private Set<Integer> Find_Neighbor_Comms(Integer node){
@@ -60,15 +60,12 @@ public class FindBestCommForNodeWorker implements Runnable {
 	    }
 	    
 	    private double Calc_Modularity_Improvement(Integer comm, Integer node){
-	    	//As Sigma_c is the sum of the weights of the edges incident in nodes in c,
-	    	// and we havent took node out, we should reduce it.
-	    	Double edgesWeightFromNodeToC = metaData.K_v_c.get(node).get(comm);
-        	if(edgesWeightFromNodeToC == null){
-        		edgesWeightFromNodeToC = 0D;
-        	}        	
-	    	double trueSigma = metaData.Sigma_c.get(comm) - metaData.K_v.get(node) + edgesWeightFromNodeToC;
-		    
-	    	return metaData.K_v_c.get(node).get(comm)-trueSigma*metaData.K_v.get(node)/(2*metaData.m);
+	    	double trueSigma = metaData.Sigma_c.get(comm);
+
+	    	// In case the comm is no longer a neighbor comm:
+		    Double k_v_c = metaData.K_v_c.get(node).get(comm);
+		    if (k_v_c == null) return 0;
+	    	return k_v_c-trueSigma*metaData.K_v.get(node)/(2*metaData.m);
 	    }
 	    
 	    private static Set<Integer> Keep_Best_Communities(Map<Integer, Double>comms_imps,double betta){

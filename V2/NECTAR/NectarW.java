@@ -29,8 +29,9 @@ public class NectarW {
 	public WoccMetaData metaData;
 	public PrintWriter runTimeLog;
 	public long startTime;
+	private boolean debug;
 	
-	public NectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode) throws IOException{
+	public NectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
 		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));		
 		this.startTime = System.currentTimeMillis();
 		this.percentageOfStableNodes= percentageOfStableNodes;
@@ -39,7 +40,8 @@ public class NectarW {
 		this.outputPath =outputPath;
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
-		this.pathToGraph = pathToGraph;				
+		this.pathToGraph = pathToGraph;		
+		this.debug = debug;
 		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));		
 		
 		TakeTime();
@@ -66,14 +68,17 @@ public class NectarW {
 	}
 
 	private void TakeTime() {
-		long endTime   = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		runTimeLog.println(totalTime/1000);
-		startTime = endTime;
+		if(debug){
+			long endTime   = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			runTimeLog.println(totalTime/1000);
+			startTime = endTime;
+		}
 	}
 	
 	public NectarW(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{		
-		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));
+		if(debug)
+			this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.betas= betas;
 		this.alpha = alpha;
@@ -110,14 +115,25 @@ public class NectarW {
 			TakeTime();
 			WriteToFile(comms, betta);			
 			TakeTime();
-			runTimeLog.println("DONE Beta");
+			if(debug)
+				runTimeLog.println("DONE Beta");
 		}
-		runTimeLog.println("DONE");
-		runTimeLog.close();
+		if(debug){
+			runTimeLog.println("DONE");
+			runTimeLog.close();
+		}
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunitiesMultyThreaded(double betta) throws FileNotFoundException, UnsupportedEncodingException{
-	    /*int numOfStableNodes = 0;
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("");
+		System.out.println("                No multy threaded version for this yet. Executing single thread.");
+		System.out.println("");
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+	    return FindCommunities(betta);
+		/*int numOfStableNodes = 0;
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
 	    while (numOfStableNodes < n && amountOfScans < maxIterationsToRun){
@@ -186,7 +202,7 @@ public class NectarW {
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
 	    }*/
 	    
-	    return metaData.com2nodes;
+	    //return metaData.com2nodes;
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException {
@@ -200,8 +216,8 @@ public class NectarW {
 	    long Sec3Time = 0;	    	    
 	    
 	    while (amountOfScans <5 || (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
-	    	System.out.println("Input: " +pathToGraph + " betta: " + betta + "            Num of iter: " + amountOfScans);
-	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
+	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iter: " + amountOfScans);
+	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
 	    	amountOfScans++;
 	    	for (Integer node : g.nodes()){
@@ -241,10 +257,12 @@ public class NectarW {
         }    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
-	    }	    
-	    runTimeLog.println(Sec1Time/(1000));
-	    runTimeLog.println(Sec2Time/(1000));
-	    runTimeLog.println(Sec3Time/(1000));	    
+	    }	   
+	    if(debug){
+		    runTimeLog.println(Sec1Time/(1000));
+		    runTimeLog.println(Sec2Time/(1000));
+		    runTimeLog.println(Sec3Time/(1000));
+	    }
 	    return metaData.com2nodes;
 	}	  
 	

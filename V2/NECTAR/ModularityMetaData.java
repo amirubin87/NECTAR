@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ModularityMetaData {
 	UndirectedUnweightedGraphQ g;
@@ -18,12 +19,12 @@ public class ModularityMetaData {
     //cons
     public ModularityMetaData(){
     	m=0;
-    	K_v = new HashMap<Integer, Double>();
-    	K_v_c = new HashMap<Integer, Map<Integer,Double>>();
-    	Intersection_c1_c2 = new HashMap<Integer, Map<Integer,Integer>>();
-    	Sigma_c = new HashMap<Integer, Double>();
-    	com2nodes = new HashMap<Integer, Set<Integer>>();
-    	node2coms = new HashMap<Integer, Set<Integer>>();
+    	K_v = new ConcurrentHashMap<Integer, Double>();
+    	K_v_c = new ConcurrentHashMap <Integer, Map<Integer,Double>>();
+    	Intersection_c1_c2 = new ConcurrentHashMap <Integer, Map<Integer,Integer>>();
+    	Sigma_c = new ConcurrentHashMap <Integer, Double>();
+    	com2nodes = new ConcurrentHashMap <Integer, Set<Integer>>();
+    	node2coms = new ConcurrentHashMap <Integer, Set<Integer>>();
     }
     
     public ModularityMetaData(UndirectedUnweightedGraphQ graph){        
@@ -185,7 +186,11 @@ public class ModularityMetaData {
         		int y = comms[j];
         		Integer min = Math.min(x, y);
         		Integer max = Math.max(x, y);
-        		Intersection_c1_c2.get(min).put(max, Intersection_c1_c2.get(min).get(max) -1);
+        		Map<Integer, Integer> minIntersection =Intersection_c1_c2.get(min);
+        		Integer minMaxIntersection = minIntersection.get(max);
+        		if ( minMaxIntersection != null){        			
+        			minIntersection.put(max, minMaxIntersection -1);
+        		}
         	}
         }
         

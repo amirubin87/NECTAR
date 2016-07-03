@@ -1,9 +1,8 @@
 package NECTAR;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 
 import java.util.concurrent.Executors;
-
+import java.util.concurrent.atomic.AtomicInteger;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -12,6 +11,7 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,9 +31,12 @@ public class NectarQ {
 	public String pathToGraph;
 	public PrintWriter runTimeLog;
 	public long startTime;
+	private int percentageOfStableNodes;
+	private boolean debug;
 	
-	public NectarQ(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun) throws IOException{
-		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarQ-runTime.log", true)));
+	public NectarQ(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean debug) throws IOException{
+		
+		
 		this.startTime = System.currentTimeMillis();
 		this.betas= betas;
 		this.alpha = alpha;
@@ -41,6 +44,10 @@ public class NectarQ {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;
+		this.percentageOfStableNodes= percentageOfStableNodes;
+		this.debug = debug;
+		if (debug)
+			this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarQ-runTime.log", true)));
 		this.g = new UndirectedUnweightedGraphQ(Paths.get(pathToGraph));
 		TakeTime();
 		TakeTime();
@@ -49,10 +56,12 @@ public class NectarQ {
 	}
 	
 	private void TakeTime() {
-		long endTime   = System.currentTimeMillis();
-		long totalTime = endTime - startTime;
-		runTimeLog.println(totalTime/1000);
-		startTime = endTime;
+		if (debug){
+			long endTime   = System.currentTimeMillis();
+			long totalTime = endTime - startTime;
+			runTimeLog.println(totalTime/1000);
+			startTime = endTime;
+		}
 	}
 	
 	public void FindCommunities(boolean runMultyThreaded, int numOfThreads) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException{
@@ -78,10 +87,13 @@ public class NectarQ {
 			WriteToFile(comms, betta);
 			//6
 			TakeTime();
-			runTimeLog.println("DONE Beta");
+			if(debug)
+				runTimeLog.println("DONE Beta");
 		}
-		runTimeLog.println("DONE");
-		runTimeLog.close();
+		if(debug){
+			runTimeLog.println("DONE");
+			runTimeLog.close();
+		}
 	}
 
 	private void WriteToFile(Map<Integer, Set<Integer>> comms, double betta) throws FileNotFoundException, UnsupportedEncodingException {
@@ -98,38 +110,19 @@ public class NectarQ {
 	}
 
 	private Map<Integer,Set<Integer>> FindCommunitiesMultyThreaded(double betta, int numOfThreads) throws FileNotFoundException, UnsupportedEncodingException, InterruptedException{
-	    int numOfStableNodes = 0;
+		AtomicInteger numOfStableNodes = new AtomicInteger(0);
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
-	    while (numOfStableNodes < n && amountOfScans < maxIterationsToRun){
-	    	System.out.println("Input: " +pathToGraph + " betta: " + betta + "            Num of iterations: " + amountOfScans);
-	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
-            numOfStableNodes = 0;
+	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;	    
+	    while (numOfStableNodes.intValue() < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){
+	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iterations: " + amountOfScans);
+	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
+            numOfStableNodes = new AtomicInteger(0);
             amountOfScans++;
-            Map<Integer, Set<Integer>> OLDnode2comms = new ConcurrentHashMap <Integer, Set<Integer>>();
-            Map<Integer, Set<Integer>> NEWnode2comms = new ConcurrentHashMap <Integer, Set<Integer>>();
-            
-            
+            Set<Set<Integer>> changedComms = Collections.synchronizedSet(new HashSet<Set<Integer>>());            
             
             // Find new comms for each node
-            FindCommsForNodesMultyThreaded(numOfThreads, betta, OLDnode2comms, NEWnode2comms);
-            
-            
-	        Set<Set<Integer>> changedComms = new HashSet<>();
-            // Move nodes to new comms
-	        for (Integer node : g.nodes()){       	
-	        	
-	        	// Remove from all comms
-	            metaData.ClearCommsOfNode(node);
-	            Set<Integer> c_v_original = OLDnode2comms.get((Integer)node);
-	        	Set<Integer> c_v_new = NEWnode2comms.get((Integer)node);
-	        	
-	        	changedComms.add(c_v_new);
-    			metaData.SetCommsForNodeNoMerge(node, c_v_new);
-    			if (c_v_new.equals(c_v_original)){
-	            	numOfStableNodes++;
-	            }
-	        }
+            SetCommsForNodesMultyThreaded(numOfThreads, betta, changedComms, numOfStableNodes);
 	        
 	        // Merge comms.
             Map<Integer[],Double> commsCouplesIntersectionRatio = scanChangedComms(changedComms);
@@ -140,10 +133,10 @@ public class NectarQ {
             }
             
             if (haveMergedComms){
-        		numOfStableNodes--;
+        		numOfStableNodes.decrementAndGet();
             }            
 	    } 
-        	   
+	    System.out.println("Number of stable nodes: " + numOfStableNodes);	   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
 	    }
@@ -151,31 +144,30 @@ public class NectarQ {
 	    return metaData.com2nodes;
 	}
 
-	private void FindCommsForNodesMultyThreaded(int threads, double betta, Map<Integer, Set<Integer>> OLDnode2comms,
-			Map<Integer, Set<Integer>> NEWnode2comms) {
+	private void SetCommsForNodesMultyThreaded(int threads, double betta, Set<Set<Integer>> changedComms, AtomicInteger numOfStableNodes) {
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
 		for (Integer node : g.nodes()){            
-		    Runnable worker = new FindBestCommForNodeWorker(node, betta, metaData,  OLDnode2comms, NEWnode2comms);
+		    Runnable worker = new ModularityWorker(node, betta, metaData, changedComms, numOfStableNodes);
 		    executor.execute(worker);
 		}
 		executor.shutdown();
 		while (!executor.isTerminated()) {            	
-		}
-		System.out.println("			Finished all nodes");
+		}	
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException{
 	    int numOfStableNodes = 0;
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
+	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;
 	    
 	    long Sec1Time = 0;
 	    long Sec2Time = 0;
 	    long Sec3Time = 0;	    
 	    
-	    while (numOfStableNodes < n && amountOfScans < maxIterationsToRun){
-	    	System.out.println("Input: " +pathToGraph + " betta: " + betta + "            Num of iterations: " + amountOfScans);
-	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
+	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){
+	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iterations: " + amountOfScans);
+	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
             numOfStableNodes = 0;
             amountOfScans++;
             
@@ -215,16 +207,18 @@ public class NectarQ {
 	        }
 	    }
 	        
-            
+	    System.out.println("Number of stable nodes: " + numOfStableNodes);   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
 	    }
-	    //2
-	    runTimeLog.println(Sec1Time/(1000));
-	    //3
-	    runTimeLog.println(Sec2Time/(1000));
-	    //4
-	    runTimeLog.println(Sec3Time/(1000));
+	    if(debug){
+		    //2
+		    runTimeLog.println(Sec1Time/(1000));
+		    //3
+		    runTimeLog.println(Sec2Time/(1000));
+		    //4
+		    runTimeLog.println(Sec3Time/(1000));
+	    }
 	    
 	    return metaData.com2nodes;
 	}
@@ -247,7 +241,11 @@ public class NectarQ {
 			    		int y = commsArray[j];
 			    		Integer lowComm = Math.min(x, y);
 			    		Integer highComm = Math.max(x, y);
-				        double intersectionRatio = (double)metaData.Intersection_c1_c2.get(lowComm).get(highComm)/(double)Math.min(metaData.com2nodes.get(lowComm).size(), metaData.com2nodes.get(highComm).size());
+			    		Integer intersection = metaData.Intersection_c1_c2.get(lowComm).get(highComm); 
+			    		double intersectionRatio = 0;
+			    		if ( intersection !=null){
+			    			intersectionRatio = (double)metaData.Intersection_c1_c2.get(lowComm).get(highComm)/(double)Math.min(metaData.com2nodes.get(lowComm).size(), metaData.com2nodes.get(highComm).size());
+			    		}
 				        Integer[] sortedComms= new Integer[]{lowComm,highComm};
 				        commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
 			    	}
