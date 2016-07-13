@@ -1,11 +1,4 @@
 package NECTAR;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,8 +8,9 @@ import java.util.Set;
 
 public class RunNectar {
 
-	public static void main(String[] args) throws IOException, InterruptedException {		
-		long startTime   = System.currentTimeMillis();
+	public static void main(String[] args) throws Exception {		
+		
+		long startTime = System.currentTimeMillis();
 		
 		if (args.length <2){
 			System.out.println("Input parameteres for NECTAR: "
@@ -35,8 +29,8 @@ public class RunNectar {
 					+ "debug=false");
 		}
 		else{
-			String pathToGraph = "";
-			String outputPath = "";
+			String pathToGraph = "C:/Temp/a1.txt";
+			String outputPath = "C:/Temp/DEL";
 			double[] betas = {1.1,1.2,2.0,3.0};				
 			double alpha = 0.8;
 			int iteratioNumToStartMerge = 6;
@@ -119,20 +113,15 @@ public class RunNectar {
 			
 
 			System.out.println("");
-			List<Edge> edges = GetEdgesList(pathToGraph);
-			double trianglesRate = TrianglesRate(edges);
-			if (debug)
-				WriteToFile("./Triangles.txt", pathToGraph + " " + trianglesRate);
+						
+			if(dynamicChoose){
+				double[] graphFeatures = CalcFeatures.processGraph(pathToGraph);
 			
-			if(!dynamicChoose & useModularity){
-				trianglesRate = 1;
+				useModularity = DynamicFunctionChoose.shouldUseModularity(graphFeatures);
 			}
 			
-			if(!dynamicChoose & !useModularity){
-				trianglesRate = 10;
-			}
 			 
-			if(trianglesRate > 5){
+			if(!useModularity){
 				System.out.println("                         Using WOCC.");
 				NectarW nectarW = new NectarW(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);				
 				nectarW.FindCommunities(runMultyThreaded, numOfThreads);
@@ -160,18 +149,6 @@ public class RunNectar {
 		return ans;
 	}
 	
-	private static List<Edge> GetEdgesList(String pathToGraph) throws IOException {
-		List<String> lines= Files.readAllLines(Paths.get(pathToGraph));
-		List<Edge> edges= new ArrayList<>();
-		
-		for (String line : lines){
-			String[] parts = line.split(" |\t");
-			Integer v = Integer.parseInt(parts[0].trim());
-			Integer u = Integer.parseInt(parts[1].trim());
-			edges.add(new Edge(v, u));
-		}
-		return edges;
-	}
 	
 	public static Map<Object,Set<Object>> buildAdjacencyMap(List<Edge> edges){
 		if ((edges==null) || (edges.isEmpty())){
@@ -193,29 +170,4 @@ public class RunNectar {
 		return graph;
 	}
 	
-	private static double TrianglesRate(List<Edge> edges){
-		Map<Object,Set<Object>> graph = buildAdjacencyMap(edges);
-		
-		int triangles = 0;
-		int nodes = 0;
-		for (Set<Object> neighbors : graph.values()){
-			nodes++;
-			for (Object v2 : neighbors){
-				for (Object v3 : neighbors){
-					if ((!v2.equals(v3))){						
-						 if (graph.get(v2).contains(v3)){
-							 triangles++;
-						 }
-					}
-				}
-			}
-		}		
-		return (double)(triangles/6)/(double)nodes;
-	}
-	
-	private static void WriteToFile(String path, String msg) throws IOException {
-		PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(path, true)));				
-		out.println(msg);
-		out.close();	
-	}
 }
