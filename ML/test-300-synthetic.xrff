@@ -1,0 +1,2757 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!DOCTYPE dataset
+[
+   <!ELEMENT dataset (header,body)>
+   <!ATTLIST dataset name CDATA #REQUIRED>
+   <!ATTLIST dataset version CDATA "3.8.0">
+
+   <!ELEMENT header (notes?,attributes)>
+   <!ELEMENT body (instances)>
+   <!ELEMENT notes ANY>   <!--  comments, information, copyright, etc. -->
+
+   <!ELEMENT attributes (attribute+)>
+   <!ELEMENT attribute (labels?,metadata?,attributes?)>
+   <!ATTLIST attribute name CDATA #REQUIRED>
+   <!ATTLIST attribute type (numeric|date|nominal|string|relational) #REQUIRED>
+   <!ATTLIST attribute format CDATA #IMPLIED>
+   <!ATTLIST attribute class (yes|no) "no">
+   <!ELEMENT labels (label*)>   <!-- only for type "nominal" -->
+   <!ELEMENT label ANY>
+   <!ELEMENT metadata (property*)>
+   <!ELEMENT property ANY>
+   <!ATTLIST property name CDATA #REQUIRED>
+
+   <!ELEMENT instances (instance*)>
+   <!ELEMENT instance (value*)>
+   <!ATTLIST instance type (normal|sparse) "normal">
+   <!ATTLIST instance weight CDATA #IMPLIED>
+   <!ELEMENT value (#PCDATA|instances)*>
+   <!ATTLIST value index CDATA #IMPLIED>   <!-- 1-based index (only used for instance format "sparse") -->
+   <!ATTLIST value missing (yes|no) "no">
+]
+>
+
+<dataset name="weights-15-7-features-with-brake-ml.arff" version="3.8.0">
+   <header>
+      <attributes>
+         <attribute name="averageDegree" type="numeric"/>
+         <attribute name="density" type="numeric"/>
+         <attribute name="avergaeTrianglesRate" type="numeric"/>
+         <attribute name="ratioOfNodesInTriangles" type="numeric"/>
+         <attribute name="GCC" type="numeric"/>
+         <attribute name="ACC" type="numeric"/>
+         <attribute class="yes" name="label" type="nominal">
+            <labels>
+               <label>0</label>
+               <label>1</label>
+            </labels>
+         </attribute>
+      </attributes>
+   </header>
+   <body>
+      <instances>
+         <instance weight="0.327253">
+            <value>11.168</value>
+            <value>0.011179</value>
+            <value>1.836</value>
+            <value>0.887</value>
+            <value>0.316752</value>
+            <value>0.382763</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.311986">
+            <value>11.064</value>
+            <value>0.011075</value>
+            <value>1.772</value>
+            <value>0.897</value>
+            <value>0.305307</value>
+            <value>0.400023</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.310292">
+            <value>10.976</value>
+            <value>0.010987</value>
+            <value>1.609</value>
+            <value>0.879</value>
+            <value>0.288042</value>
+            <value>0.381154</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.217479">
+            <value>10.992</value>
+            <value>0.011003</value>
+            <value>1.789</value>
+            <value>0.897</value>
+            <value>0.318668</value>
+            <value>0.398209</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.206488">
+            <value>10.976</value>
+            <value>0.010987</value>
+            <value>1.64</value>
+            <value>0.875</value>
+            <value>0.292979</value>
+            <value>0.37446</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.203648">
+            <value>11.216</value>
+            <value>0.011227</value>
+            <value>2.028</value>
+            <value>0.922</value>
+            <value>0.33755</value>
+            <value>0.440027</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.203621">
+            <value>10.816</value>
+            <value>0.010827</value>
+            <value>1.908</value>
+            <value>0.932</value>
+            <value>0.349429</value>
+            <value>0.427059</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.203308">
+            <value>11.024</value>
+            <value>0.011035</value>
+            <value>1.743</value>
+            <value>0.9</value>
+            <value>0.309116</value>
+            <value>0.39211</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.198657">
+            <value>10.908</value>
+            <value>0.010919</value>
+            <value>1.445</value>
+            <value>0.908</value>
+            <value>0.258559</value>
+            <value>0.378162</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.194775">
+            <value>10.784</value>
+            <value>0.010795</value>
+            <value>1.741</value>
+            <value>0.904</value>
+            <value>0.326111</value>
+            <value>0.397502</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.190903">
+            <value>11.148</value>
+            <value>0.011159</value>
+            <value>2.12</value>
+            <value>0.932</value>
+            <value>0.367142</value>
+            <value>0.459573</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.169227">
+            <value>11.036</value>
+            <value>0.011047</value>
+            <value>1.502</value>
+            <value>0.923</value>
+            <value>0.264049</value>
+            <value>0.390135</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.157708">
+            <value>10.724</value>
+            <value>0.010735</value>
+            <value>1.888</value>
+            <value>0.924</value>
+            <value>0.353978</value>
+            <value>0.449294</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.157321">
+            <value>11.084</value>
+            <value>0.011095</value>
+            <value>2.092</value>
+            <value>0.937</value>
+            <value>0.369611</value>
+            <value>0.458649</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.15418">
+            <value>11.12</value>
+            <value>0.011131</value>
+            <value>1.833</value>
+            <value>0.923</value>
+            <value>0.326021</value>
+            <value>0.413191</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.148712">
+            <value>10.944</value>
+            <value>0.010955</value>
+            <value>2.032</value>
+            <value>0.924</value>
+            <value>0.358377</value>
+            <value>0.428182</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.142315">
+            <value>10.844</value>
+            <value>0.010855</value>
+            <value>1.693</value>
+            <value>0.896</value>
+            <value>0.31525</value>
+            <value>0.400502</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.135408">
+            <value>11.068</value>
+            <value>0.011079</value>
+            <value>1.968</value>
+            <value>0.923</value>
+            <value>0.34486</value>
+            <value>0.442469</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.118118">
+            <value>10.668</value>
+            <value>0.010679</value>
+            <value>1.558</value>
+            <value>0.931</value>
+            <value>0.29363</value>
+            <value>0.439111</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.105017">
+            <value>10.984</value>
+            <value>0.010995</value>
+            <value>2.107</value>
+            <value>0.936</value>
+            <value>0.3744</value>
+            <value>0.440992</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.104664">
+            <value>10.756</value>
+            <value>0.010767</value>
+            <value>1.854</value>
+            <value>0.912</value>
+            <value>0.345616</value>
+            <value>0.442076</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.102488">
+            <value>19.136</value>
+            <value>0.019155</value>
+            <value>8.372</value>
+            <value>1</value>
+            <value>0.568776</value>
+            <value>0.616329</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.101979">
+            <value>19.06</value>
+            <value>0.019079</value>
+            <value>8.26</value>
+            <value>1</value>
+            <value>0.562849</value>
+            <value>0.60868</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.096044">
+            <value>10.608</value>
+            <value>0.010619</value>
+            <value>1.668</value>
+            <value>0.904</value>
+            <value>0.320708</value>
+            <value>0.438913</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.079966">
+            <value>19.044</value>
+            <value>0.019063</value>
+            <value>8.93</value>
+            <value>1</value>
+            <value>0.615098</value>
+            <value>0.658537</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.077615">
+            <value>10.896</value>
+            <value>0.010907</value>
+            <value>1.913</value>
+            <value>0.937</value>
+            <value>0.349492</value>
+            <value>0.453796</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.076665">
+            <value>19.404</value>
+            <value>0.019423</value>
+            <value>7.266</value>
+            <value>1</value>
+            <value>0.481681</value>
+            <value>0.536698</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.074741">
+            <value>19.36</value>
+            <value>0.019379</value>
+            <value>7.314</value>
+            <value>1</value>
+            <value>0.48721</value>
+            <value>0.540327</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.069246">
+            <value>11.084</value>
+            <value>0.011095</value>
+            <value>2.277</value>
+            <value>0.95</value>
+            <value>0.396506</value>
+            <value>0.478744</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.068796">
+            <value>19.184</value>
+            <value>0.019203</value>
+            <value>8.85</value>
+            <value>1</value>
+            <value>0.601413</value>
+            <value>0.644699</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.066393">
+            <value>19.46</value>
+            <value>0.019479</value>
+            <value>7.701</value>
+            <value>1</value>
+            <value>0.503421</value>
+            <value>0.549576</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.062628">
+            <value>19.36</value>
+            <value>0.019379</value>
+            <value>9.437</value>
+            <value>1</value>
+            <value>0.624746</value>
+            <value>0.655752</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.057315">
+            <value>10.392</value>
+            <value>0.010402</value>
+            <value>1.954</value>
+            <value>0.948</value>
+            <value>0.399973</value>
+            <value>0.482554</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.055164">
+            <value>19.456</value>
+            <value>0.019475</value>
+            <value>7.241</value>
+            <value>1</value>
+            <value>0.477072</value>
+            <value>0.517551</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.054325">
+            <value>11.056</value>
+            <value>0.011067</value>
+            <value>2.312</value>
+            <value>0.978</value>
+            <value>0.404927</value>
+            <value>0.553589</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.050396">
+            <value>19.212</value>
+            <value>0.019231</value>
+            <value>9.521</value>
+            <value>1</value>
+            <value>0.641721</value>
+            <value>0.674175</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.044267">
+            <value>19.284</value>
+            <value>0.019303</value>
+            <value>7.471</value>
+            <value>1</value>
+            <value>0.498787</value>
+            <value>0.544179</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.038892">
+            <value>19.548</value>
+            <value>0.019568</value>
+            <value>9.924</value>
+            <value>1</value>
+            <value>0.649151</value>
+            <value>0.678012</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.038873">
+            <value>19.664</value>
+            <value>0.019684</value>
+            <value>7.34</value>
+            <value>1</value>
+            <value>0.472999</value>
+            <value>0.513966</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.037988">
+            <value>11.08</value>
+            <value>0.011091</value>
+            <value>1.975</value>
+            <value>0.958</value>
+            <value>0.338688</value>
+            <value>0.465564</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.037134">
+            <value>19.5</value>
+            <value>0.01952</value>
+            <value>7.68</value>
+            <value>1</value>
+            <value>0.504169</value>
+            <value>0.555924</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.035989">
+            <value>19.42</value>
+            <value>0.019439</value>
+            <value>7.837</value>
+            <value>1</value>
+            <value>0.518252</value>
+            <value>0.568041</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.033264">
+            <value>11.2</value>
+            <value>0.011211</value>
+            <value>2.432</value>
+            <value>0.977</value>
+            <value>0.416605</value>
+            <value>0.562281</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.031337">
+            <value>19.624</value>
+            <value>0.019644</value>
+            <value>10.098</value>
+            <value>1</value>
+            <value>0.655544</value>
+            <value>0.680983</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.030221">
+            <value>19.66</value>
+            <value>0.01968</value>
+            <value>7.712</value>
+            <value>1</value>
+            <value>0.497131</value>
+            <value>0.547914</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.026959">
+            <value>19.664</value>
+            <value>0.019684</value>
+            <value>7.832</value>
+            <value>1</value>
+            <value>0.504683</value>
+            <value>0.544008</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.024457">
+            <value>19.488</value>
+            <value>0.019508</value>
+            <value>7.907</value>
+            <value>1</value>
+            <value>0.5203</value>
+            <value>0.570418</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.022205">
+            <value>10.86</value>
+            <value>0.010871</value>
+            <value>2.521</value>
+            <value>0.968</value>
+            <value>0.463448</value>
+            <value>0.544038</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.021316">
+            <value>10.944</value>
+            <value>0.010955</value>
+            <value>2.344</value>
+            <value>0.964</value>
+            <value>0.426699</value>
+            <value>0.502289</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.02039">
+            <value>19.472</value>
+            <value>0.019491</value>
+            <value>7.577</value>
+            <value>1</value>
+            <value>0.498706</value>
+            <value>0.534182</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.020173">
+            <value>19.388</value>
+            <value>0.019407</value>
+            <value>7.844</value>
+            <value>1</value>
+            <value>0.52189</value>
+            <value>0.572809</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.019458">
+            <value>19.512</value>
+            <value>0.019532</value>
+            <value>7.318</value>
+            <value>1</value>
+            <value>0.479596</value>
+            <value>0.504445</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.01868">
+            <value>19.592</value>
+            <value>0.019612</value>
+            <value>8.231</value>
+            <value>1</value>
+            <value>0.533603</value>
+            <value>0.572723</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.017003">
+            <value>19.48</value>
+            <value>0.019499</value>
+            <value>7.32</value>
+            <value>1</value>
+            <value>0.482341</value>
+            <value>0.509932</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.015021">
+            <value>11.06</value>
+            <value>0.011071</value>
+            <value>1.832</value>
+            <value>0.96</value>
+            <value>0.32227</value>
+            <value>0.471236</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.010843">
+            <value>19.16</value>
+            <value>0.019179</value>
+            <value>7.347</value>
+            <value>1</value>
+            <value>0.501057</value>
+            <value>0.529951</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.010066">
+            <value>19.256</value>
+            <value>0.019275</value>
+            <value>7.397</value>
+            <value>1</value>
+            <value>0.498047</value>
+            <value>0.530968</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.010047">
+            <value>10.92</value>
+            <value>0.010931</value>
+            <value>2.687</value>
+            <value>0.962</value>
+            <value>0.480995</value>
+            <value>0.5479</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.008474">
+            <value>19.252</value>
+            <value>0.019271</value>
+            <value>7.887</value>
+            <value>1</value>
+            <value>0.528041</value>
+            <value>0.571808</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.006704">
+            <value>19.404</value>
+            <value>0.019423</value>
+            <value>7.976</value>
+            <value>1</value>
+            <value>0.530343</value>
+            <value>0.579766</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.006135">
+            <value>19.316</value>
+            <value>0.019335</value>
+            <value>7.795</value>
+            <value>1</value>
+            <value>0.520986</value>
+            <value>0.554547</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.006125">
+            <value>19.532</value>
+            <value>0.019552</value>
+            <value>7.777</value>
+            <value>1</value>
+            <value>0.508456</value>
+            <value>0.536744</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.004919">
+            <value>19.612</value>
+            <value>0.019632</value>
+            <value>7.096</value>
+            <value>1</value>
+            <value>0.461358</value>
+            <value>0.482806</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.000658">
+            <value>19.204</value>
+            <value>0.019223</value>
+            <value>7.811</value>
+            <value>1</value>
+            <value>0.526655</value>
+            <value>0.562281</value>
+            <value>1</value>
+         </instance>
+         <instance weight="1.560436">
+            <value>20.3768</value>
+            <value>0</value>
+            <value>4.7848</value>
+            <value>0.9624</value>
+            <value>0.166403</value>
+            <value>0.26725</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.509463">
+            <value>20.1088</value>
+            <value>0</value>
+            <value>4.5782</value>
+            <value>0.958</value>
+            <value>0.167798</value>
+            <value>0.263939</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.89106">
+            <value>20.1488</value>
+            <value>0</value>
+            <value>4.2936</value>
+            <value>0.9334</value>
+            <value>0.154687</value>
+            <value>0.255034</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.998028">
+            <value>20.1416</value>
+            <value>0</value>
+            <value>4.2956</value>
+            <value>0.931</value>
+            <value>0.155563</value>
+            <value>0.251018</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.152715">
+            <value>20.38</value>
+            <value>0</value>
+            <value>4.3676</value>
+            <value>0.921</value>
+            <value>0.153844</value>
+            <value>0.251212</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.122694">
+            <value>19.9352</value>
+            <value>0</value>
+            <value>4.1148</value>
+            <value>0.918</value>
+            <value>0.153803</value>
+            <value>0.250762</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.293433">
+            <value>19.7432</value>
+            <value>0</value>
+            <value>3.8014</value>
+            <value>0.907</value>
+            <value>0.14497</value>
+            <value>0.243769</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.327562">
+            <value>19.9176</value>
+            <value>0</value>
+            <value>3.9018</value>
+            <value>0.907</value>
+            <value>0.143136</value>
+            <value>0.245647</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.384205">
+            <value>19.7536</value>
+            <value>0</value>
+            <value>3.6926</value>
+            <value>0.9004</value>
+            <value>0.140147</value>
+            <value>0.24962</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.508622">
+            <value>19.8968</value>
+            <value>0</value>
+            <value>3.7794</value>
+            <value>0.9074</value>
+            <value>0.142839</value>
+            <value>0.255166</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.34477">
+            <value>19.7144</value>
+            <value>0</value>
+            <value>3.6936</value>
+            <value>0.9104</value>
+            <value>0.140012</value>
+            <value>0.255792</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.384294">
+            <value>20.1432</value>
+            <value>0</value>
+            <value>3.8748</value>
+            <value>0.9094</value>
+            <value>0.141864</value>
+            <value>0.256659</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.471793">
+            <value>20.2072</value>
+            <value>0</value>
+            <value>3.684</value>
+            <value>0.911</value>
+            <value>0.132991</value>
+            <value>0.258703</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.380411">
+            <value>20.1104</value>
+            <value>0</value>
+            <value>3.682</value>
+            <value>0.9102</value>
+            <value>0.136695</value>
+            <value>0.255689</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.712578">
+            <value>19.9232</value>
+            <value>0</value>
+            <value>3.0814</value>
+            <value>0.8456</value>
+            <value>0.112843</value>
+            <value>0.16712</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.665672">
+            <value>20.1912</value>
+            <value>0</value>
+            <value>3.1072</value>
+            <value>0.8452</value>
+            <value>0.110411</value>
+            <value>0.165065</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.768897">
+            <value>20.2624</value>
+            <value>0</value>
+            <value>3.0282</value>
+            <value>0.8342</value>
+            <value>0.10794</value>
+            <value>0.15649</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.545545">
+            <value>20.4016</value>
+            <value>0</value>
+            <value>3.3854</value>
+            <value>0.865</value>
+            <value>0.118398</value>
+            <value>0.180814</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.709438">
+            <value>20.4096</value>
+            <value>0</value>
+            <value>3.162</value>
+            <value>0.8548</value>
+            <value>0.10928</value>
+            <value>0.172686</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.671756">
+            <value>20.376</value>
+            <value>0</value>
+            <value>2.975</value>
+            <value>0.8354</value>
+            <value>0.104928</value>
+            <value>0.15874</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.79653">
+            <value>20.0904</value>
+            <value>0</value>
+            <value>3.0626</value>
+            <value>0.8314</value>
+            <value>0.112322</value>
+            <value>0.171031</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.643649">
+            <value>20.2584</value>
+            <value>0</value>
+            <value>3.0986</value>
+            <value>0.8482</value>
+            <value>0.109336</value>
+            <value>0.177894</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.813115">
+            <value>20.5024</value>
+            <value>0</value>
+            <value>2.9846</value>
+            <value>0.845</value>
+            <value>0.104246</value>
+            <value>0.17563</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.682745">
+            <value>19.7992</value>
+            <value>0</value>
+            <value>2.9298</value>
+            <value>0.8236</value>
+            <value>0.109152</value>
+            <value>0.175057</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.742459">
+            <value>20.1672</value>
+            <value>0</value>
+            <value>3.0108</value>
+            <value>0.8282</value>
+            <value>0.107921</value>
+            <value>0.174536</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.726932">
+            <value>20.2712</value>
+            <value>0</value>
+            <value>3.1504</value>
+            <value>0.8556</value>
+            <value>0.111095</value>
+            <value>0.191493</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.775173">
+            <value>19.8328</value>
+            <value>0</value>
+            <value>2.857</value>
+            <value>0.8344</value>
+            <value>0.107008</value>
+            <value>0.181011</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.823616">
+            <value>20.1832</value>
+            <value>0</value>
+            <value>3.1832</value>
+            <value>0.8538</value>
+            <value>0.114584</value>
+            <value>0.196559</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.037748">
+            <value>80.4728</value>
+            <value>0</value>
+            <value>42.8938</value>
+            <value>1</value>
+            <value>0.160386</value>
+            <value>0.164862</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.010866">
+            <value>80.3352</value>
+            <value>0</value>
+            <value>40.4544</value>
+            <value>1</value>
+            <value>0.151717</value>
+            <value>0.154991</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.058379">
+            <value>80.2824</value>
+            <value>0</value>
+            <value>32.6472</value>
+            <value>1</value>
+            <value>0.12257</value>
+            <value>0.126174</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.040839">
+            <value>80.5448</value>
+            <value>0</value>
+            <value>33.8206</value>
+            <value>1</value>
+            <value>0.126105</value>
+            <value>0.129524</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.015572">
+            <value>80.072</value>
+            <value>0</value>
+            <value>27.8874</value>
+            <value>1</value>
+            <value>0.105228</value>
+            <value>0.108418</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.010175">
+            <value>80.0216</value>
+            <value>0</value>
+            <value>26.7248</value>
+            <value>1</value>
+            <value>0.100925</value>
+            <value>0.103884</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.033491">
+            <value>80.1816</value>
+            <value>0</value>
+            <value>23.7142</value>
+            <value>1</value>
+            <value>0.089127</value>
+            <value>0.092231</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.00365">
+            <value>80.0464</value>
+            <value>0</value>
+            <value>23.9612</value>
+            <value>1</value>
+            <value>0.090384</value>
+            <value>0.093497</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.051376">
+            <value>79.76</value>
+            <value>0</value>
+            <value>20.8486</value>
+            <value>1</value>
+            <value>0.079074</value>
+            <value>0.08229</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.065317">
+            <value>79.964</value>
+            <value>0</value>
+            <value>21.1048</value>
+            <value>1</value>
+            <value>0.079607</value>
+            <value>0.082714</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.356294">
+            <value>79.6848</value>
+            <value>0</value>
+            <value>18.1698</value>
+            <value>1</value>
+            <value>0.068859</value>
+            <value>0.072095</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.499485">
+            <value>79.9504</value>
+            <value>0</value>
+            <value>18.3834</value>
+            <value>1</value>
+            <value>0.069208</value>
+            <value>0.072505</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.428274">
+            <value>79.4648</value>
+            <value>0</value>
+            <value>15.9442</value>
+            <value>1</value>
+            <value>0.060653</value>
+            <value>0.063891</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.509292">
+            <value>79.3112</value>
+            <value>0</value>
+            <value>15.6728</value>
+            <value>1</value>
+            <value>0.059746</value>
+            <value>0.062771</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.055808">
+            <value>80.2552</value>
+            <value>0</value>
+            <value>58.198</value>
+            <value>1</value>
+            <value>0.218764</value>
+            <value>0.225116</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.114256">
+            <value>80.5272</value>
+            <value>0</value>
+            <value>59.0422</value>
+            <value>1</value>
+            <value>0.220356</value>
+            <value>0.227545</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.26102">
+            <value>80.0792</value>
+            <value>0</value>
+            <value>43.7546</value>
+            <value>1</value>
+            <value>0.165036</value>
+            <value>0.171126</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.157656">
+            <value>80.2576</value>
+            <value>0</value>
+            <value>43.9538</value>
+            <value>1</value>
+            <value>0.165121</value>
+            <value>0.171143</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.196943">
+            <value>80.1576</value>
+            <value>0</value>
+            <value>34.0154</value>
+            <value>1</value>
+            <value>0.127834</value>
+            <value>0.132969</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.07561">
+            <value>80.5144</value>
+            <value>0</value>
+            <value>34.6872</value>
+            <value>1</value>
+            <value>0.129249</value>
+            <value>0.13369</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.186589">
+            <value>79.568</value>
+            <value>0</value>
+            <value>27.4324</value>
+            <value>1</value>
+            <value>0.104277</value>
+            <value>0.109406</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.150741">
+            <value>79.5032</value>
+            <value>0</value>
+            <value>27.3418</value>
+            <value>1</value>
+            <value>0.104126</value>
+            <value>0.108793</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.476898">
+            <value>79.1376</value>
+            <value>0</value>
+            <value>22.5602</value>
+            <value>1</value>
+            <value>0.086407</value>
+            <value>0.091308</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.411543">
+            <value>79.1136</value>
+            <value>0</value>
+            <value>22.5406</value>
+            <value>1</value>
+            <value>0.086272</value>
+            <value>0.091424</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.475076">
+            <value>78.6344</value>
+            <value>0</value>
+            <value>18.7992</value>
+            <value>1</value>
+            <value>0.072602</value>
+            <value>0.07754</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.473923">
+            <value>78.2304</value>
+            <value>0</value>
+            <value>18.5778</value>
+            <value>1</value>
+            <value>0.072335</value>
+            <value>0.077851</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.456252">
+            <value>77.8888</value>
+            <value>0</value>
+            <value>15.8</value>
+            <value>1</value>
+            <value>0.06185</value>
+            <value>0.066808</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.469293">
+            <value>78.3168</value>
+            <value>0</value>
+            <value>15.9008</value>
+            <value>1</value>
+            <value>0.061726</value>
+            <value>0.065948</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.52291">
+            <value>20.86</value>
+            <value>0.020881</value>
+            <value>3.339</value>
+            <value>0.9</value>
+            <value>0.11057</value>
+            <value>0.174128</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.752136">
+            <value>20.436</value>
+            <value>0.020456</value>
+            <value>3.105</value>
+            <value>0.882</value>
+            <value>0.106625</value>
+            <value>0.168441</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.388793">
+            <value>19.816</value>
+            <value>0.019836</value>
+            <value>2.152</value>
+            <value>0.756</value>
+            <value>0.081093</value>
+            <value>0.116855</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.850241">
+            <value>19.264</value>
+            <value>0.019283</value>
+            <value>1.887</value>
+            <value>0.738</value>
+            <value>0.073195</value>
+            <value>0.113996</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.658182">
+            <value>19.136</value>
+            <value>0.019155</value>
+            <value>1.514</value>
+            <value>0.66</value>
+            <value>0.061435</value>
+            <value>0.093065</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.122885">
+            <value>18.964</value>
+            <value>0.018983</value>
+            <value>1.494</value>
+            <value>0.671</value>
+            <value>0.063953</value>
+            <value>0.093733</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.627253">
+            <value>20.08</value>
+            <value>0.0201</value>
+            <value>1.567</value>
+            <value>0.669</value>
+            <value>0.059145</value>
+            <value>0.093415</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.486013">
+            <value>21.284</value>
+            <value>0.021305</value>
+            <value>1.929</value>
+            <value>0.703</value>
+            <value>0.063794</value>
+            <value>0.095957</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.598772">
+            <value>19.936</value>
+            <value>0.019956</value>
+            <value>1.371</value>
+            <value>0.648</value>
+            <value>0.052942</value>
+            <value>0.082992</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.505337">
+            <value>19.98</value>
+            <value>0.02</value>
+            <value>1.25</value>
+            <value>0.656</value>
+            <value>0.047929</value>
+            <value>0.079276</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.830556">
+            <value>20.124</value>
+            <value>0.020144</value>
+            <value>1.264</value>
+            <value>0.611</value>
+            <value>0.047565</value>
+            <value>0.079298</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.628085">
+            <value>21.496</value>
+            <value>0.021518</value>
+            <value>1.652</value>
+            <value>0.675</value>
+            <value>0.051779</value>
+            <value>0.086079</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.059303">
+            <value>20.38</value>
+            <value>0.0204</value>
+            <value>2.375</value>
+            <value>0.788</value>
+            <value>0.080848</value>
+            <value>0.116008</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.394784">
+            <value>20.22</value>
+            <value>0.02024</value>
+            <value>2.235</value>
+            <value>0.768</value>
+            <value>0.079474</value>
+            <value>0.110323</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.174172">
+            <value>20.976</value>
+            <value>0.020997</value>
+            <value>2.169</value>
+            <value>0.722</value>
+            <value>0.071335</value>
+            <value>0.095813</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.839249">
+            <value>20.376</value>
+            <value>0.020396</value>
+            <value>1.805</value>
+            <value>0.686</value>
+            <value>0.062734</value>
+            <value>0.081519</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.93306">
+            <value>20.244</value>
+            <value>0.020264</value>
+            <value>1.664</value>
+            <value>0.68</value>
+            <value>0.058449</value>
+            <value>0.086225</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.679504">
+            <value>20.724</value>
+            <value>0.020745</value>
+            <value>1.616</value>
+            <value>0.674</value>
+            <value>0.054431</value>
+            <value>0.080074</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.531225">
+            <value>20.664</value>
+            <value>0.020685</value>
+            <value>1.549</value>
+            <value>0.631</value>
+            <value>0.053837</value>
+            <value>0.074695</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.587569">
+            <value>21.232</value>
+            <value>0.021253</value>
+            <value>1.688</value>
+            <value>0.665</value>
+            <value>0.055147</value>
+            <value>0.079364</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.457107">
+            <value>20.4</value>
+            <value>0.02042</value>
+            <value>1.334</value>
+            <value>0.636</value>
+            <value>0.046792</value>
+            <value>0.072525</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.76759">
+            <value>19.504</value>
+            <value>0.019524</value>
+            <value>1.149</value>
+            <value>0.582</value>
+            <value>0.045268</value>
+            <value>0.062941</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.423555">
+            <value>20.78</value>
+            <value>0.020801</value>
+            <value>1.356</value>
+            <value>0.621</value>
+            <value>0.046346</value>
+            <value>0.073512</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.613769">
+            <value>20.728</value>
+            <value>0.020749</value>
+            <value>1.379</value>
+            <value>0.612</value>
+            <value>0.047164</value>
+            <value>0.07788</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.226671">
+            <value>20.272</value>
+            <value>0.020292</value>
+            <value>4.421</value>
+            <value>0.958</value>
+            <value>0.160532</value>
+            <value>0.252724</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.637748">
+            <value>20.624</value>
+            <value>0.020645</value>
+            <value>4.648</value>
+            <value>0.933</value>
+            <value>0.161745</value>
+            <value>0.24499</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.388283">
+            <value>20.3</value>
+            <value>0.02032</value>
+            <value>4.771</value>
+            <value>0.937</value>
+            <value>0.166031</value>
+            <value>0.274246</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.236365">
+            <value>20.048</value>
+            <value>0.020068</value>
+            <value>4.115</value>
+            <value>0.94</value>
+            <value>0.147984</value>
+            <value>0.245048</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.575151">
+            <value>20.244</value>
+            <value>0.020264</value>
+            <value>4.209</value>
+            <value>0.904</value>
+            <value>0.14628</value>
+            <value>0.233848</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.17292">
+            <value>19.848</value>
+            <value>0.019868</value>
+            <value>4.08</value>
+            <value>0.937</value>
+            <value>0.150992</value>
+            <value>0.26639</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.265148">
+            <value>20.288</value>
+            <value>0.020308</value>
+            <value>4.094</value>
+            <value>0.921</value>
+            <value>0.147457</value>
+            <value>0.245356</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.465158">
+            <value>20.82</value>
+            <value>0.020841</value>
+            <value>4.645</value>
+            <value>0.918</value>
+            <value>0.156026</value>
+            <value>0.266397</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.52906">
+            <value>19.36</value>
+            <value>0.019379</value>
+            <value>3.511</value>
+            <value>0.903</value>
+            <value>0.14033</value>
+            <value>0.233223</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.211915">
+            <value>20.36</value>
+            <value>0.02038</value>
+            <value>4.152</value>
+            <value>0.933</value>
+            <value>0.144087</value>
+            <value>0.26463</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.650066">
+            <value>18.844</value>
+            <value>0.018863</value>
+            <value>3.346</value>
+            <value>0.897</value>
+            <value>0.142438</value>
+            <value>0.250792</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.09252">
+            <value>20.064</value>
+            <value>0.020084</value>
+            <value>4.107</value>
+            <value>0.947</value>
+            <value>0.148299</value>
+            <value>0.285179</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.121191">
+            <value>19.368</value>
+            <value>0.019387</value>
+            <value>2.569</value>
+            <value>0.817</value>
+            <value>0.100815</value>
+            <value>0.139021</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.144318">
+            <value>20.164</value>
+            <value>0.020184</value>
+            <value>3.517</value>
+            <value>0.907</value>
+            <value>0.124563</value>
+            <value>0.197167</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.250107">
+            <value>20.308</value>
+            <value>0.020328</value>
+            <value>3.142</value>
+            <value>0.871</value>
+            <value>0.111183</value>
+            <value>0.170063</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.519959">
+            <value>20.296</value>
+            <value>0.020316</value>
+            <value>3.165</value>
+            <value>0.868</value>
+            <value>0.114232</value>
+            <value>0.181166</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.702317">
+            <value>19.936</value>
+            <value>0.019956</value>
+            <value>2.956</value>
+            <value>0.853</value>
+            <value>0.110749</value>
+            <value>0.170386</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.299275">
+            <value>21.028</value>
+            <value>0.021049</value>
+            <value>3.749</value>
+            <value>0.848</value>
+            <value>0.121478</value>
+            <value>0.178919</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.278002">
+            <value>20.196</value>
+            <value>0.020216</value>
+            <value>3.223</value>
+            <value>0.848</value>
+            <value>0.11696</value>
+            <value>0.175061</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.364389">
+            <value>19.436</value>
+            <value>0.019455</value>
+            <value>2.753</value>
+            <value>0.826</value>
+            <value>0.106262</value>
+            <value>0.164254</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.610658">
+            <value>20.7</value>
+            <value>0.020721</value>
+            <value>3.739</value>
+            <value>0.889</value>
+            <value>0.123357</value>
+            <value>0.20336</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.774118">
+            <value>20.416</value>
+            <value>0.020436</value>
+            <value>3.583</value>
+            <value>0.864</value>
+            <value>0.123711</value>
+            <value>0.196154</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.703721">
+            <value>20.628</value>
+            <value>0.020649</value>
+            <value>3.412</value>
+            <value>0.855</value>
+            <value>0.116218</value>
+            <value>0.186011</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.837615">
+            <value>19.152</value>
+            <value>0.019171</value>
+            <value>2.813</value>
+            <value>0.865</value>
+            <value>0.113057</value>
+            <value>0.187976</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.131472">
+            <value>80.156</value>
+            <value>0.080236</value>
+            <value>60.594</value>
+            <value>1</value>
+            <value>0.228451</value>
+            <value>0.233276</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.106108">
+            <value>80.376</value>
+            <value>0.080456</value>
+            <value>59.435</value>
+            <value>1</value>
+            <value>0.222689</value>
+            <value>0.225958</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.13048">
+            <value>80.552</value>
+            <value>0.080633</value>
+            <value>46.901</value>
+            <value>1</value>
+            <value>0.175038</value>
+            <value>0.179883</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.219967">
+            <value>80.712</value>
+            <value>0.080793</value>
+            <value>47.652</value>
+            <value>1</value>
+            <value>0.176933</value>
+            <value>0.182077</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.452001">
+            <value>80.188</value>
+            <value>0.080268</value>
+            <value>38.594</value>
+            <value>1</value>
+            <value>0.145087</value>
+            <value>0.1503</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.471823">
+            <value>80.22</value>
+            <value>0.0803</value>
+            <value>38.768</value>
+            <value>1</value>
+            <value>0.145473</value>
+            <value>0.151004</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.486481">
+            <value>79.524</value>
+            <value>0.079604</value>
+            <value>31.839</value>
+            <value>1</value>
+            <value>0.120514</value>
+            <value>0.126743</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.482813">
+            <value>79.232</value>
+            <value>0.079311</value>
+            <value>31.429</value>
+            <value>1</value>
+            <value>0.120559</value>
+            <value>0.124821</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.529252">
+            <value>79.328</value>
+            <value>0.079407</value>
+            <value>27.522</value>
+            <value>1</value>
+            <value>0.104457</value>
+            <value>0.109913</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.575842">
+            <value>78.9</value>
+            <value>0.078979</value>
+            <value>26.673</value>
+            <value>1</value>
+            <value>0.102718</value>
+            <value>0.107134</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.592899">
+            <value>78.576</value>
+            <value>0.078655</value>
+            <value>23.459</value>
+            <value>1</value>
+            <value>0.090551</value>
+            <value>0.095718</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.607501">
+            <value>79.004</value>
+            <value>0.079083</value>
+            <value>23.386</value>
+            <value>1</value>
+            <value>0.089357</value>
+            <value>0.094417</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.054886">
+            <value>80.448</value>
+            <value>0.080529</value>
+            <value>41.084</value>
+            <value>1</value>
+            <value>0.15369</value>
+            <value>0.155312</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.026685">
+            <value>80.616</value>
+            <value>0.080697</value>
+            <value>47.267</value>
+            <value>1</value>
+            <value>0.176056</value>
+            <value>0.179305</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.143506">
+            <value>80.148</value>
+            <value>0.080228</value>
+            <value>36.953</value>
+            <value>1</value>
+            <value>0.139187</value>
+            <value>0.143049</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.079136">
+            <value>80.732</value>
+            <value>0.080813</value>
+            <value>37.762</value>
+            <value>1</value>
+            <value>0.140233</value>
+            <value>0.142999</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.3802">
+            <value>79.752</value>
+            <value>0.079832</value>
+            <value>32.995</value>
+            <value>1</value>
+            <value>0.125461</value>
+            <value>0.128186</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.450543">
+            <value>80.42</value>
+            <value>0.080501</value>
+            <value>32.722</value>
+            <value>1</value>
+            <value>0.122407</value>
+            <value>0.125025</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.507562">
+            <value>79.388</value>
+            <value>0.079467</value>
+            <value>28.362</value>
+            <value>1</value>
+            <value>0.108369</value>
+            <value>0.112353</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.530923">
+            <value>80.276</value>
+            <value>0.080356</value>
+            <value>28.128</value>
+            <value>1</value>
+            <value>0.105351</value>
+            <value>0.108201</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.631692">
+            <value>79.724</value>
+            <value>0.079804</value>
+            <value>25.961</value>
+            <value>1</value>
+            <value>0.098318</value>
+            <value>0.101229</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.582684">
+            <value>80.396</value>
+            <value>0.080476</value>
+            <value>26.207</value>
+            <value>1</value>
+            <value>0.097987</value>
+            <value>0.099936</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.656387">
+            <value>80.352</value>
+            <value>0.080432</value>
+            <value>23.296</value>
+            <value>1</value>
+            <value>0.087174</value>
+            <value>0.089299</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.607268">
+            <value>79.1</value>
+            <value>0.079179</value>
+            <value>22.924</value>
+            <value>1</value>
+            <value>0.088247</value>
+            <value>0.091468</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.006106">
+            <value>80.324</value>
+            <value>0.080404</value>
+            <value>98.242</value>
+            <value>1</value>
+            <value>0.368061</value>
+            <value>0.376137</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.019109">
+            <value>79.984</value>
+            <value>0.080064</value>
+            <value>94.109</value>
+            <value>1</value>
+            <value>0.356289</value>
+            <value>0.363173</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.075735">
+            <value>79.248</value>
+            <value>0.079327</value>
+            <value>93.336</value>
+            <value>1</value>
+            <value>0.358489</value>
+            <value>0.36923</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.027348">
+            <value>80.1</value>
+            <value>0.08018</value>
+            <value>91.864</value>
+            <value>1</value>
+            <value>0.344994</value>
+            <value>0.354322</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.118416">
+            <value>76.508</value>
+            <value>0.076585</value>
+            <value>83.873</value>
+            <value>1</value>
+            <value>0.34314</value>
+            <value>0.359542</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.062386">
+            <value>77.048</value>
+            <value>0.077125</value>
+            <value>83.209</value>
+            <value>1</value>
+            <value>0.335413</value>
+            <value>0.350223</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.03228">
+            <value>75.584</value>
+            <value>0.07566</value>
+            <value>80.283</value>
+            <value>1</value>
+            <value>0.336238</value>
+            <value>0.354559</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.061538">
+            <value>77</value>
+            <value>0.077077</value>
+            <value>83.25</value>
+            <value>1</value>
+            <value>0.334954</value>
+            <value>0.348811</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.153913">
+            <value>73.864</value>
+            <value>0.073938</value>
+            <value>72.823</value>
+            <value>1</value>
+            <value>0.315941</value>
+            <value>0.333453</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.133748">
+            <value>72.764</value>
+            <value>0.072837</value>
+            <value>69.871</value>
+            <value>1</value>
+            <value>0.312366</value>
+            <value>0.332949</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.160574">
+            <value>72.3</value>
+            <value>0.072372</value>
+            <value>68.007</value>
+            <value>1</value>
+            <value>0.30565</value>
+            <value>0.323056</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.160554">
+            <value>72.772</value>
+            <value>0.072845</value>
+            <value>69.613</value>
+            <value>1</value>
+            <value>0.311162</value>
+            <value>0.331829</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.050719">
+            <value>80.144</value>
+            <value>0.080224</value>
+            <value>63.236</value>
+            <value>1</value>
+            <value>0.238289</value>
+            <value>0.24297</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.027674">
+            <value>80.32</value>
+            <value>0.0804</value>
+            <value>58.891</value>
+            <value>1</value>
+            <value>0.220926</value>
+            <value>0.230099</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.023841">
+            <value>80.104</value>
+            <value>0.080184</value>
+            <value>71.616</value>
+            <value>1</value>
+            <value>0.269609</value>
+            <value>0.277705</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.079921">
+            <value>80.184</value>
+            <value>0.080264</value>
+            <value>75.36</value>
+            <value>1</value>
+            <value>0.283198</value>
+            <value>0.292494</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.041982">
+            <value>79.224</value>
+            <value>0.079303</value>
+            <value>72.926</value>
+            <value>1</value>
+            <value>0.279667</value>
+            <value>0.288442</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.006233">
+            <value>79.592</value>
+            <value>0.079672</value>
+            <value>65.809</value>
+            <value>1</value>
+            <value>0.250318</value>
+            <value>0.259729</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.010968">
+            <value>78.828</value>
+            <value>0.078907</value>
+            <value>66.283</value>
+            <value>1</value>
+            <value>0.257213</value>
+            <value>0.26722</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.07314">
+            <value>78.836</value>
+            <value>0.078915</value>
+            <value>72.779</value>
+            <value>1</value>
+            <value>0.281827</value>
+            <value>0.293889</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.012635">
+            <value>77.836</value>
+            <value>0.077914</value>
+            <value>67.59</value>
+            <value>1</value>
+            <value>0.267775</value>
+            <value>0.280015</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.014685">
+            <value>78.568</value>
+            <value>0.078647</value>
+            <value>64.632</value>
+            <value>1</value>
+            <value>0.251809</value>
+            <value>0.262449</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.070939">
+            <value>76.068</value>
+            <value>0.076144</value>
+            <value>61.84</value>
+            <value>1</value>
+            <value>0.254669</value>
+            <value>0.268792</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.02048">
+            <value>76.632</value>
+            <value>0.076709</value>
+            <value>63.452</value>
+            <value>1</value>
+            <value>0.25786</value>
+            <value>0.273127</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.37324">
+            <value>20.2176</value>
+            <value>0.002022</value>
+            <value>4.3886</value>
+            <value>0.9497</value>
+            <value>0.155577</value>
+            <value>0.252517</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.332313">
+            <value>20.356</value>
+            <value>0.002036</value>
+            <value>4.4206</value>
+            <value>0.9532</value>
+            <value>0.155525</value>
+            <value>0.253479</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.427783">
+            <value>20.2404</value>
+            <value>0.002024</value>
+            <value>4.1116</value>
+            <value>0.9269</value>
+            <value>0.146946</value>
+            <value>0.242497</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.535928">
+            <value>20.054</value>
+            <value>0.002006</value>
+            <value>4.1224</value>
+            <value>0.922</value>
+            <value>0.149285</value>
+            <value>0.241292</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.588345">
+            <value>20.3372</value>
+            <value>0.002034</value>
+            <value>4.0812</value>
+            <value>0.9135</value>
+            <value>0.143742</value>
+            <value>0.24513</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.557442">
+            <value>20.0944</value>
+            <value>0.00201</value>
+            <value>4.0569</value>
+            <value>0.9123</value>
+            <value>0.147014</value>
+            <value>0.248603</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.517506">
+            <value>20.0064</value>
+            <value>0.002001</value>
+            <value>3.8796</value>
+            <value>0.9013</value>
+            <value>0.143348</value>
+            <value>0.243946</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.431217">
+            <value>20.4724</value>
+            <value>0.002047</value>
+            <value>4.0372</value>
+            <value>0.9125</value>
+            <value>0.141388</value>
+            <value>0.247666</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.004994">
+            <value>20.2588</value>
+            <value>0.002026</value>
+            <value>3.9358</value>
+            <value>0.903</value>
+            <value>0.141185</value>
+            <value>0.253287</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.595384">
+            <value>20.2024</value>
+            <value>0.00202</value>
+            <value>3.9176</value>
+            <value>0.9031</value>
+            <value>0.142265</value>
+            <value>0.253384</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.583329">
+            <value>19.9312</value>
+            <value>0.001993</value>
+            <value>3.6649</value>
+            <value>0.901</value>
+            <value>0.139128</value>
+            <value>0.254069</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.760632">
+            <value>20.0664</value>
+            <value>0.002007</value>
+            <value>3.6983</value>
+            <value>0.8967</value>
+            <value>0.137364</value>
+            <value>0.250339</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.599358">
+            <value>20.1864</value>
+            <value>0.002019</value>
+            <value>3.2189</value>
+            <value>0.8731</value>
+            <value>0.114731</value>
+            <value>0.17441</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.487287">
+            <value>20.3696</value>
+            <value>0.002037</value>
+            <value>3.4042</value>
+            <value>0.8825</value>
+            <value>0.118825</value>
+            <value>0.185018</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.055876">
+            <value>20.0908</value>
+            <value>0.002009</value>
+            <value>3.2301</value>
+            <value>0.8572</value>
+            <value>0.116815</value>
+            <value>0.180064</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.240363">
+            <value>20.2392</value>
+            <value>0.002024</value>
+            <value>3.1396</value>
+            <value>0.8486</value>
+            <value>0.109715</value>
+            <value>0.171369</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.124858">
+            <value>19.8532</value>
+            <value>0.001986</value>
+            <value>2.8148</value>
+            <value>0.8358</value>
+            <value>0.104979</value>
+            <value>0.166981</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.890578">
+            <value>20.0228</value>
+            <value>0.002002</value>
+            <value>3.0075</value>
+            <value>0.8487</value>
+            <value>0.109867</value>
+            <value>0.174213</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.379068">
+            <value>20.514</value>
+            <value>0.002052</value>
+            <value>3.333</value>
+            <value>0.8487</value>
+            <value>0.115246</value>
+            <value>0.185441</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.204026">
+            <value>20.1812</value>
+            <value>0.002018</value>
+            <value>3.2574</value>
+            <value>0.8434</value>
+            <value>0.116272</value>
+            <value>0.185388</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.291474">
+            <value>20.1444</value>
+            <value>0.002015</value>
+            <value>3.0094</value>
+            <value>0.8409</value>
+            <value>0.109484</value>
+            <value>0.180722</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.350026">
+            <value>20.2424</value>
+            <value>0.002024</value>
+            <value>3.1723</value>
+            <value>0.8448</value>
+            <value>0.112874</value>
+            <value>0.18658</value>
+            <value>0</value>
+         </instance>
+         <instance weight="2.409297">
+            <value>19.8256</value>
+            <value>0.001983</value>
+            <value>2.9849</value>
+            <value>0.8346</value>
+            <value>0.112194</value>
+            <value>0.184644</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.762408">
+            <value>20.2164</value>
+            <value>0.002022</value>
+            <value>3.2465</value>
+            <value>0.8514</value>
+            <value>0.115016</value>
+            <value>0.194136</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.159352">
+            <value>80.3244</value>
+            <value>0.008033</value>
+            <value>57.2882</value>
+            <value>1</value>
+            <value>0.214985</value>
+            <value>0.220866</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.151443">
+            <value>80.268</value>
+            <value>0.008028</value>
+            <value>55.9388</value>
+            <value>1</value>
+            <value>0.210178</value>
+            <value>0.215329</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.179027">
+            <value>80.1592</value>
+            <value>0.008017</value>
+            <value>42.7684</value>
+            <value>1</value>
+            <value>0.161064</value>
+            <value>0.166683</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.161823">
+            <value>80.3164</value>
+            <value>0.008032</value>
+            <value>42.8351</value>
+            <value>1</value>
+            <value>0.160669</value>
+            <value>0.166036</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.128613">
+            <value>79.8156</value>
+            <value>0.007982</value>
+            <value>33.2651</value>
+            <value>1</value>
+            <value>0.126051</value>
+            <value>0.131127</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.127472">
+            <value>80.12</value>
+            <value>0.008013</value>
+            <value>33.4571</value>
+            <value>1</value>
+            <value>0.125874</value>
+            <value>0.130366</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.091076">
+            <value>79.396</value>
+            <value>0.00794</value>
+            <value>26.6585</value>
+            <value>1</value>
+            <value>0.101779</value>
+            <value>0.106653</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.089389">
+            <value>79.6336</value>
+            <value>0.007964</value>
+            <value>26.8697</value>
+            <value>1</value>
+            <value>0.101955</value>
+            <value>0.106955</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.061835">
+            <value>78.6728</value>
+            <value>0.007868</value>
+            <value>21.5964</value>
+            <value>1</value>
+            <value>0.083597</value>
+            <value>0.088656</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.028708">
+            <value>79.078</value>
+            <value>0.007909</value>
+            <value>21.8587</value>
+            <value>1</value>
+            <value>0.083848</value>
+            <value>0.088651</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.033994">
+            <value>78.2644</value>
+            <value>0.007827</value>
+            <value>17.8753</value>
+            <value>1</value>
+            <value>0.069559</value>
+            <value>0.074702</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.011891">
+            <value>78.47</value>
+            <value>0.007848</value>
+            <value>18.0143</value>
+            <value>1</value>
+            <value>0.069807</value>
+            <value>0.07449</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.042011">
+            <value>80.4776</value>
+            <value>0.008049</value>
+            <value>41.1224</value>
+            <value>1</value>
+            <value>0.153688</value>
+            <value>0.157033</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.058104">
+            <value>80.2976</value>
+            <value>0.008031</value>
+            <value>40.7609</value>
+            <value>1</value>
+            <value>0.153056</value>
+            <value>0.156856</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.035315">
+            <value>80.4676</value>
+            <value>0.008048</value>
+            <value>34.1843</value>
+            <value>1</value>
+            <value>0.127759</value>
+            <value>0.13123</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.018095">
+            <value>80.3544</value>
+            <value>0.008036</value>
+            <value>32.7224</value>
+            <value>1</value>
+            <value>0.12268</value>
+            <value>0.125733</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.06187">
+            <value>80.3112</value>
+            <value>0.008032</value>
+            <value>27.8266</value>
+            <value>1</value>
+            <value>0.104348</value>
+            <value>0.107656</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.049227">
+            <value>80.2288</value>
+            <value>0.008024</value>
+            <value>27.859</value>
+            <value>1</value>
+            <value>0.104647</value>
+            <value>0.108081</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.056783">
+            <value>79.9852</value>
+            <value>0.007999</value>
+            <value>23.3388</value>
+            <value>1</value>
+            <value>0.088108</value>
+            <value>0.091431</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.063767">
+            <value>80.1832</value>
+            <value>0.008019</value>
+            <value>23.501</value>
+            <value>1</value>
+            <value>0.08826</value>
+            <value>0.091416</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.065481">
+            <value>79.8468</value>
+            <value>0.007985</value>
+            <value>20.1902</value>
+            <value>1</value>
+            <value>0.076306</value>
+            <value>0.0796</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.038103">
+            <value>79.7764</value>
+            <value>0.007978</value>
+            <value>20.4354</value>
+            <value>1</value>
+            <value>0.077432</value>
+            <value>0.080313</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.032112">
+            <value>79.6328</value>
+            <value>0.007964</value>
+            <value>17.5557</value>
+            <value>1</value>
+            <value>0.066584</value>
+            <value>0.069711</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.034471">
+            <value>79.5832</value>
+            <value>0.007959</value>
+            <value>17.6562</value>
+            <value>1</value>
+            <value>0.067057</value>
+            <value>0.070439</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.078399">
+            <value>80.1864</value>
+            <value>0.008019</value>
+            <value>93.8813</value>
+            <value>1</value>
+            <value>0.353219</value>
+            <value>0.361266</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.0696">
+            <value>80.1636</value>
+            <value>0.008017</value>
+            <value>92.0636</value>
+            <value>1</value>
+            <value>0.346482</value>
+            <value>0.354421</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.102474">
+            <value>79.246</value>
+            <value>0.007925</value>
+            <value>88.0222</value>
+            <value>1</value>
+            <value>0.337673</value>
+            <value>0.348268</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.104463">
+            <value>79.4352</value>
+            <value>0.007944</value>
+            <value>88.6311</value>
+            <value>1</value>
+            <value>0.338533</value>
+            <value>0.349032</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.121328">
+            <value>78.1856</value>
+            <value>0.007819</value>
+            <value>84.2255</value>
+            <value>1</value>
+            <value>0.330877</value>
+            <value>0.344057</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.124464">
+            <value>78.0044</value>
+            <value>0.007801</value>
+            <value>84.33</value>
+            <value>1</value>
+            <value>0.332379</value>
+            <value>0.346088</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.131566">
+            <value>76.488</value>
+            <value>0.00765</value>
+            <value>79.3395</value>
+            <value>1</value>
+            <value>0.323976</value>
+            <value>0.339521</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.132415">
+            <value>75.7796</value>
+            <value>0.007579</value>
+            <value>77.6807</value>
+            <value>1</value>
+            <value>0.322718</value>
+            <value>0.338495</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.158128">
+            <value>74.1936</value>
+            <value>0.00742</value>
+            <value>71.8415</value>
+            <value>1</value>
+            <value>0.309467</value>
+            <value>0.32867</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.154083">
+            <value>73.9288</value>
+            <value>0.007394</value>
+            <value>71.391</value>
+            <value>1</value>
+            <value>0.309946</value>
+            <value>0.32938</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.154461">
+            <value>72.5204</value>
+            <value>0.007253</value>
+            <value>66.667</value>
+            <value>1</value>
+            <value>0.299175</value>
+            <value>0.319236</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.161211">
+            <value>72.018</value>
+            <value>0.007203</value>
+            <value>65.0766</value>
+            <value>1</value>
+            <value>0.295844</value>
+            <value>0.316457</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.033225">
+            <value>80.4368</value>
+            <value>0.008044</value>
+            <value>64.7895</value>
+            <value>1</value>
+            <value>0.242341</value>
+            <value>0.248386</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.024925">
+            <value>80.338</value>
+            <value>0.008035</value>
+            <value>68.5573</value>
+            <value>1</value>
+            <value>0.257062</value>
+            <value>0.263516</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.057482">
+            <value>79.9564</value>
+            <value>0.007996</value>
+            <value>63.8674</value>
+            <value>1</value>
+            <value>0.241411</value>
+            <value>0.248259</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.056757">
+            <value>79.9608</value>
+            <value>0.007997</value>
+            <value>66.0504</value>
+            <value>1</value>
+            <value>0.249574</value>
+            <value>0.258261</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.051516">
+            <value>79.3352</value>
+            <value>0.007934</value>
+            <value>66.1245</value>
+            <value>1</value>
+            <value>0.253077</value>
+            <value>0.263953</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.077306">
+            <value>79.2756</value>
+            <value>0.007928</value>
+            <value>63.9896</value>
+            <value>1</value>
+            <value>0.245267</value>
+            <value>0.256582</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.028708">
+            <value>78.6568</value>
+            <value>0.007866</value>
+            <value>67.0818</value>
+            <value>1</value>
+            <value>0.260465</value>
+            <value>0.272724</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.049836">
+            <value>78.9268</value>
+            <value>0.007893</value>
+            <value>64.6864</value>
+            <value>1</value>
+            <value>0.249659</value>
+            <value>0.261058</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.006859">
+            <value>78.0116</value>
+            <value>0.007802</value>
+            <value>66.7194</value>
+            <value>1</value>
+            <value>0.263029</value>
+            <value>0.276636</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.000393">
+            <value>78.0248</value>
+            <value>0.007803</value>
+            <value>64.5827</value>
+            <value>1</value>
+            <value>0.254238</value>
+            <value>0.265936</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.048822">
+            <value>77.19</value>
+            <value>0.00772</value>
+            <value>62.9106</value>
+            <value>1</value>
+            <value>0.252285</value>
+            <value>0.266158</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.038761">
+            <value>76.5384</value>
+            <value>0.007655</value>
+            <value>62.2681</value>
+            <value>1</value>
+            <value>0.25344</value>
+            <value>0.268484</value>
+            <value>1</value>
+         </instance>
+         <instance weight="0.435206">
+            <value>19.8932</value>
+            <value>0.000995</value>
+            <value>4.23465</value>
+            <value>0.9468</value>
+            <value>0.156032</value>
+            <value>0.250449</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.41241">
+            <value>20.166</value>
+            <value>0.001008</value>
+            <value>4.25405</value>
+            <value>0.94855</value>
+            <value>0.153142</value>
+            <value>0.246555</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.435349">
+            <value>20.019</value>
+            <value>0.001001</value>
+            <value>4.074</value>
+            <value>0.9239</value>
+            <value>0.148752</value>
+            <value>0.242273</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.431237">
+            <value>20.0266</value>
+            <value>0.001001</value>
+            <value>4.0213</value>
+            <value>0.92355</value>
+            <value>0.147394</value>
+            <value>0.23894</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.596556">
+            <value>20.1076</value>
+            <value>0.001005</value>
+            <value>3.96015</value>
+            <value>0.91095</value>
+            <value>0.142156</value>
+            <value>0.24388</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.490524">
+            <value>20.0974</value>
+            <value>0.001005</value>
+            <value>3.9723</value>
+            <value>0.9124</value>
+            <value>0.143168</value>
+            <value>0.243464</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.565733">
+            <value>20.0546</value>
+            <value>0.001003</value>
+            <value>3.83495</value>
+            <value>0.90545</value>
+            <value>0.139985</value>
+            <value>0.24493</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.645159">
+            <value>20.0914</value>
+            <value>0.001005</value>
+            <value>3.91515</value>
+            <value>0.9022</value>
+            <value>0.142799</value>
+            <value>0.247174</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.786026">
+            <value>20.0562</value>
+            <value>0.001003</value>
+            <value>3.7874</value>
+            <value>0.89825</value>
+            <value>0.138134</value>
+            <value>0.247377</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.739401">
+            <value>20.0888</value>
+            <value>0.001004</value>
+            <value>3.7976</value>
+            <value>0.90355</value>
+            <value>0.138749</value>
+            <value>0.250892</value>
+            <value>0</value>
+         </instance>
+         <instance weight="0.744685">
+            <value>20.1018</value>
+            <value>0.001005</value>
+            <value>3.73195</value>
+            <value>0.8976</value>
+            <value>0.137011</value>
+            <value>0.252389</value>
+            <value>0</value>
+         </instance>
+         <instance weight="1.030516">
+            <value>20.141</value>
+            <value>0.001007</value>
+            <value>3.67665</value>
+            <value>0.8966</value>
+            <value>0.134779</value>
+            <value>0.249725</value>
+            <value>0</value>
+         </instance>
+      </instances>
+   </body>
+</dataset>
+
