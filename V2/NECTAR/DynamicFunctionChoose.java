@@ -1,6 +1,7 @@
 package NECTAR;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -12,23 +13,16 @@ import weka.core.Instances;
 public class DynamicFunctionChoose {
 	
 	public static boolean shouldUseModularity(double[] features) throws Exception {
-		String pathToModel = GetPathToModel();
-		
-		// deserialize model
-		 Classifier cls = (Classifier) weka.core.SerializationHelper.read(pathToModel);
-				 		 
-		 ArrayList<Attribute> atts = new ArrayList<Attribute>(11);
+		Classifier cls = 
+				(Classifier) weka.core.SerializationHelper.read((InputStream) Classifier.class.getResourceAsStream("/NECTAR/NECTARRandomTree.model"));		 		 
+		 ArrayList<Attribute> atts = new ArrayList<Attribute>(7);
 		 	
 		 ArrayList<String> classVal = new ArrayList<String>();
 		        classVal.add("0");
 		        classVal.add("1");
 	        
-	        atts.add(new Attribute("numOfNodes"));
-	        atts.add(new Attribute("numOfEdges"));
 	        atts.add(new Attribute("averageDegree"));
 	        atts.add(new Attribute("density"));
-	        atts.add(new Attribute("numOfNodesInTriangles"));
-	        atts.add(new Attribute("numOfTriangles"));
 	        atts.add(new Attribute("avergaeTrianglesRate"));
 	        atts.add(new Attribute("ratioOfNodesInTriangles"));
 	        atts.add(new Attribute("GCC"));
@@ -51,26 +45,5 @@ public class DynamicFunctionChoose {
 	        		dataRaw.classAttribute().value((int) predictionIndex);
 	        return predictedClassLabel=="0";
 	}
-
-	public static String GetPathToModel() throws URISyntaxException {
-		String pathToModel;
-		String path = new File(RunNectar.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).toString();
-				
-		int endIndex = path.lastIndexOf("\\");
-		if (endIndex == -1) endIndex = path.lastIndexOf("/");
-		String shortPath ="";
-	    if (endIndex != -1)  
-	    {
-	    	shortPath = path.substring(0, endIndex); // not forgot to put check if(endIndex != -1)
-	    }
-	    System.out.println("shortPath    " +shortPath );		
-		
-		try{
-			pathToModel= shortPath +"/DynamicFunctionj48.model";
-		}catch(Exception e)
-			{ pathToModel= path +"/DynamicFunctionj48.model";}
-		return pathToModel;
-	}
-
 
 }

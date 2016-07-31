@@ -45,10 +45,12 @@ public class CalcFeatures {
 		double ACC = calcACC(adjacencyMap, node2triangles, NumOfNodes);		
 		
 		return new double[] {
-				numOfNodes,numOfEdges,averageDegree,
-				density,numOfNodesInTriangles,numOfTriangles,
-				avergaeTrianglesRate,ratioOfNodesInTriangles,
-				GCC,ACC,
+				averageDegree,
+				density,
+				avergaeTrianglesRate,
+				ratioOfNodesInTriangles,
+				GCC,
+				ACC,
 				//Place holder for label
 				0.0
 				};

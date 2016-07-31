@@ -29,8 +29,8 @@ public class RunNectar {
 					+ "debug=false");
 		}
 		else{
-			String pathToGraph = "C:/Temp/a1.txt";
-			String outputPath = "C:/Temp/DEL";
+			String pathToGraph = "";
+			String outputPath = "";
 			double[] betas = {1.1,1.2,2.0,3.0};				
 			double alpha = 0.8;
 			int iteratioNumToStartMerge = 6;
