@@ -157,6 +157,11 @@ public class WeightedNectarWOCC {
         		numOfStableNodes.decrementAndGet();
             }              
 	    } 
+	    
+	    // If we havent meged any communities- we should do so in the end.
+	    if(amountOfScans<=iteratioNumToStartMerge){
+	    	FindAndMergeComms(metaData.GetIntersectionBetweenAllComms());
+	    	
 	    System.out.println("Number of stable nodes: " + numOfStableNodes);	   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
