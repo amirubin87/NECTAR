@@ -161,6 +161,7 @@ public class WeightedNectarWOCC {
 	    // If we havent meged any communities- we should do so in the end.
 	    if(amountOfScans<=iteratioNumToStartMerge){
 	    	FindAndMergeComms(metaData.GetIntersectionBetweenAllComms());
+	    }
 	    	
 	    System.out.println("Number of stable nodes: " + numOfStableNodes);	   
 	    if (amountOfScans >= maxIterationsToRun){
@@ -250,8 +251,10 @@ public class WeightedNectarWOCC {
 	            for (Integer neighborComm : neighborComms){
 	                double inc= Calc_WOCC_Weighted(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);	              
-	            }	            
-	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
+	            }	
+	            
+	            boolean includeBestComm = true; 
+	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta, includeBestComm);
 	            
 	            Sec1Time += (System.currentTimeMillis() - startTime);
 	            
@@ -306,19 +309,27 @@ public class WeightedNectarWOCC {
 	    }
 	}
 	
-	private Set<Integer> Keep_Best_Communities(Map<Integer, Double>comms_imps,double betta){
-	    double bestImp = 0;
+	private Set<Integer> Keep_Best_Communities(Map<Integer, Double>comms_imps,double betta, boolean includeBestComm){
+		Set<Integer> bestComms = new HashSet<Integer>();
+		// Single element
+		if(comms_imps.values().size() == 1){
+			bestComms.add(comms_imps.keySet().iterator().next());
+			return bestComms;
+		}
+		// get the best improvement we can gain
+		double bestImp = 0;
 	    for( double imp : comms_imps.values()){
 	    	bestImp = Math.max(bestImp, imp);
-	    }
-	    Set<Integer> bestComs = new HashSet<Integer>();
+	    }	    
        	for(Entry<Integer, Double> entry: comms_imps.entrySet()){
 	    		 if (entry.getValue()*betta >= bestImp){
-	    				 bestComs.add(entry.getKey());
+	    			 if (includeBestComm | entry.getValue() != bestImp){
+	    				 bestComms.add(entry.getKey());
+	    			 }
 	    		 }
 	    }
 	    
-	    return bestComs;
+	    return bestComms;
 	}	
 
 	private Set<Integer> Find_Neighbor_Comms(Integer node){
