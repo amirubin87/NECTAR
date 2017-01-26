@@ -20,8 +20,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class NectarW {
-	TODOUndirectedWeightedGraphW g;
+import org.netlib.util.booleanW;
+
+public class WeightedNectarW {
+	UndirectedWeightedGraphW g;
 	public double[] betas;
 	public double alpha;
 	public String outputPath;
@@ -35,7 +37,7 @@ public class NectarW {
 	public long startTime;
 	private boolean debug;
 	
-	public NectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
+	public WeightedNectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
 		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));		
 		this.startTime = System.currentTimeMillis();
 		this.percentageOfStableNodes= percentageOfStableNodes;
@@ -46,10 +48,8 @@ public class NectarW {
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;		
 		this.debug = debug;
-		this.g = new TODOUndirectedWeightedGraphW(Paths.get(pathToGraph));		
-		
-		TakeTime();
-		
+		this.g = new UndirectedWeightedGraphW(Paths.get(pathToGraph));		
+
 		Map<Integer, Set<Integer>> firstPart;
 		System.out.println("Get first part");
 		if (firstPartMode == 0){
@@ -81,7 +81,7 @@ public class NectarW {
 		}
 	}
 	
-	public NectarW(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{		
+	public WeightedNectarW(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{		
 		if(debug)
 			this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));
 		this.percentageOfStableNodes= percentageOfStableNodes;
@@ -91,7 +91,8 @@ public class NectarW {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;		
-		this.g = new TODOUndirectedWeightedGraphW(Paths.get(pathToGraph));		
+		this.g = new UndirectedWeightedGraphW(Paths.get(pathToGraph));		
+				
 		TakeTime();
 		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);
 		TakeTime();		
@@ -135,7 +136,7 @@ public class NectarW {
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
 	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;	    
-	    while (numOfStableNodes.intValue() < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){
+	    while (amountOfScans <5 || (numOfStableNodes.intValue() < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){
 	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iterations: " + amountOfScans);
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
             numOfStableNodes = new AtomicInteger(0);
@@ -155,7 +156,7 @@ public class NectarW {
             
             if (haveMergedComms){
         		numOfStableNodes.decrementAndGet();
-            }            
+            }              
 	    } 
 	    System.out.println("Number of stable nodes: " + numOfStableNodes);	   
 	    if (amountOfScans >= maxIterationsToRun){
@@ -178,8 +179,7 @@ public class NectarW {
 	    return haveMergedComms;
 	}
 
-	private Map<Integer[], Double> scanChangedComms(Set<Set<Integer>> changedComms) {
-		
+	private Map<Integer[], Double> scanChangedComms(Set<Set<Integer>> changedComms) {		
 		Map<Integer[],Double> commsCouplesIntersectionRatio = new HashMap<Integer[],Double>();
 	    for( Set<Integer> comms : changedComms){
 			
@@ -236,7 +236,7 @@ public class NectarW {
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
 	    	amountOfScans++;
-	    	for (Integer node : g.nodes()){
+	    	for (Integer node : g.nodes()){	    		
 	    		////////////////////////////////////   Section 1
 	    		startTime = System.currentTimeMillis();
 	            Set<Integer> c_v_original = metaData.node2coms.get(node);	            
@@ -244,8 +244,8 @@ public class NectarW {
 	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
 	            Set<Integer> neighborComms = Find_Neighbor_Comms(node);
 	            for (Integer neighborComm : neighborComms){
-	                double inc= Calc_WCC(neighborComm, node);
-	                comms_inc.put(neighborComm, inc);
+	                double inc= Calc_WOCC_Weighted(neighborComm, node);
+	                comms_inc.put(neighborComm, inc);	              
 	            }	            
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	            
@@ -269,7 +269,7 @@ public class NectarW {
 	            }
 	            Sec3Time += (System.currentTimeMillis() - startTime);
 	            
-	        }
+	        }	    	
         }    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
@@ -343,15 +343,15 @@ public class NectarW {
 		writer.close();	
 	}
 
-	public static Map<Integer,Set<Integer>> GetFirstPartition(TODOUndirectedWeightedGraphW G){
+	public static Map<Integer,Set<Integer>> GetFirstPartition(UndirectedWeightedGraphW G){
 		Map<Integer,Set<Integer>> result = new HashMap<>();
-		Map<Integer, Double> CC = G.Clustring();		
+		Map<Integer, Double> CC = G.WeightedClustring();		
 	    Map<Integer, Double> sorted_CC = MapUtil.sortByValue(CC);
-	    double maxSeenSoFar=1.0;    
+	    double maxSeenSoFar=Double.MAX_VALUE;    
 	    boolean[] isVisited = new boolean[G.maxNodeId()+1];	    
 	    int commID=0;	    
 	    for (int v : sorted_CC.keySet()){
-	    	if(maxSeenSoFar<CC.get(v)){
+	    	if(maxSeenSoFar<sorted_CC.get(v)){
 	    		throw(new RuntimeException(String.format("sortedCC was not sorted. node: %1$d.", v)));
 	    	}	    	
 	        if (!isVisited[v]){
@@ -372,54 +372,109 @@ public class NectarW {
 	    return result;
 	}
 	
-	public double Calc_WCC(int comm, int  x){	    
-		Set<Integer> commMembers = metaData.com2nodes.get(comm);
-		long TxV = metaData.T.get(x);	    
+	// TODO - this is the same code as in the worker - must be removed...
+	public double Calc_WOCC_Weighted(int comm, Integer x){	    
+    	// The sum of the weights of the triangles which the node is in.
+		double TxV = metaData.g.TrianglesWeight().get(x);	    
 	    if (TxV==0){
 	        return 0;
 	    }
+    			    
+    	Set<Integer> commMembers = metaData.com2nodes.get(comm);			
 	    
-		long TxC = calcT(commMembers, x);	    
+    	// The sum of the weights of the triangles which the node has with
+		// nodes in the comm.
+		double TxC = calcTWeights(commMembers, x);	    
 		if(TxC == 0){
 			return 0;
 		}
 		BigDecimal partA = new BigDecimal(TxC).divide(new BigDecimal(TxV),10, BigDecimal.ROUND_DOWN); 
-	    
-	    int VTxV = metaData.VT.get(x).size();
+	    			
+		// The sum of weights of edges between x and nodes which share 
+		// a triangle with x
+	    double VTxV = metaData.g.GetWeightOfEdgesWithTriangleInNode(x);
 	    if(VTxV == 0){
 			return 0;
 		}
-	    int VTxVnoC = calcVTWithoutComm(commMembers, x);	    
-	    double divesor = (double)(commMembers.size() +(VTxVnoC));	    
+	    // The sum of weights of edges between x and nodes which share 
+			// a triangle with x, except those in the community
+	    double VTxVnoC = calcVTWithoutComm(commMembers, x);	 
+	    
+	    double averageEdgeWeight = metaData.g.GetAverageEdgeWeight();
+	    double divesor = (double)(commMembers.size()*averageEdgeWeight +(VTxVnoC));	    
 	    if (divesor==0){
 	        return 0;
 	    }	    
 	    BigDecimal partB = new BigDecimal(VTxV).divide(new BigDecimal(divesor),10, BigDecimal.ROUND_DOWN);	
 	    double ans = (partA.multiply(partB)).doubleValue();
-	    
+	    	   
 	    return ans;
 	    
 	}
-
-	private int calcVTWithoutComm(Set<Integer> commMembers, int node) {		
-		Set<Integer> nodesWithTriangle = metaData.VT.get(node);
-		return nodesWithTriangle.size() - UtillsW.IntersectionSize(nodesWithTriangle, commMembers);
-	}
-
-	private long calcT(Set<Integer> commMembers, int node) {
-		long t=0;
-	    Set<Integer> neighbours = g.neighbors(node);
-	    Set<Integer> neighInComm = UtillsW.Intersection(commMembers, neighbours);
-	    for (int v : neighInComm){
-	        for (int u : neighInComm){
-	            if (u > v && g.get_edge_weight(u,v)>0){
-	                t++;
-	            }
-	        }
-	    }
-	    return t;
+	
+	// Calc the sum of weights of edges with nodes which v is in trianlges with, 
+    // without the nodes of the community 
+	private double calcVTWithoutComm(Set<Integer> commMembers, int node) {		
+		double weight = 0.0;
+		Set<Integer> nodesWithTriangle = metaData.g.VTriangles().get(node);
+		Set<Integer> nodesWithTriangleNotInComm = UtillsW.RemoveElements(nodesWithTriangle, commMembers);
+		// Go over the candidates, verify they close triangles, if so - take the weigths.
+		Integer[] arrCandidates = nodesWithTriangleNotInComm.toArray(new Integer[nodesWithTriangleNotInComm.size()]);        	
+    	
+		Set<Integer> alreadyAddedWeights = new HashSet<Integer>(); 
+		for(int i1 = 0 ; i1 < arrCandidates.length ; i1++){
+    		Integer v1 = arrCandidates[i1];
+    		boolean v1WasAdded = alreadyAddedWeights.contains(v1);
+    		for(int i2 = i1+1 ; i2 < arrCandidates.length ; i2++){        			
+				Integer v2 = arrCandidates[i2];
+				boolean v2WasAdded = alreadyAddedWeights.contains(v2);
+				// If they are neighbors - we have a triangle - and so we add the weights of their edges.
+				if (metaData.g.AreNeighbors(v1,v2)){
+					if (!v1WasAdded){
+						double WeightV1V = metaData.g.GetEdgeWeight(node,v1);
+						weight = weight + WeightV1V;
+						v1WasAdded = true;
+						alreadyAddedWeights.add(v1);
+					}
+					if (!v2WasAdded){
+						double WeightV2V = metaData.g.GetEdgeWeight(node,v2);
+						weight = weight + WeightV2V;
+						v2WasAdded = true;
+						alreadyAddedWeights.add(v2);
+					}
+				}
+    		}
+    	}
+    	return weight;
 	}
 	
+	
+	// For the given node and comm, we sum the weights of the triangles which the node has with
+	// nodes in the comm.
+	private double calcTWeights(Set<Integer> commMembers, int node) {
+				double t=0;
+			    Set<Integer> neighbours = metaData.g.neighbors(node);
+			    Set<Integer> neighInComm = UtillsW.Intersection(commMembers, neighbours);
+			    Integer[] arrNeighInComm = neighInComm.toArray(new Integer[neighInComm.size()]);
+	        	// Go over the neighbors
+	        	for(int i1 = 0 ; i1 < arrNeighInComm.length ; i1++){
+	        		Integer v1 = arrNeighInComm[i1];
+	        		double WeightV1V = metaData.g.GetEdgeWeight(v1,node);
+	        		for(int i2 = i1+1 ; i2 < arrNeighInComm.length ; i2++){        			
+						Integer v2 = arrNeighInComm[i2];
+						if (metaData.g.AreNeighbors(v1,v2)){
+							double WeightV2V = metaData.g.GetEdgeWeight(v2,node);
+							double WeightV1V2 = metaData.g.GetEdgeWeight(v2,v1);						
+							t= t + Math.min(
+									WeightV1V, Math.min(
+									WeightV2V, 
+									WeightV1V2)); 
+						}
+	        		}
+	        	}
+			    return t;
+			}
+
 	public Map<Integer,Set<Integer>> GetPartitionFromFile(String partFile) throws IOException{		
 		Map<Integer,Set<Integer>> comm2Nodes= new HashMap<Integer,Set<Integer>>();
 		List<String> lines= Files.readAllLines(Paths.get(partFile));		
@@ -438,7 +493,7 @@ public class NectarW {
 	    return comm2Nodes;
 	}
 	
-	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques4(TODOUndirectedWeightedGraphW G){
+	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques4(UndirectedWeightedGraphW G){
 		Set<Integer> hasComm = new HashSet<>();
 		boolean vHasComm=false;
 		Map<Integer,Set<Integer>> result = new HashMap<>();
@@ -491,7 +546,7 @@ public class NectarW {
 	    return result;
 	}
 	
-	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques3(TODOUndirectedWeightedGraphW G){
+	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques3(UndirectedWeightedGraphW G){
 		Set<Integer> hasComm = new HashSet<>();
 		boolean vHasComm=false;
 		Map<Integer,Set<Integer>> result = new HashMap<>();

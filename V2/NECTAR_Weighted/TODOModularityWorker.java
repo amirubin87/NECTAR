@@ -7,15 +7,15 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ModularityWorker implements Runnable {
+public class TODOModularityWorker implements Runnable {
 
 	    private Integer node;
 	    private double betta;
-	    private ModularityMetaData metaData;
+	    private TODOModularityMetaData metaData;
 	    private Set<Set<Integer>> changedComms;
 	    private AtomicInteger numOfStableNodes;
 	    
-	    public ModularityWorker(Integer n, double betta, ModularityMetaData metaData, Set<Set<Integer>> changedComms,
+	    public TODOModularityWorker(Integer n, double betta, TODOModularityMetaData metaData, Set<Set<Integer>> changedComms,
 	    		AtomicInteger numOfStableNodes){
 	        this.node=n;
 	        this.betta = betta;

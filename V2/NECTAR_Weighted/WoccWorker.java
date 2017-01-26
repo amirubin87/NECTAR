@@ -41,7 +41,7 @@ public class WoccWorker implements Runnable {
             Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
             Set<Integer> neighborComms = Find_Neighbor_Comms(node);
             for (Integer neighborComm : neighborComms){
-                double inc= Calc_WCC(neighborComm, node);
+                double inc= Calc_WOCC_Weighted(neighborComm, node);
                 comms_inc.put(neighborComm, inc);
             }
             Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
@@ -61,26 +61,35 @@ public class WoccWorker implements Runnable {
 	    return neighborComms;
 	    }
 	    
-	 // TODO support weight
-	    public double Calc_WCC(int comm, int  x){	    
-			Set<Integer> commMembers = metaData.com2nodes.get(comm);
-			long TxV = metaData.T.get(x);	    
+	    public double Calc_WOCC_Weighted(int comm, Integer x){	    
+	    	// The sum of the weights of the triangles which the node is in.
+			double TxV = metaData.g.TrianglesWeight().get(x);	    
 		    if (TxV==0){
 		        return 0;
 		    }
+	    			    
+	    	Set<Integer> commMembers = metaData.com2nodes.get(comm);			
 		    
-			long TxC = calcT(commMembers, x);	    
+	    	// The sum of the weights of the triangles which the node has with
+			// nodes in the comm.
+			double TxC = calcTWeights(commMembers, x);	    
 			if(TxC == 0){
 				return 0;
 			}
 			BigDecimal partA = new BigDecimal(TxC).divide(new BigDecimal(TxV),10, BigDecimal.ROUND_DOWN); 
-		    
-		    int VTxV = metaData.VT.get(x).size();
+		    			
+			// The sum of weights of edges between x and nodes which share 
+			// a triangle with x
+		    double VTxV = metaData.g.GetWeightOfEdgesWithTriangleInNode(x);
 		    if(VTxV == 0){
 				return 0;
 			}
-		    int VTxVnoC = calcVTWithoutComm(commMembers, x);	    
-		    double divesor = (double)(commMembers.size() +(VTxVnoC));	    
+		    // The sum of weights of edges between x and nodes which share 
+ 			// a triangle with x, except those in the community
+		    double VTxVnoC = calcVTWithoutComm(commMembers, x);	 
+		    
+		    double averageEdgeWeight = metaData.g.GetAverageEdgeWeight();
+		    double divesor = (double)(commMembers.size()*averageEdgeWeight +(VTxVnoC));	    
 		    if (divesor==0){
 		        return 0;
 		    }	    
@@ -90,23 +99,66 @@ public class WoccWorker implements Runnable {
 		    return ans;
 		    
 		}
-
-		private int calcVTWithoutComm(Set<Integer> commMembers, int node) {		
-			Set<Integer> nodesWithTriangle = metaData.VT.get(node);
-			return nodesWithTriangle.size() - UtillsW.IntersectionSize(nodesWithTriangle, commMembers);
+	    
+		// Calc the sum of weights of edges with nodes which v is in trianlges with, 
+	    // without the nodes of the community 
+	    private double calcVTWithoutComm(Set<Integer> commMembers, int node) {		
+			double weight = 0.0;
+			Set<Integer> nodesWithTriangle = metaData.g.VTriangles().get(node);
+			Set<Integer> nodesWithTriangleNotInComm = UtillsW.RemoveElements(nodesWithTriangle, commMembers);
+			// Go over the candidates, verify they close triangles, if so - take the weigths.
+			Integer[] arrCandidates = nodesWithTriangleNotInComm.toArray(new Integer[nodesWithTriangleNotInComm.size()]);        	
+	    	
+			Set<Integer> alreadyAddedWeights = new HashSet<Integer>(); 
+			for(int i1 = 0 ; i1 < arrCandidates.length ; i1++){
+	    		Integer v1 = arrCandidates[i1];
+	    		boolean v1WasAdded = alreadyAddedWeights.contains(v1);
+	    		for(int i2 = i1+1 ; i2 < arrCandidates.length ; i2++){        			
+					Integer v2 = arrCandidates[i2];
+					boolean v2WasAdded = alreadyAddedWeights.contains(v2);
+					// If they are neighbors - we have a triangle - and so we add the weights of their edges.
+					if (metaData.g.AreNeighbors(v1,v2)){
+						if (!v1WasAdded){
+							double WeightV1V = metaData.g.GetEdgeWeight(node,v1);
+							weight = weight + WeightV1V;
+							v1WasAdded = true;
+							alreadyAddedWeights.add(v1);
+						}
+						if (!v2WasAdded){
+							double WeightV2V = metaData.g.GetEdgeWeight(node,v2);
+							weight = weight + WeightV2V;
+							v2WasAdded = true;
+							alreadyAddedWeights.add(v2);
+						}
+					}
+	    		}
+	    	}
+	    	return weight;
 		}
 
-		private long calcT(Set<Integer> commMembers, int node) {
-			long t=0;
+		// For the given node and comm, we sum the weights of the triangles which the node has with
+		// nodes in the comm.
+		private double calcTWeights(Set<Integer> commMembers, int node) {
+			double t=0;
 		    Set<Integer> neighbours = metaData.g.neighbors(node);
 		    Set<Integer> neighInComm = UtillsW.Intersection(commMembers, neighbours);
-		    for (int v : neighInComm){
-		        for (int u : neighInComm){
-		            if (u > v && metaData.g.get_edge_weight(u,v)>0){
-		                t++;
-		            }
-		        }
-		    }
+		    Integer[] arrNeighInComm = neighInComm.toArray(new Integer[neighInComm.size()]);
+        	// Go over the neighbors
+        	for(int i1 = 0 ; i1 < arrNeighInComm.length ; i1++){
+        		Integer v1 = arrNeighInComm[i1];
+        		double WeightV1V = metaData.g.GetEdgeWeight(v1,node);
+        		for(int i2 = i1+1 ; i2 < arrNeighInComm.length ; i2++){        			
+					Integer v2 = arrNeighInComm[i2];
+					if (metaData.g.AreNeighbors(v1,v2)){
+						double WeightV2V = metaData.g.GetEdgeWeight(v2,node);
+						double WeightV1V2 = metaData.g.GetEdgeWeight(v2,v1);						
+						t= t + Math.min(
+								WeightV1V, Math.min(
+								WeightV2V, 
+								WeightV1V2)); 
+					}
+        		}
+        	}
 		    return t;
 		}
 	    

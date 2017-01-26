@@ -1,3 +1,9 @@
+Sanity cheks:
+a. weights = 1 and no weights - the same 
+b. 1 thred vs no threds - the same
+
+
+
 Input:
 	A list of undirected edges, tab or space delimited.
 	

@@ -113,6 +113,15 @@ public class UtillsW {
 		return copy;
 	}
 	
+	// Removes the elements of s2 from s1
+	public static <T> Set<T> RemoveElements(Set<T> s1, Set<T> s2) {
+		Set<T> ans = new HashSet<>();
+		for (T t : s1){
+			if(!s2.contains(t)){ ans.add(t);}
+		}
+		return ans;
+	}
+	
 
 	
 

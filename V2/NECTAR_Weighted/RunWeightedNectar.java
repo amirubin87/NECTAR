@@ -6,14 +6,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class RunNectar {
+public class RunWeightedNectar {
 
 	public static void main(String[] args) throws Exception {		
 		
 		long startTime = System.currentTimeMillis();
 		
-		if (args.length <2){
-			System.out.println("Input parameteres for NECTAR: "
+		if (false & args.length <2){
+			System.out.println("Input parameteres for NECTAR weighted: "
 					+ "pathToGraph  "
 					+ "outputPath  "
 					+ "betas=1.1,1.2,2.0,3.0  "
@@ -29,17 +29,17 @@ public class RunNectar {
 					+ "debug=false");
 		}
 		else{
-			String pathToGraph = "";
-			String outputPath = "";
-			double[] betas = {1.1,1.2,2.0,3.0};				
+			String pathToGraph = "C:/Temp/LesMiserables.txt";
+			String outputPath = "C:/Temp/WeightedNoThreads/";
+			double[] betas = {1.2,1.4,2.0,3.0};				
 			double alpha = 0.8;
 			int iteratioNumToStartMerge = 6;
 			int maxIterationsToRun = 20;
 			int firstPartMode = 0;
 			int percentageOfStableNodes = 95;
-			boolean runMultyThreaded = true;
-			int numOfThreads = 8;
-			boolean dynamicChoose = true;   
+			boolean runMultyThreaded = false;
+			int numOfThreads = 1;
+			boolean dynamicChoose = false;   
 			boolean useModularity = false;
 			boolean debug = false;
 			
@@ -75,7 +75,7 @@ public class RunNectar {
 				runMultyThreaded = Boolean.parseBoolean(args[8]);				
 			}
 			
-			if(args.length > 9){
+			if(runMultyThreaded & args.length > 9){
 				numOfThreads = Integer.parseInt(args[9]);				
 			}
 			
@@ -123,12 +123,12 @@ public class RunNectar {
 			 
 			if(!useModularity){
 				System.out.println("                         Using WOCC.");
-				NectarW nectarW = new NectarW(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);				
+				WeightedNectarW nectarW = new WeightedNectarW(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);				
 				nectarW.FindCommunities(runMultyThreaded, numOfThreads);
 			}
 			else{
 				System.out.println("                         Using Modularity.");
-				NectarQ nectarQ= new NectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun, percentageOfStableNodes, debug);
+				WeightedNectarQ nectarQ= new WeightedNectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun, percentageOfStableNodes, debug);
 				nectarQ.FindCommunities(runMultyThreaded, numOfThreads);			
 			}
 		}

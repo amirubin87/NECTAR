@@ -9,9 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WoccMetaData {
-	TODOUndirectedWeightedGraphW g;    
-    public Map<Integer, Long> T;
-    public Map<Integer, Set<Integer>> VT;  
+	UndirectedWeightedGraphW g;    
     public Map<Integer, Map<Integer, Integer>> Intersection_c1_c2;        
     public Map<Integer, Set<Integer>> com2nodes;
     public Map<Integer, Set<Integer>> node2coms;
@@ -19,18 +17,14 @@ public class WoccMetaData {
     //cons
     public WoccMetaData(){
     	Intersection_c1_c2 = new ConcurrentHashMap<Integer, Map<Integer, Integer>>();
-    	T = new ConcurrentHashMap<Integer, Long>();
-    	VT = new ConcurrentHashMap<Integer, Set<Integer>>();
     	com2nodes = new ConcurrentHashMap<Integer, Set<Integer>>();
     	node2coms = new ConcurrentHashMap<Integer, Set<Integer>>();
     }
     
-    public WoccMetaData(TODOUndirectedWeightedGraphW graph){        
+    public WoccMetaData(UndirectedWeightedGraphW graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g = graph;
-    	T = graph.Triangles();
-    	VT = graph.VTriangles();
     	Integer count = 0;
     
         for (Integer node : graph.nodes()){
@@ -48,9 +42,7 @@ public class WoccMetaData {
 
     /*public WoccMetaData(UndirectedUnweightedGraphW graph, Map<Integer,Set<Integer>> comms){
     	this(); 
-    	g = graph;
-    	T = graph.Triangles();   
-    	VT = graph.VTriangles(); 	
+    	g = graph;	
         for (Entry<Integer, Set<Integer>> comm :comms.entrySet()){
         	int commID =comm.getKey();
         	Set<Integer> nodes =comm.getValue();        
@@ -64,11 +56,9 @@ public class WoccMetaData {
         }
     }*/
     
-    public WoccMetaData(TODOUndirectedWeightedGraphW graph, Map<Integer,Set<Integer>> comms, boolean commsMayOverlap){
+    public WoccMetaData(UndirectedWeightedGraphW graph, Map<Integer,Set<Integer>> comms, boolean commsMayOverlap){
     	this(); 
     	g = graph;
-    	T = graph.Triangles();   
-    	VT = graph.VTriangles(); 
     	int maxCommIDSeen = 0;
     	int commID = 0;
         for (Entry<Integer, Set<Integer>> comm :comms.entrySet()){
@@ -117,8 +107,6 @@ public class WoccMetaData {
     
 	public WoccMetaData(WoccMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
-    	T=UtillsW.CopyMapIntLong(ORIGINALmetaData.T);
-    	VT=UtillsW.CopyMapIntSet(ORIGINALmetaData.VT);
     	Intersection_c1_c2 = UtillsW.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
     	com2nodes = UtillsW.CopyMapIntSet(ORIGINALmetaData.com2nodes);
     	node2coms = UtillsW.CopyMapIntSet(ORIGINALmetaData.node2coms);

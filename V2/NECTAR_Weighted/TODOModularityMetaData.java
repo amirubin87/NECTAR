@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class ModularityMetaData {
+public class TODOModularityMetaData {
 	TODOUndirectedWeightedGraphQ g;
     public double m;
     public Map<Integer, Double> K_v;
@@ -17,7 +17,7 @@ public class ModularityMetaData {
     public Map<Integer, Set<Integer>> node2coms;
     
     //cons
-    public ModularityMetaData(){
+    public TODOModularityMetaData(){
     	m=0;
     	K_v = new ConcurrentHashMap<Integer, Double>();
     	K_v_c = new ConcurrentHashMap <Integer, Map<Integer,Double>>();
@@ -27,7 +27,7 @@ public class ModularityMetaData {
     	node2coms = new ConcurrentHashMap <Integer, Set<Integer>>();
     }
     
-    public ModularityMetaData(TODOUndirectedWeightedGraphQ graph){        
+    public TODOModularityMetaData(TODOUndirectedWeightedGraphQ graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g=graph;
@@ -61,7 +61,7 @@ public class ModularityMetaData {
         }
     }
         
-    public ModularityMetaData(ModularityMetaData ORIGINALmetaData) {
+    public TODOModularityMetaData(TODOModularityMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
     	m= ORIGINALmetaData.m;
     	K_v = UtillsQ.CopyMapIntDouble(ORIGINALmetaData.K_v);

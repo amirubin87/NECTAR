@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-public class NectarQ {
-	public ModularityMetaData ORIGINALmetaData;
-	public ModularityMetaData metaData;
+public class WeightedNectarQ {
+	public TODOModularityMetaData ORIGINALmetaData;
+	public TODOModularityMetaData metaData;
 	public TODOUndirectedWeightedGraphQ g;
 	public double[] betas;
 	public double alpha;
@@ -34,7 +34,7 @@ public class NectarQ {
 	private int percentageOfStableNodes;
 	private boolean debug;
 	
-	public NectarQ(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean debug) throws IOException{
+	public WeightedNectarQ(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean debug) throws IOException{
 		
 		
 		this.startTime = System.currentTimeMillis();
@@ -51,7 +51,7 @@ public class NectarQ {
 		this.g = new TODOUndirectedWeightedGraphQ(Paths.get(pathToGraph));
 		TakeTime();
 		TakeTime();
-		this.ORIGINALmetaData = new ModularityMetaData(g);
+		this.ORIGINALmetaData = new TODOModularityMetaData(g);
 		TakeTime();		
 	}
 	
@@ -70,7 +70,7 @@ public class NectarQ {
 			System.out.println("                       Input: " + pathToGraph);
 			System.out.println("                       betta: " + betta);
 			// Create a copy of the original meta data
-			metaData = new ModularityMetaData(ORIGINALmetaData);
+			metaData = new TODOModularityMetaData(ORIGINALmetaData);
 			Map<Integer,Set<Integer>> comms;
 			if(runMultyThreaded){
 				//1
@@ -147,7 +147,7 @@ public class NectarQ {
 	private void SetCommsForNodesMultyThreaded(int threads, double betta, Set<Set<Integer>> changedComms, AtomicInteger numOfStableNodes) {
 		ExecutorService executor = Executors.newFixedThreadPool(threads);
 		for (Integer node : g.nodes()){            
-		    Runnable worker = new ModularityWorker(node, betta, metaData, changedComms, numOfStableNodes);
+		    Runnable worker = new TODOModularityWorker(node, betta, metaData, changedComms, numOfStableNodes);
 		    executor.execute(worker);
 		}
 		executor.shutdown();
