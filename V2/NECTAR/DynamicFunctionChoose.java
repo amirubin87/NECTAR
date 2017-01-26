@@ -1,10 +1,7 @@
 package NECTAR;
 
-import java.io.File;
 import java.io.InputStream;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-
 import weka.classifiers.Classifier;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
@@ -15,14 +12,14 @@ public class DynamicFunctionChoose {
 	public static boolean shouldUseModularity(double[] features) throws Exception {
 		Classifier cls = 
 				(Classifier) weka.core.SerializationHelper.read((InputStream) Classifier.class.getResourceAsStream("/NECTAR/NECTARRandomTree.model"));		 		 
-		 ArrayList<Attribute> atts = new ArrayList<Attribute>(7);
+		 ArrayList<Attribute> atts = new ArrayList<Attribute>(6);
 		 	
 		 ArrayList<String> classVal = new ArrayList<String>();
 		        classVal.add("0");
 		        classVal.add("1");
 	        
 	        atts.add(new Attribute("averageDegree"));
-	        atts.add(new Attribute("density"));
+	        //atts.add(new Attribute("density"));
 	        atts.add(new Attribute("avergaeTrianglesRate"));
 	        atts.add(new Attribute("ratioOfNodesInTriangles"));
 	        atts.add(new Attribute("GCC"));

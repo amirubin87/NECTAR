@@ -21,7 +21,7 @@ public class UtillsW {
     	Set<Integer> small = new HashSet<Integer>();
     	Set<Integer> ans = new HashSet<>();
     	synchronized (set1) {
-    	    small = new HashSet(set1); //preferably use generics
+    	    small = new HashSet<Integer>(set1); //preferably use generics
     	}		
 		Set<Integer> big = set2;
 		if(set2.size() < set1.size()){

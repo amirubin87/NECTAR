@@ -158,7 +158,7 @@ public class WoccMetaData {
         		if (intersection == null){
         			intersection =1;
         		}
-        		Intersection_c1_c2.get(min).put(max, -1);
+        		Intersection_c1_c2.get(min).put(max, intersection-1);
         	}
         }		
 	}
@@ -189,9 +189,7 @@ public class WoccMetaData {
 		        	intersectionSize = 0;
 		        }   
 		        
-		        intersectionSize++;
-		    
-		        lowCommDic.put(highComm, intersectionSize);
+		        lowCommDic.put(highComm, intersectionSize +1);
 	    	}
 	    }
 	}
@@ -298,7 +296,7 @@ public class WoccMetaData {
         
 	}
                     
-	private void SymbolicClearComm(Integer comm){    	
+	/*private void SymbolicClearComm(Integer comm){    	
     	Set<Integer> nodes = Collections.synchronizedSet(new HashSet<Integer>(com2nodes.get(comm)));
     	for (Integer node: nodes){
     		SymbolicRemoveNodeFromComm(node, comm);
@@ -313,6 +311,6 @@ public class WoccMetaData {
 	private void SymbolicAddNodeToComm(Integer node, Integer comm) {
 		node2coms.get(node).add(comm);
 		com2nodes.get(comm).add(node);		
-	}
+	}*/
 
 }

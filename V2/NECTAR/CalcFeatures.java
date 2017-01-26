@@ -28,12 +28,9 @@ public class CalcFeatures {
 		
 		double numOfConnectedTriplets = triCount[1];
 		
-		long numOfCouples = (long)NumOfNodes*(long)(NumOfNodes-1);
-		
 		double numOfNodes = NumOfNodes;		 
 		double numOfEdges = edges.size();
-		double averageDegree = (2*numOfEdges)/numOfNodes;		
-		double density =numOfEdges*2/numOfCouples;		
+		double averageDegree = (2*numOfEdges)/numOfNodes;
 		double numOfNodesInTriangles = triCount[2];				
 		double numOfTriangles = triCount[0];
 		double avergaeTrianglesRate = numOfTriangles/numOfNodes;
@@ -46,7 +43,6 @@ public class CalcFeatures {
 		
 		return new double[] {
 				averageDegree,
-				density,
 				avergaeTrianglesRate,
 				ratioOfNodesInTriangles,
 				GCC,

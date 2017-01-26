@@ -56,7 +56,11 @@ public class UndirectedUnweightedGraphW {
 	}
 	
 	public String toString() {		
-		return "Num of nodes: " + nodes.size() + " . Num of edges: " + number_of_edges;
+		return "Num of nodes: " + nodes.size()
+		+ " .\n Num of edges: " + number_of_edges
+		+ " .\n T: " + T
+		+ " .\n VT: " + VT		
+		+ " .\n\n";
 	}
 	
 	private double ClustringPerNode(Integer node) {

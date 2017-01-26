@@ -47,7 +47,7 @@ public class NectarW {
 		this.pathToGraph = pathToGraph;		
 		this.debug = debug;
 		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));		
-		
+						
 		TakeTime();
 		
 		Map<Integer, Set<Integer>> firstPart;
@@ -91,7 +91,8 @@ public class NectarW {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;		
-		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));		
+		this.g = new UndirectedUnweightedGraphW(Paths.get(pathToGraph));	
+		
 		TakeTime();
 		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);
 		TakeTime();		
@@ -222,7 +223,8 @@ public class NectarW {
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException {
-	    int numOfStableNodes = 0;
+	    
+		int numOfStableNodes = 0;
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
 	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;
@@ -236,16 +238,18 @@ public class NectarW {
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
 	    	amountOfScans++;
-	    	for (Integer node : g.nodes()){
+	    	for (Integer node : g.nodes()){	  
+	            
 	    		////////////////////////////////////   Section 1
 	    		startTime = System.currentTimeMillis();
 	            Set<Integer> c_v_original = metaData.node2coms.get(node);	            
 	            metaData.ClearCommsOfNode(node);
 	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
 	            Set<Integer> neighborComms = Find_Neighbor_Comms(node);
-	            for (Integer neighborComm : neighborComms){
+	            for (Integer neighborComm : neighborComms){	            	
 	                double inc= Calc_WCC(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);
+	              
 	            }	            
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	            
@@ -269,7 +273,7 @@ public class NectarW {
 	            }
 	            Sec3Time += (System.currentTimeMillis() - startTime);
 	            
-	        }
+	        }	    	
         }    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
@@ -396,7 +400,7 @@ public class NectarW {
 	    }	    
 	    BigDecimal partB = new BigDecimal(VTxV).divide(new BigDecimal(divesor),10, BigDecimal.ROUND_DOWN);	
 	    double ans = (partA.multiply(partB)).doubleValue();
-	    
+	    	 
 	    return ans;
 	    
 	}
