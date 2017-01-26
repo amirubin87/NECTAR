@@ -29,10 +29,10 @@ public class RunWeightedNectar {
 					+ "debug=false");
 		}
 		else{
-			String pathToGraph = "C:/Temp/LesMiserables.txt";
-			String outputPath = "C:/Temp/WeightedNoThreads/";
-			double[] betas = {1.2,1.4,2.0,3.0};				
-			double alpha = 0.8;
+			String pathToGraph = "C:/Users/t-amirub/OneDrive/PhD/Data/Genes/0.18edgeList.txt";
+			String outputPath = "C:/Users/t-amirub/OneDrive/PhD/Data/Genes/output/NECTAR_W/0.18P1000/";
+			double[] betas = {1,1.1,1.05,1.2,1.4,2.0,3.0};				
+			double alpha = 0.9;
 			int iteratioNumToStartMerge = 6;
 			int maxIterationsToRun = 20;
 			int firstPartMode = 0;
@@ -123,7 +123,7 @@ public class RunWeightedNectar {
 			 
 			if(!useModularity){
 				System.out.println("                         Using WOCC.");
-				WeightedNectarW nectarW = new WeightedNectarW(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);				
+				WeightedNectarWOCC nectarW = new WeightedNectarWOCC(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);				
 				nectarW.FindCommunities(runMultyThreaded, numOfThreads);
 			}
 			else{

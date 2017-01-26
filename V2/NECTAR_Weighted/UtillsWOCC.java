@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map.Entry;
 
-public class UtillsW {
+public class UtillsWOCC {
 	
 	 
     public static int IntersectionSize(Set<Integer> set1, Set<Integer> set2) {			

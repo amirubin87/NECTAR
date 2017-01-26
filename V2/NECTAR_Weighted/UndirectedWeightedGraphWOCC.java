@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class UndirectedWeightedGraphW {	
+public class UndirectedWeightedGraphWOCC {	
 	private Set<Integer> nodes;
 	// For node v, neighbors[v] is the set of v's neighbors
 	private Map<Integer,Set<Integer>> neighbors;
@@ -38,7 +38,7 @@ public class UndirectedWeightedGraphW {
 	private double sum_of_weights;
 	
 	
-	public UndirectedWeightedGraphW(Path p) throws IOException{
+	public UndirectedWeightedGraphWOCC(Path p) throws IOException{
 		List<String> lines= Files.readAllLines(p,StandardCharsets.UTF_8);
 		System.out.println("All graph lines read.");
 		nodes = Collections.synchronizedSet(new HashSet<Integer>());

@@ -105,7 +105,7 @@ public class WoccWorker implements Runnable {
 	    private double calcVTWithoutComm(Set<Integer> commMembers, int node) {		
 			double weight = 0.0;
 			Set<Integer> nodesWithTriangle = metaData.g.VTriangles().get(node);
-			Set<Integer> nodesWithTriangleNotInComm = UtillsW.RemoveElements(nodesWithTriangle, commMembers);
+			Set<Integer> nodesWithTriangleNotInComm = UtillsWOCC.RemoveElements(nodesWithTriangle, commMembers);
 			// Go over the candidates, verify they close triangles, if so - take the weigths.
 			Integer[] arrCandidates = nodesWithTriangleNotInComm.toArray(new Integer[nodesWithTriangleNotInComm.size()]);        	
 	    	
@@ -141,7 +141,7 @@ public class WoccWorker implements Runnable {
 		private double calcTWeights(Set<Integer> commMembers, int node) {
 			double t=0;
 		    Set<Integer> neighbours = metaData.g.neighbors(node);
-		    Set<Integer> neighInComm = UtillsW.Intersection(commMembers, neighbours);
+		    Set<Integer> neighInComm = UtillsWOCC.Intersection(commMembers, neighbours);
 		    Integer[] arrNeighInComm = neighInComm.toArray(new Integer[neighInComm.size()]);
         	// Go over the neighbors
         	for(int i1 = 0 ; i1 < arrNeighInComm.length ; i1++){

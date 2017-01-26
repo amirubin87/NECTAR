@@ -1,5 +1,6 @@
 package NECTAR_Weighted;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,10 +21,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.netlib.util.booleanW;
-
-public class WeightedNectarW {
-	UndirectedWeightedGraphW g;
+public class WeightedNectarWOCC {
+	UndirectedWeightedGraphWOCC g;
 	public double[] betas;
 	public double alpha;
 	public String outputPath;
@@ -37,7 +36,7 @@ public class WeightedNectarW {
 	public long startTime;
 	private boolean debug;
 	
-	public WeightedNectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
+	public WeightedNectarWOCC(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
 		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));		
 		this.startTime = System.currentTimeMillis();
 		this.percentageOfStableNodes= percentageOfStableNodes;
@@ -48,7 +47,7 @@ public class WeightedNectarW {
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;		
 		this.debug = debug;
-		this.g = new UndirectedWeightedGraphW(Paths.get(pathToGraph));		
+		this.g = new UndirectedWeightedGraphWOCC(Paths.get(pathToGraph));		
 
 		Map<Integer, Set<Integer>> firstPart;
 		System.out.println("Get first part");
@@ -81,7 +80,7 @@ public class WeightedNectarW {
 		}
 	}
 	
-	public WeightedNectarW(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{		
+	public WeightedNectarWOCC(String pathToGraph, String pathToPartition, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{		
 		if(debug)
 			this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));
 		this.percentageOfStableNodes= percentageOfStableNodes;
@@ -91,7 +90,7 @@ public class WeightedNectarW {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;		
-		this.g = new UndirectedWeightedGraphW(Paths.get(pathToGraph));		
+		this.g = new UndirectedWeightedGraphWOCC(Paths.get(pathToGraph));		
 				
 		TakeTime();
 		Map<Integer, Set<Integer>> firstPart = GetPartitionFromFile(pathToPartition);
@@ -171,7 +170,6 @@ public class WeightedNectarW {
 	    for (Entry<Integer[],Double > c1c2intersectionRate : commsCouplesIntersectionRatio.entrySet()){	    	
 	        if(c1c2intersectionRate.getValue()>alpha){
 	        	Integer[] c1c2 = c1c2intersectionRate.getKey();
-	        	//System.out.println("          MERGED" + c1c2intersectionRate.getValue());
 	        	MergeComms(c1c2);
 	        	haveMergedComms = true;
 	        }
@@ -221,6 +219,7 @@ public class WeightedNectarW {
 		}	
 	}
 	
+	// The reason we keep this non-threaded version is performance, and our ability to measure the time it takes to perform the different parts.
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException {
 	    int numOfStableNodes = 0;
 	    int amountOfScans = 0;
@@ -261,16 +260,23 @@ public class WeightedNectarW {
         		///////////////////////////////////////    Section 3
 	            startTime = System.currentTimeMillis();
 	            if(shouldMergeComms){
-	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio,amountOfScans);
+	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio);
 	            }	            
 	            
 	            if (!haveMergedComms && c_v_new.equals(c_v_original)){
 	            	numOfStableNodes++;
 	            }
+	            
 	            Sec3Time += (System.currentTimeMillis() - startTime);
 	            
-	        }	    	
+	        }  	
+            
         }    
+	    // If we havent meged any communities- we should do so in the end.
+	    if(amountOfScans<=iteratioNumToStartMerge){
+	    	FindAndMergeComms(metaData.GetIntersectionBetweenAllComms());
+		}
+	    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
 	    }	   
@@ -280,19 +286,7 @@ public class WeightedNectarW {
 		    runTimeLog.println(Sec3Time/(1000));
 	    }
 	    return metaData.com2nodes;
-	}	  
-	
-	private boolean FindAndMergeComms (Map<Integer[],Double> commsCouplesIntersectionRatio, int amountOfScans){
-	    boolean haveMergedComms = false;
-	    for (Entry<Integer[],Double > c1c2intersectionRate : commsCouplesIntersectionRatio.entrySet()){	    	
-	    	if(c1c2intersectionRate.getValue()>alpha){
-	        	Integer[] c1c2 = c1c2intersectionRate.getKey();
-	        	MergeComms(c1c2);
-	        	haveMergedComms = true;
-	        }
-	    }
-	    return haveMergedComms;
-	}
+	}	
 
 	private void MergeComms(Integer[] commsToMerge){
 		Integer c1 = commsToMerge[0];
@@ -330,11 +324,20 @@ public class WeightedNectarW {
     return neighborComms;
     }
 	
-	private void WriteToFile(Map<Integer, Set<Integer>> comms, double betta) throws FileNotFoundException, UnsupportedEncodingException {
+	private void WriteToFile(Map<Integer, Set<Integer>> comms, double betta) throws IOException {
+		File files = new File(outputPath);
+        if (!files.exists()) {
+            if (!files.mkdirs()) {
+            	throw new IOException ("Failed to create directories fot the given output path: " + outputPath);
+            }
+        }
+
 		PrintWriter writer = new PrintWriter(outputPath + betta + ".txt", "UTF-8");
-		for ( Set<Integer> listOfNodes : comms.values()){
+		for ( Set<Integer> listOfNodes : comms.values()){			
 			if(listOfNodes.size()>2){
-				for(int node : listOfNodes){
+				List<Integer> list = new ArrayList<Integer>(listOfNodes);
+				  Collections.sort(list);
+				for(int node : list){
 					writer.print(node + " ");
 				}
 				writer.println("");
@@ -343,7 +346,7 @@ public class WeightedNectarW {
 		writer.close();	
 	}
 
-	public static Map<Integer,Set<Integer>> GetFirstPartition(UndirectedWeightedGraphW G){
+	public static Map<Integer,Set<Integer>> GetFirstPartition(UndirectedWeightedGraphWOCC G){
 		Map<Integer,Set<Integer>> result = new HashMap<>();
 		Map<Integer, Double> CC = G.WeightedClustring();		
 	    Map<Integer, Double> sorted_CC = MapUtil.sortByValue(CC);
@@ -372,7 +375,7 @@ public class WeightedNectarW {
 	    return result;
 	}
 	
-	// TODO - this is the same code as in the worker - must be removed...
+	// TODO - this is the same code as in the worker - should be refactored...
 	public double Calc_WOCC_Weighted(int comm, Integer x){	    
     	// The sum of the weights of the triangles which the node is in.
 		double TxV = metaData.g.TrianglesWeight().get(x);	    
@@ -417,7 +420,7 @@ public class WeightedNectarW {
 	private double calcVTWithoutComm(Set<Integer> commMembers, int node) {		
 		double weight = 0.0;
 		Set<Integer> nodesWithTriangle = metaData.g.VTriangles().get(node);
-		Set<Integer> nodesWithTriangleNotInComm = UtillsW.RemoveElements(nodesWithTriangle, commMembers);
+		Set<Integer> nodesWithTriangleNotInComm = UtillsWOCC.RemoveElements(nodesWithTriangle, commMembers);
 		// Go over the candidates, verify they close triangles, if so - take the weigths.
 		Integer[] arrCandidates = nodesWithTriangleNotInComm.toArray(new Integer[nodesWithTriangleNotInComm.size()]);        	
     	
@@ -454,7 +457,7 @@ public class WeightedNectarW {
 	private double calcTWeights(Set<Integer> commMembers, int node) {
 				double t=0;
 			    Set<Integer> neighbours = metaData.g.neighbors(node);
-			    Set<Integer> neighInComm = UtillsW.Intersection(commMembers, neighbours);
+			    Set<Integer> neighInComm = UtillsWOCC.Intersection(commMembers, neighbours);
 			    Integer[] arrNeighInComm = neighInComm.toArray(new Integer[neighInComm.size()]);
 	        	// Go over the neighbors
 	        	for(int i1 = 0 ; i1 < arrNeighInComm.length ; i1++){
@@ -493,7 +496,7 @@ public class WeightedNectarW {
 	    return comm2Nodes;
 	}
 	
-	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques4(UndirectedWeightedGraphW G){
+	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques4(UndirectedWeightedGraphWOCC G){
 		Set<Integer> hasComm = new HashSet<>();
 		boolean vHasComm=false;
 		Map<Integer,Set<Integer>> result = new HashMap<>();
@@ -511,13 +514,13 @@ public class WeightedNectarW {
 	    			break;
 	    		}
 	    		if(!hasComm.contains(u)){
-	    			Set<Integer> UVNeigh= UtillsW.Intersection(vNeigh, G.neighbors(u));
+	    			Set<Integer> UVNeigh= UtillsWOCC.Intersection(vNeigh, G.neighbors(u));
 	    			for(int w:UVNeigh){
 	    				if(vHasComm || w<u){
 	    	    			break;
 	    	    		}
 	    				if(!hasComm.contains(w)){	
-	    					for(int z : UtillsW.Intersection(UVNeigh, G.neighbors(w))){
+	    					for(int z : UtillsWOCC.Intersection(UVNeigh, G.neighbors(w))){
 	    						if(vHasComm  || z<w){
 	    			    			break;
 	    			    		}
@@ -546,7 +549,7 @@ public class WeightedNectarW {
 	    return result;
 	}
 	
-	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques3(UndirectedWeightedGraphW G){
+	public static Map<Integer,Set<Integer>> GetFirstPartitionCliques3(UndirectedWeightedGraphWOCC G){
 		Set<Integer> hasComm = new HashSet<>();
 		boolean vHasComm=false;
 		Map<Integer,Set<Integer>> result = new HashMap<>();
@@ -564,7 +567,7 @@ public class WeightedNectarW {
 	    			break;
 	    		}
 	    		if(!hasComm.contains(u)){
-	    			Set<Integer> UVNeigh= UtillsW.Intersection(vNeigh, G.neighbors(u));
+	    			Set<Integer> UVNeigh= UtillsWOCC.Intersection(vNeigh, G.neighbors(u));
 	    			for(int w:UVNeigh){
 	    				if(vHasComm){
 	    	    			break;

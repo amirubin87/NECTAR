@@ -9,7 +9,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WoccMetaData {
-	UndirectedWeightedGraphW g;    
+	UndirectedWeightedGraphWOCC g;    
     public Map<Integer, Map<Integer, Integer>> Intersection_c1_c2;        
     public Map<Integer, Set<Integer>> com2nodes;
     public Map<Integer, Set<Integer>> node2coms;
@@ -21,7 +21,7 @@ public class WoccMetaData {
     	node2coms = new ConcurrentHashMap<Integer, Set<Integer>>();
     }
     
-    public WoccMetaData(UndirectedWeightedGraphW graph){        
+    public WoccMetaData(UndirectedWeightedGraphWOCC graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g = graph;
@@ -56,7 +56,7 @@ public class WoccMetaData {
         }
     }*/
     
-    public WoccMetaData(UndirectedWeightedGraphW graph, Map<Integer,Set<Integer>> comms, boolean commsMayOverlap){
+    public WoccMetaData(UndirectedWeightedGraphWOCC graph, Map<Integer,Set<Integer>> comms, boolean commsMayOverlap){
     	this(); 
     	g = graph;
     	int maxCommIDSeen = 0;
@@ -82,7 +82,7 @@ public class WoccMetaData {
         			int AcommId = AcommIdAndNodes.getKey();
         			int BcommId = BcommIdAndNodes.getKey();
         			if (AcommId < BcommId){
-        				int intersectionSize = UtillsW.IntersectionSize(AcommIdAndNodes.getValue(), BcommIdAndNodes.getValue());
+        				int intersectionSize = UtillsWOCC.IntersectionSize(AcommIdAndNodes.getValue(), BcommIdAndNodes.getValue());
         				Map<Integer, Integer> AcommDictionary = Intersection_c1_c2.get(AcommId);
         				AcommDictionary.put(BcommId, intersectionSize);
         			}
@@ -107,16 +107,16 @@ public class WoccMetaData {
     
 	public WoccMetaData(WoccMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
-    	Intersection_c1_c2 = UtillsW.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
-    	com2nodes = UtillsW.CopyMapIntSet(ORIGINALmetaData.com2nodes);
-    	node2coms = UtillsW.CopyMapIntSet(ORIGINALmetaData.node2coms);
+    	Intersection_c1_c2 = UtillsWOCC.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
+    	com2nodes = UtillsWOCC.CopyMapIntSet(ORIGINALmetaData.com2nodes);
+    	node2coms = UtillsWOCC.CopyMapIntSet(ORIGINALmetaData.node2coms);
 	}
 
 	public void ClearCommsOfNode(Integer node){
     	Set<Integer> commsSet = node2coms.get(node); 
     	
     	//update intersection ratio
-    	UpdateIntersectionRatioRemove(commsSet);   
+    	UpdateIntersectionSizeRemove(commsSet);   
     	
     	//Symbolic change
         for(Integer comm : commsSet){
@@ -126,7 +126,7 @@ public class WoccMetaData {
         node2coms.put(node, Collections.synchronizedSet(new HashSet<Integer>()));
     }
    
-	private void UpdateIntersectionRatioRemove(Set<Integer> c_v) {
+	private void UpdateIntersectionSizeRemove(Set<Integer> c_v) {
 		// Intersection size update
         Integer[] comms = new Integer[c_v.size()];
         int k = 0;
@@ -146,19 +146,15 @@ public class WoccMetaData {
         		if (intersection == null){
         			intersection =1;
         		}
-        		Intersection_c1_c2.get(min).put(max, -1);
+        		intersection--;
+        		Intersection_c1_c2.get(min).put(max, intersection);
         	}
         }		
 	}
 	
-	private void UpdateIntersectionRatioAdd(Set<Integer> c_v) {
+	private void UpdateIntersectionAdd(Set<Integer> c_v) {
 		// Update Intersection_c1_c2
-        Integer[] commsArray = new Integer[c_v.size()];
-        int k = 0;
-        for(Integer comm : c_v){
-        	commsArray[k] = comm;
-        	k++;      	
-        }
+        Integer[] commsArray = c_v.toArray( new Integer[c_v.size()]);        
         
 	    for (int i = 0; i <commsArray.length ; i++){
 	    	for (int j = i+1; j < commsArray.length ; j++){
@@ -186,11 +182,11 @@ public class WoccMetaData {
 
 	public Map<Integer[],Double> SetCommsForNode(Integer node, Set<Integer> comms, boolean shouldMergeComms, boolean calcOutput){		
     	// When going to Multy thread todo - arrange this method!
-		UpdateIntersectionRatioAdd(comms);
+		UpdateIntersectionAdd(comms);
 		
 		Map<Integer[],Double> commsCouplesIntersectionRatio = new ConcurrentHashMap<Integer[],Double>();
 	    
-		// Find intersection ration for merge
+		// Find intersection ratio for merge
         Integer[] commsArray = new Integer[comms.size()];
         int k = 0;
         for(Integer comm : comms){
@@ -211,19 +207,38 @@ public class WoccMetaData {
 		    		int y = commsArray[j];
 		    		Integer lowComm = Math.min(x, y);
 		    		Integer highComm = Math.max(x, y);
-			        double intersectionRatio = (double)Intersection_c1_c2.get(lowComm).get(highComm)/(double)Math.min(com2nodes.get(lowComm).size(), com2nodes.get(highComm).size());
+			        double intersectionRatio = (double)Intersection_c1_c2.get(lowComm).get(highComm)/(double)Math.max(com2nodes.get(lowComm).size(), com2nodes.get(highComm).size());
 			        Integer[] sortedComms= new Integer[]{lowComm,highComm};
 			        commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
 		    	}
 		    }
-        }
-	    
+        }	    
 
 	    return commsCouplesIntersectionRatio;
     }
 	
+	public Map<Integer[],Double> GetIntersectionBetweenAllComms(){
+		Map<Integer[],Double> commsCouplesIntersectionRatio = new ConcurrentHashMap<Integer[],Double>();
+		
+		for (Integer lowComm : Intersection_c1_c2.keySet()){
+			Map<Integer,Integer> highCommIntersection = Intersection_c1_c2.get(lowComm);
+			Integer highCommSize = com2nodes.get(lowComm).size();
+	    	for (Entry<Integer, Integer> entry: highCommIntersection.entrySet()){
+	    		Integer highComm = entry.getKey();
+	    		// This is important - the intersection ration is devide by the MAX!
+		        double intersectionRatio = (double)entry.getValue()/(double)Math.max(highCommSize, com2nodes.get(highComm).size());
+		        Integer[] sortedComms= new Integer[]{lowComm,highComm};
+		        if (intersectionRatio > 0){
+		        	commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
+		        }
+			}
+		}
+		
+		return commsCouplesIntersectionRatio;
+	}
+	
 	public void SetCommsForNodeNoMergeForWorker(Integer node, Set<Integer> comms){
-		UpdateIntersectionRatioAdd(comms);
+		UpdateIntersectionAdd(comms);
 		
 		// Symbolic add
 	    for (Integer comm : comms){
