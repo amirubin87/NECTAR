@@ -52,7 +52,10 @@ public class UndirectedWeightedGraphWOCC {
 			Integer v = Integer.parseInt(parts[0].trim());
 			Integer u = Integer.parseInt(parts[1].trim());
 			Double w = 1.0;
-			if(parts.length>2) w = Double.parseDouble(parts[2].trim());
+			//TODO - change this back to Double.parseDouble(parts[2].trim());
+			if(parts.length>2) w = Math.pow(10.0, 10*Double.parseDouble(parts[2].trim()));
+			//if(parts.length>2) w = Double.parseDouble(parts[2].trim());
+			
 			int max = Math.max(u, v);
 			if(max>MaxNodeId){
 				MaxNodeId=max;
