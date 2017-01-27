@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,8 +53,15 @@ public class WeightedNectarWOCC {
 		Map<Integer, Set<Integer>> firstPart;
 		System.out.println("Get first part");
 		if (firstPartMode == 0){
-			firstPart = GetFirstPartition(g);
+			firstPart = GetFirstPartition(g);			
 		}
+		
+		else if (firstPartMode == 1){
+			// Note that we use the beta given to us first in betas!
+			firstPart = GetFirstPartitionDenseGraph(g,betas[0]);
+			
+		}
+		
 		else if (firstPartMode == 3){
 			firstPart = GetFirstPartitionCliques3(g);
 		}
@@ -63,9 +71,12 @@ public class WeightedNectarWOCC {
 		else{
 			throw new RuntimeException("param firstPartMode must be on of 0=CC, 3=clique 3, 4=clique 4");
 		}	
+		//TODO remove
+		System.out.println(firstPart.size());
+		System.out.println(firstPart);
 		TakeTime();
 		System.out.println("Get meta data");
-		boolean commsMayOverlap = (firstPartMode != 0);
+		boolean commsMayOverlap = (firstPartMode >1);
 		this.ORIGINALmetaData = new WoccMetaData(g,firstPart, commsMayOverlap);
 		TakeTime();
 		this.metaData = this.ORIGINALmetaData;		
@@ -236,7 +247,7 @@ public class WeightedNectarWOCC {
 	    long Sec2Time = 0;
 	    long Sec3Time = 0;	    	    
 	    
-	    while (amountOfScans <5 || (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
+	    while (amountOfScans <3 || (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
 	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iter: " + amountOfScans);
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
@@ -252,8 +263,8 @@ public class WeightedNectarWOCC {
 	                double inc= Calc_WOCC_Weighted(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);	              
 	            }	
-	            
-	            boolean includeBestComm = true; 
+	            // TODO - make true, or add a user param to control this.
+	            boolean includeBestComm = true;//Math.random() < 0.5; 
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta, includeBestComm);
 	            
 	            Sec1Time += (System.currentTimeMillis() - startTime);
@@ -323,7 +334,8 @@ public class WeightedNectarWOCC {
 	    }	    
        	for(Entry<Integer, Double> entry: comms_imps.entrySet()){
 	    		 if (entry.getValue()*betta >= bestImp){
-	    			 if (includeBestComm | entry.getValue() != bestImp){
+	    			 // If we dont want to take the best comm, we only take those who are less than it.
+	    			 if (includeBestComm | entry.getValue() < bestImp){
 	    				 bestComms.add(entry.getKey());
 	    			 }
 	    		 }
@@ -384,6 +396,45 @@ public class WeightedNectarWOCC {
 	                    result.get(commID).add(neigh);
 	                }
 	            }
+	            commID+=1;
+	        }
+	    }
+	    
+	    return result;
+	}
+	
+	public static Map<Integer,Set<Integer>> GetFirstPartitionDenseGraph(UndirectedWeightedGraphWOCC G, double beta){
+		Map<Integer,Set<Integer>> result = new HashMap<>();
+		Map<Integer, Double> CC = G.WeightedClustring();		
+	    Map<Integer, Double> sorted_CC = MapUtil.sortByValue(CC);	    
+	    boolean[] isVisited = new boolean[G.maxNodeId()+1];	    
+	    int commID=0;	    
+	    for (int v : sorted_CC.keySet()){	    	
+	        if (!isVisited[v]){
+	            isVisited[v]= true;
+	            Set<Integer> vSet = new HashSet<>();
+	            vSet.add(v);
+	            result.put(commID, vSet);
+	            // Only take the best neighbors, which was not visited:
+	            // First, take the neigh not visited and the edges weight.
+	            Map<Integer, Double> nonVisitedNeighbors = new HashMap<Integer, Double>();
+	            double maxW = 0.0;
+	            for(int  neigh : G.neighbors(v)){
+	            	if (!isVisited[neigh]){
+	            		double w = G.GetEdgeWeight(v, neigh);
+	            		nonVisitedNeighbors.put(neigh, w);	
+	            		maxW = Math.max(maxW, w);
+	                }
+	            }
+	            //Now take only those close enough to the best, according to beta	            
+	            for( Entry<Integer, Double> entry : nonVisitedNeighbors.entrySet()){
+	            	Double w = entry.getValue();
+	            	if (w*beta >= maxW){
+		            	Integer neigh = entry.getKey();
+		            	isVisited[neigh]= true;
+		            	result.get(commID).add(neigh);
+	            	}	            	
+	            }	            
 	            commID+=1;
 	        }
 	    }
