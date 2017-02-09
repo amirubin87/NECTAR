@@ -188,8 +188,7 @@ public class RunWeightedNectar_bulk {
 					System.out.println("relevantNodes to this bulk " + relevantNodes.size());
 					System.out.println("EdgesForNectar in total    " + EdgesForNectar.size());
 					System.out.println("nodesSeen in total         " + nodesSeen.size());					
-					System.out.println("partitionSize              " + (partitionForNectar!=null ? partitionForNectar.size() : 0));
-					System.out.println("partitionForNectar         " + partitionForNectar);
+					System.out.println("CommunitesFromNectar       " + (CommunitesFromNectar!=null ? CommunitesFromNectar.size() : 0));					
 					// TODO:
 					// a. support partitionForNectar in Nectar
 					// b. deal with merging comms..
