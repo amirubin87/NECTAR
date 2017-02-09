@@ -19,11 +19,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class WeightedNectarWOCC {
+public class WeightedNectarWOCC_bulk {
 	UndirectedWeightedGraphWOCC g;
 	public double[] betas;
 	public double alpha;
@@ -38,7 +39,7 @@ public class WeightedNectarWOCC {
 	public long startTime;
 	private boolean debug;
 	
-	public WeightedNectarWOCC(String pathToGraph, TreeSet<Edge> edgesForNectar, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
+	public WeightedNectarWOCC_bulk(String pathToGraph, Map<Integer, Set<Integer>> partitionForNectar, TreeSet<Edge> edgesForNectar, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
 		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));		
 		this.startTime = System.currentTimeMillis();
 		this.percentageOfStableNodes= percentageOfStableNodes;
@@ -50,44 +51,69 @@ public class WeightedNectarWOCC {
 		this.pathToGraph = pathToGraph;		
 		this.debug = debug;
 		this.g = new UndirectedWeightedGraphWOCC(edgesForNectar);		
-
 		Map<Integer, Set<Integer>> firstPart;
-		System.out.println("Get first part");
-		if (firstPartMode == 0){
-			firstPart = GetFirstPartition(g);			
+		
+		// If we have a given partition we will use it.
+		if (partitionForNectar != null) {
+			firstPart = partitionForNectar;			
+			iteratioNumToStartMerge = -1;
+		}
+		else{	
+			System.out.println("Get first part");
+			if (firstPartMode == 0){
+				firstPart = GetFirstPartition(g);			
+			}			
+			else if (firstPartMode == 1){
+				// Note that we use the beta given to us first in betas!
+				firstPart = GetFirstPartitionDenseGraph(g,betas[0]);			
+			}			
+			else if (firstPartMode == 3){
+				firstPart = GetFirstPartitionCliques3(g);
+			}
+			else if (firstPartMode == 4){
+				firstPart = GetFirstPartitionCliques4(g);
+			}
+			else{
+				throw new RuntimeException("param firstPartMode must be on of 0=CC, 3=clique 3, 4=clique 4");
+			}
 		}
 		
-		else if (firstPartMode == -1){
-			// This is a trick, we use the ground truth..
-			firstPart = TODODeleteRGetFirstPartitionGroundTrute();
-			
-		}
-		
-		else if (firstPartMode == 1){
-			// Note that we use the beta given to us first in betas!
-			firstPart = GetFirstPartitionDenseGraph(g,betas[0]);
-			
-		}
-		
-		else if (firstPartMode == 3){
-			firstPart = GetFirstPartitionCliques3(g);
-		}
-		else if (firstPartMode == 4){
-			firstPart = GetFirstPartitionCliques4(g);
-		}
-		else{
-			throw new RuntimeException("param firstPartMode must be on of 0=CC, 3=clique 3, 4=clique 4");
-		}	
-		//TODO remove
-		//System.out.println(firstPart.size());
-		//System.out.println(firstPart);
 		TakeTime();
 		System.out.println("Get meta data");
-		boolean commsMayOverlap = (firstPartMode >1);
+		boolean commsMayOverlap = (iteratioNumToStartMerge == -1 | firstPartMode >1);
 		this.ORIGINALmetaData = new WoccMetaData(g,firstPart, commsMayOverlap);
+		this.metaData = this.ORIGINALmetaData;
 		TakeTime();
-		this.metaData = this.ORIGINALmetaData;		
+		if(iteratioNumToStartMerge == -1){
+			FindAndMergeComms(GenerateCommsCouplesIntersectionRatio());
+		}
+		TakeTime();
+				
 	}
+
+
+	private Map<Integer[], Double> GenerateCommsCouplesIntersectionRatio() {
+		Map<Integer[],Double> commsCouplesIntersectionRatio = new ConcurrentHashMap<Integer[],Double>();
+		
+		for (Integer lowComm : ORIGINALmetaData.Intersection_c1_c2.keySet()){
+			int lowCommSize = ORIGINALmetaData.com2nodes.get(lowComm).size();
+			if (lowCommSize > 0){
+				for (Integer highComm : ORIGINALmetaData.Intersection_c1_c2.get(lowComm).keySet()){
+					int highCommSize = ORIGINALmetaData.com2nodes.get(highComm).size();
+					if (highCommSize > 0){
+						double intersectionRatio = (double)ORIGINALmetaData.Intersection_c1_c2.get(lowComm).get(highComm)
+				        							/(double)Math.max(lowCommSize, highCommSize);
+				        if (intersectionRatio>0){
+					        Integer[] sortedComms= new Integer[]{lowComm,highComm};		
+					        commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
+				        }
+					}
+				}
+			}
+		}
+		return commsCouplesIntersectionRatio;
+	}
+
 
 	private void TakeTime() {
 		if(debug){
@@ -254,7 +280,8 @@ public class WeightedNectarWOCC {
 	    long Sec2Time = 0;
 	    long Sec3Time = 0;	    	    
 	    
-	    while (amountOfScans <3 || (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
+	    // TODO : do we want: amountOfScans <3 || 
+	    while ((numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
 	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iter: " + amountOfScans);
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
@@ -270,9 +297,7 @@ public class WeightedNectarWOCC {
 	                double inc= Calc_WOCC_Weighted(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);	              
 	            }	
-	            // TODO - make true, or add a user param to control this.
-	            boolean includeBestComm = true;//Math.random() < 0.5; 
-	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta, includeBestComm);
+	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	            
 	            Sec1Time += (System.currentTimeMillis() - startTime);
 	            
@@ -327,7 +352,7 @@ public class WeightedNectarWOCC {
 	    }
 	}
 	
-	private Set<Integer> Keep_Best_Communities(Map<Integer, Double>comms_imps,double betta, boolean includeBestComm){
+	private Set<Integer> Keep_Best_Communities(Map<Integer, Double>comms_imps,double betta){
 		Set<Integer> bestComms = new HashSet<Integer>();
 		// Single element
 		if(comms_imps.values().size() == 1){
@@ -340,11 +365,8 @@ public class WeightedNectarWOCC {
 	    	bestImp = Math.max(bestImp, imp);
 	    }	    
        	for(Entry<Integer, Double> entry: comms_imps.entrySet()){
-	    		 if (entry.getValue()*betta >= bestImp){
-	    			 // If we dont want to take the best comm, we only take those who are less than it.
-	    			 if (includeBestComm | entry.getValue() < bestImp){
-	    				 bestComms.add(entry.getKey());
-	    			 }
+	    		 if (entry.getValue()*betta >= bestImp){	
+	    				 bestComms.add(entry.getKey());	    			 
 	    		 }
 	    }
 	    
@@ -361,11 +383,12 @@ public class WeightedNectarWOCC {
 	
 	private void WriteToFile(Map<Integer, Set<Integer>> comms, double betta) throws IOException {
 		File files = new File(outputPath);
-        if (!files.exists()) {
+        /*TODO - consider uncommenting to generate dirs
+         * if (!files.exists()) {
             if (!files.mkdirs()) {
             	throw new IOException ("Failed to create directories fot the given output path: " + outputPath);
             }
-        }
+        }*/
 
 		PrintWriter writer = new PrintWriter(outputPath + betta + ".txt", "UTF-8");
 		for ( Set<Integer> listOfNodes : comms.values()){			

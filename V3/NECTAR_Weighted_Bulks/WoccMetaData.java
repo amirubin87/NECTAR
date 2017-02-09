@@ -83,7 +83,9 @@ public class WoccMetaData {
         			int AcommId = AcommIdAndNodes.getKey();
         			int BcommId = BcommIdAndNodes.getKey();
         			if (AcommId < BcommId){
+
         				int intersectionSize = UtillsWOCC.IntersectionSize(AcommIdAndNodes.getValue(), BcommIdAndNodes.getValue());
+        				
         				Map<Integer, Integer> AcommDictionary = Intersection_c1_c2.get(AcommId);
         				AcommDictionary.put(BcommId, intersectionSize);
         			}

@@ -16,6 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import NECTAR_Weighted_Bulks.*;
 public class RunWeightedNectar_bulk {
 
+/*
+ * Notes.
+ * Bulk size is getting bigger in every step
+ * we only output communities larger than 10
+ * 
+ */
 	public static void main(String[] args) throws Exception {		
 		
 		long startTime = System.currentTimeMillis();
@@ -40,15 +46,16 @@ public class RunWeightedNectar_bulk {
 		else{
 			String th = "0.18";
 			String pathToGraph = "C:/Users/t-amirub/OneDrive/PhD/Data/Genes/" + th +"edgeList.txt";
-			String outputPath = "C:/Users/t-amirub/OneDrive/PhD/Data/Genes/output/NECTAR_W/" + th +"_";
+			String outputPath = "C:/Users/t-amirub/OneDrive/PhD/Data/Genes/output/NECTAR_W_BULK/" + th +"/";
 			
 			
-			double[] betas = {1.1,1.2};				
+			double[] betas = {1.3};				
 			double alpha = 0.5;
 			int iteratioNumToStartMerge = 3;
 			int maxIterationsToRun = 20;
 			int firstPartMode = 1;
-			int bulkSize = 50;
+			int bulkSize = 150;
+			int bulkSizeIncreaseSize = 5;
 			int percentageOfStableNodes = 95;
 			boolean runMultyThreaded = false;
 			int numOfThreads = 1;
@@ -143,37 +150,52 @@ public class RunWeightedNectar_bulk {
 			for ( double betta : betas){
 				TreeSet<Edge> EdgesForNectar = new TreeSet<Edge>();
 				Map<Integer, Set<Integer>> CommunitesFromNectar = null;
-				Set<Integer> newNodes = new HashSet<Integer>();
+				Set<Integer> relevantNodes = new HashSet<Integer>();
 				Set<Integer> nodesSeen = new HashSet<Integer>();
 				// Read all edegs, sort from the srongest down.
 				TreeSet<Edge> AllEdgesSorted = GetSortedListOfEdges(pathToGraph);
 				int bulkNumber = 0;
-				//TODO remove first cond
-				while (bulkNumber < 5 & AllEdgesSorted.size() >0){
-					bulkNumber++;					
-					// In the first run, use bulkSize*3 number of edges
+				
+				while ((nodesSeen.size()< 550 
+						| (nodesSeen.size()== 550 & (CommunitesFromNectar == null || CommunitesFromNectar.size()>3)))
+										& AllEdgesSorted.size() >0){
+					bulkNumber++;	
+					relevantNodes = new HashSet<Integer>();
+					// Get the edges to add for the current bulk.
+					// (In the first run, use bulkSize*3 number of edges)
 					TreeSet<Edge> EdgesToAddForNectar = GetEdgesToAddForNectar(EdgesForNectar.size() == 0,AllEdgesSorted, bulkSize); 
+					bulkSize = bulkSize + bulkSizeIncreaseSize;
 					EdgesForNectar.addAll(EdgesToAddForNectar);
-					for (Edge e : EdgesToAddForNectar){
-						newNodes.add(e.getFrom());
-						newNodes.add(e.getTo());
-					}
 					
-					Map<Integer, Set<Integer>> partitionForNectar = GetPartitionForNectar(CommunitesFromNectar, newNodes);
-					nodesSeen.addAll(newNodes);
+					// Get the nodes relavant to the new edges
+					for (Edge e : EdgesToAddForNectar){
+						relevantNodes.add(e.getFrom());
+						relevantNodes.add(e.getTo());
+					}
+					nodesSeen.addAll(relevantNodes);
+					
+					// The new nodes are to be added, but may belong to different comms, so we partition them.	
+					// We do it based on all the edges between them.
+					Map<Integer, Set<Integer>> partitionOfNewNodes =  GetPartitionOfNewNodes(EdgesForNectar,relevantNodes,betta);
+					
+					// Use the partition NECTAR found so far. Add all nodes relevant to the new edges in a new community.
+					Map<Integer, Set<Integer>> partitionForNectar = GetPartitionForNectar(CommunitesFromNectar, partitionOfNewNodes);
+					
+					
 					// Run NECTAR, and keep the communities it finds.
 					
-					System.out.println("Bulk number " + bulkNumber);
-					System.out.println("newNodes " + newNodes.size());
-					System.out.println("EdgesForNectar " + EdgesForNectar.size());
-					System.out.println("nodesSeen " + nodesSeen.size());
-					System.out.println("partitionForNectar " + partitionForNectar);
+					System.out.println("Bulk number                " + bulkNumber);
+					System.out.println("relevantNodes to this bulk " + relevantNodes.size());
+					System.out.println("EdgesForNectar in total    " + EdgesForNectar.size());
+					System.out.println("nodesSeen in total         " + nodesSeen.size());					
+					System.out.println("partitionSize              " + (partitionForNectar!=null ? partitionForNectar.size() : 0));
+					System.out.println("partitionForNectar         " + partitionForNectar);
 					// TODO:
 					// a. support partitionForNectar in Nectar
 					// b. deal with merging comms..
 					if(!useModularity){
 						System.out.println("                         Using WOCC.");
-						WeightedNectarWOCC nectarW = new WeightedNectarWOCC(pathToGraph, EdgesForNectar,betas,alpha,outputPath + "BULK_" + bulkNumber + "_", iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);			
+						WeightedNectarWOCC_bulk nectarW = new WeightedNectarWOCC_bulk(pathToGraph, partitionForNectar, EdgesForNectar,betas,alpha,outputPath + "BULK_" + bulkNumber + "_", iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode, debug);			
 						
 						CommunitesFromNectar = nectarW.FindCommunities(runMultyThreaded, numOfThreads,betta);					
 					}
@@ -192,20 +214,46 @@ public class RunWeightedNectar_bulk {
 		System.out.println(totalTime/1000);
 	}
 
+	private static Map<Integer, Set<Integer>> GetPartitionOfNewNodes(TreeSet<Edge> edgesForNectar,
+			Set<Integer> relevantNodes, double betta) throws IOException {		
+		// Find relevant edges
+		TreeSet<Edge> egdesInNodes = new TreeSet<Edge>();
+		for ( Edge e : edgesForNectar){
+			if (relevantNodes.contains(e.getFrom()) && relevantNodes.contains(e.getTo())){
+				egdesInNodes.add(e);
+			}
+		}
+		// Build graph
+		UndirectedWeightedGraphWOCC graphWithNodes = new UndirectedWeightedGraphWOCC(egdesInNodes);
+		// TODO refactor and move this method to the right place.		
+		return WeightedNectarWOCC_bulk.GetFirstPartitionDenseGraph(graphWithNodes,betta);
+	}
+
 	private static Map<Integer, Set<Integer>> GetPartitionForNectar(Map<Integer, Set<Integer>> communitesFromNectar,
-			Set<Integer> newNodes) {
+			Map<Integer, Set<Integer>> partitionOfNewNodes) {
 		
 		//first run - Nectar will do this on his own.
 		if(communitesFromNectar == null){ return null;}
 		else{
-			Map<Integer, Set<Integer>> partitionForNectar = communitesFromNectar;
-			// TODO - is there a smarter way? maybe we can control what commID nectar returns?
-			for (int i = 0 ; i<partitionForNectar.size()+1 ; i++){
-				if(partitionForNectar.get(new Integer(i)) == null){
-					partitionForNectar.put(new Integer(i),newNodes);
-					break;
+			boolean havePlacedNewNodes = false;
+			Integer maxCommId = new Integer(-1);
+			Map<Integer, Set<Integer>> partitionForNectar = new HashMap<Integer, Set<Integer>>();
+			// Go over all comms. Take only non empty
+			for (Integer i : communitesFromNectar.keySet()){
+				Set<Integer> comm = communitesFromNectar.get(i);
+				if(comm != null && comm.size()!=0){					
+					partitionForNectar.put(i,comm);
+					maxCommId=Math.max(i, maxCommId);
 				}
+			}	
+			// We place the new nodes in maxCommId+1,maxCommId+2 ... 
+			//TODO there is probably a better way to find a free place..
+			Integer c = new Integer(maxCommId+1);
+			for (Set<Integer> newComm : partitionOfNewNodes.values()){			
+				partitionForNectar.put(c,newComm);
+				c = new Integer(c+1);
 			}
+			
 			return partitionForNectar;
 		}		
 	}
@@ -214,10 +262,10 @@ public class RunWeightedNectar_bulk {
 		TreeSet<Edge> newEdges = null;
 		//First run
 		if(isFirstBulk){
-			newEdges = PullBulkLastElements(allEdgesSorted, bulkSize*3);			
+			newEdges = PullBulkLastElements(allEdgesSorted, Math.min(bulkSize*3,allEdgesSorted.size()));			
 		}
 		else{
-			newEdges = PullBulkLastElements(allEdgesSorted, bulkSize);
+			newEdges = PullBulkLastElements(allEdgesSorted, Math.min(bulkSize,allEdgesSorted.size()));
 		}
 		
 		return newEdges;
