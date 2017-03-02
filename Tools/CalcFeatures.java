@@ -20,7 +20,7 @@ public class CalcFeatures {
 			double[] featuresA = processGraph(args[0]);
 			String features ="";
 			for (double f : featuresA) {features = features + f + ",";}
-			System.out.println(features);
+			System.out.println(features.substring(0,features.length()-1));
 		}
 	}
 	
@@ -48,8 +48,10 @@ public class CalcFeatures {
 		double avergaeTrianglesRate = numOfTriangles/numOfNodes;
 		//double avergaeTrianglesParticipationRate = 3*numOfTriangles/numOfNodes;
 		double ratioOfNodesInTriangles = numOfNodesInTriangles/numOfNodes;
-		
-		double GCC = 3*numOfTriangles/(double)numOfConnectedTriplets;
+		double GCC =0.0;
+		if (numOfConnectedTriplets>0){
+			GCC = 3*numOfTriangles/(double)numOfConnectedTriplets;
+		}
 		System.currentTimeMillis();
 		double ACC = calcACC(adjacencyMap, node2triangles, NumOfNodes);		
 		
@@ -58,9 +60,9 @@ public class CalcFeatures {
 				avergaeTrianglesRate,
 				ratioOfNodesInTriangles,
 				GCC,
-				ACC,
+				ACC
 				//Place holder for label
-				0.0
+				//0.0
 				};
 	}	
 	
@@ -123,13 +125,13 @@ public class CalcFeatures {
 			String[] parts = line.split(" |\t");
 			Integer v = Integer.parseInt(parts[0].trim());
 			Integer u = Integer.parseInt(parts[1].trim());
-			if(v.intValue() == u.intValue()) continue;
-			if(v.intValue() > u.intValue()){
+			if(v.intValue() == u.intValue()) continue; // no self loops
+			if(v.intValue() > u.intValue()){ //undirected!
 				Integer t = u;
 				u = v;
 				v = t;				
 			}				
-			edges.add(new Edge(v, u));
+			edges.add(new Edge(v, u));			
 		}
 		return edges;
 	}
@@ -170,5 +172,20 @@ class Edge {
 	public String toString(){
 		return "(" + ((from!=null) ? from.toString() : null) + "," + ((to!=null) ? to.toString() : null) + ")";
 	}
+	@Override
+	public boolean equals(Object other){
+		if (!( other  instanceof Edge)){
+			return false;
+		}
+		return from.equals(((Edge)other).getFrom()) & to.equals(((Edge)other).getTo());
+	}
+	
+	@Override
+    public int hashCode() {
+        int hash = 17;
+        hash = hash*37 + from.hashCode();
+        hash = hash*37 + to.hashCode();
+        return hash;
+    }
 }	
 
