@@ -194,7 +194,7 @@ public class WoccMetaData {
 	    }
 	}
 
-	public Map<Integer[],Double> SetCommsForNode(Integer node, Set<Integer> comms, boolean shouldMergeComms, boolean calcOutput){		
+	public Map<Integer[],Double> SetCommsForNode(Integer node, Set<Integer> comms, boolean shouldMergeComms){		
     	// When going to Multy thread todo - arrange this method!
 		UpdateIntersectionRatioAdd(comms);
 		

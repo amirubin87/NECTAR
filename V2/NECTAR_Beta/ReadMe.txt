@@ -48,3 +48,8 @@ Usage examples:
 	java -jar NECTAR ./net.txt ./ 1.5,3.5,5.0,10.0 0.7 4 30 3 99
 		NECTAR runs with 4 different beta values. The first partitioning is all 3-sized cliques. After the forth iteration communities which share 70% of their nodes will be merged.
 		The algorithm will stop after 30 iterations or when 99% of the nodes have stabled. 
+		
+		
+Note:
+	There is an uresolved "bug" - using this versin with Modularity gives slightly different results in comparison with the first version. It is to be fixed.
+	Comparing them, the first partition and metaData are the same. But after the first iteration there are different commms.

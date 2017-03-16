@@ -35,7 +35,7 @@ public class Nectar {
     // Constructors
     //================================================================================
 	
-	public Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes) throws IOException{
+	private Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean useModularity) throws IOException{
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.betas= betas;
 		this.alpha = alpha;
@@ -44,9 +44,9 @@ public class Nectar {
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;
 		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));
+		this.UseWOCC = !useModularity;
 		
-		if(UseWOCC()) {
-			UseWOCC = true;
+		if(UseWOCC) {
 			System.out.println("                  Using WOCC");
 		}
 		else{
@@ -58,8 +58,8 @@ public class Nectar {
 		}
 	}
 
-	public Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode) throws IOException{
-		this(pathToGraph,betas,alpha,outputPath,iteratioNumToStartMerge,maxIterationsToRun, percentageOfStableNodes);
+	public Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean useModularity) throws IOException{
+		this(pathToGraph,betas,alpha,outputPath,iteratioNumToStartMerge,maxIterationsToRun, percentageOfStableNodes,useModularity);
 		
 		if(!UseWOCC){	
 			this.OriginalMetaData = new ModularityMetaData(g);			
@@ -110,13 +110,12 @@ public class Nectar {
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
 	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;
-	    while (amountOfScans <5 || (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
-	    	System.out.println("Input: " +pathToGraph + " betta: " + betta + "            Num of iter: " + amountOfScans);
-	    	System.out.println("Number of stable nodes: " + numOfStableNodes);
+	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){	    	
+	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "            Num of iter: " + amountOfScans);
+	    	System.out.println(" Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
 	    	amountOfScans++;
-	    	for (Integer node : g.nodes()){
-	    		
+	    	for (Integer node : g.nodes()){	    		
 	            Set<Integer> c_v_original = metaData.getComsOfNode(node);	            
 	            metaData.ClearCommsOfNode(node);
 	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
@@ -124,14 +123,15 @@ public class Nectar {
 	            for (Integer neighborComm : neighborComms){
 	                double inc= metaData.CalcMetricImprovemant(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);
-	            }	            
+	            }	      
+	           
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	           
 	            boolean shouldMergeComms = amountOfScans > iteratioNumToStartMerge;
 				Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, shouldMergeComms );
 	            boolean haveMergedComms = false;
 	            if(shouldMergeComms){
-	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio,amountOfScans);
+	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio);
 	            }	            
 	            
 	            if (!haveMergedComms && c_v_new.equals(c_v_original)){
@@ -145,7 +145,7 @@ public class Nectar {
 	    return metaData.getCom2nodes();
 	}	  
 	
-	private boolean FindAndMergeComms (Map<Integer[],Double> commsCouplesIntersectionRatio, int amountOfScans){
+	private boolean FindAndMergeComms (Map<Integer[],Double> commsCouplesIntersectionRatio){
 	    boolean haveMergedComms = false;	
 	    for (Entry<Integer[],Double > c1c2intersectionRate : commsCouplesIntersectionRatio.entrySet()){	    	
 	    	if(c1c2intersectionRate.getValue()>alpha){
@@ -175,12 +175,13 @@ public class Nectar {
 	    for( double imp : comms_imps.values()){
 	    	bestImp = Math.max(bestImp, imp);
 	    }
+	    
 	    Set<Integer> bestComs = new HashSet<Integer>();
-		    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
-		    		 if (entry.getValue()*betta >= bestImp){
-		    				 bestComs.add(entry.getKey());
-		    		 }
-		    }
+	    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
+	    		 if (entry.getValue()*betta >= bestImp){
+	    				 bestComs.add(entry.getKey());
+	    		 }
+	    }
 	    return bestComs;
 	}	
 
@@ -226,6 +227,10 @@ public class Nectar {
 		return (triangles/6);
 	}
 	
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////
 	private static Map<Integer,Set<Integer>> GetFirstPartition(UndirectedUnweightedGraph G){
 		Map<Integer,Set<Integer>> result = new HashMap<>();
 		Map<Integer, Double> CC = G.Clustring();		
@@ -233,10 +238,7 @@ public class Nectar {
 	    double maxSeenSoFar=1.0;    
 	    boolean[] isVisited = new boolean[G.maxNodeId()+1];	    
 	    int commID=0;	    
-	    for (int v : sorted_CC.keySet()){
-	    	if(maxSeenSoFar<CC.get(v)){
-	    		throw(new RuntimeException(String.format("sortedCC was not sorted. node: %1$d.", v)));
-	    	}	    	
+	    for (int v : sorted_CC.keySet()){	    		    	
 	        if (!isVisited[v]){
 	            isVisited[v]= true;
 	            Set<Integer> vSet = new HashSet<>();

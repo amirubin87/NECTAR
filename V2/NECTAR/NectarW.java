@@ -67,7 +67,8 @@ public class NectarW {
 		TakeTime();
 		System.out.println("Get meta data");
 		boolean commsMayOverlap = (firstPartMode != 0);
-		this.ORIGINALmetaData = new WoccMetaData(g,firstPart, commsMayOverlap);
+		//todo - use commsMayOverlap? Setting the param to "true" initielize the c1c2IntersectionRation.
+		this.ORIGINALmetaData = new WoccMetaData(g,firstPart, true);
 		TakeTime();
 		this.metaData = this.ORIGINALmetaData;		
 	}
@@ -223,7 +224,6 @@ public class NectarW {
 	}
 	
 	private Map<Integer,Set<Integer>> FindCommunities(double betta) throws FileNotFoundException, UnsupportedEncodingException {
-	    
 		int numOfStableNodes = 0;
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
@@ -233,7 +233,7 @@ public class NectarW {
 	    long Sec2Time = 0;
 	    long Sec3Time = 0;	    	    
 	    
-	    while (amountOfScans <5 || (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun)){	    	
+	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){	    	
 	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iter: " + amountOfScans);
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
 	    	numOfStableNodes=0;
@@ -258,7 +258,7 @@ public class NectarW {
 	            /////////////////////////////////////////    Section 2
 	            startTime = System.currentTimeMillis();
 	            boolean shouldMergeComms = amountOfScans>iteratioNumToStartMerge;
-				Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, shouldMergeComms,true );
+				Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, shouldMergeComms);
 	            boolean haveMergedComms = false;
 	            Sec2Time += (System.currentTimeMillis() - startTime);
 	            
@@ -273,7 +273,7 @@ public class NectarW {
 	            }
 	            Sec3Time += (System.currentTimeMillis() - startTime);
 	            
-	        }	    	
+	        }
         }    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
@@ -321,8 +321,7 @@ public class NectarW {
 	    		 if (entry.getValue()*betta >= bestImp){
 	    				 bestComs.add(entry.getKey());
 	    		 }
-	    }
-	    
+	    }	    
 	    return bestComs;
 	}	
 
@@ -354,10 +353,7 @@ public class NectarW {
 	    double maxSeenSoFar=1.0;    
 	    boolean[] isVisited = new boolean[G.maxNodeId()+1];	    
 	    int commID=0;	    
-	    for (int v : sorted_CC.keySet()){
-	    	if(maxSeenSoFar<CC.get(v)){
-	    		throw(new RuntimeException(String.format("sortedCC was not sorted. node: %1$d.", v)));
-	    	}	    	
+	    for (int v : sorted_CC.keySet()){	    		    	
 	        if (!isVisited[v]){
 	            isVisited[v]= true;
 	            Set<Integer> vSet = new HashSet<>();

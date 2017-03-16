@@ -64,7 +64,7 @@ public class WOCCMetaData implements ImetaData{
 
     }
 
-    public WOCCMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms){
+    /*public WOCCMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms){
     	this(); 
     	g = graph;
     	T = graph.Triangles();   
@@ -80,7 +80,7 @@ public class WOCCMetaData implements ImetaData{
 	                node2coms.put(node,commInSet);
             }
         }
-    }
+    }*/
     
     public WOCCMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms, boolean partitionIsFromFile){
     	this(); 

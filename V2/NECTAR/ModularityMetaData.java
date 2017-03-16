@@ -118,8 +118,8 @@ public class ModularityMetaData {
 			        commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
 		    	}
 		    }
-	    }
-
+	    }	  
+	    
 	    return commsCouplesIntersectionRatio;
     }
 	
@@ -133,19 +133,29 @@ public class ModularityMetaData {
 	    node2coms.put(node, comms);
     }
 
-    public void SymbolicClearComm(Integer comm){    	
+    /*public void SymbolicClearComm(Integer comm){    	
     	Set<Integer> nodes = Collections.synchronizedSet(new HashSet<Integer>(com2nodes.get(comm)));
     	for (Integer node: nodes){
     		SymbolicRemoveNodeFromComm(node, comm);
     	}
-    }
+    }*/
+	
+	public void RemoveCommForNode(Integer node, Integer comm) {
+		Update_Weights_Remove(comm, node);
+        SymbolicRemoveNodeFromComm(node, comm);
+	}
+
+	public void AddCommForNode(Integer node, Integer comm) {		
+			Update_Weights_Add(comm, node);
+			SymbolicAddNodeToComm(node,comm);		
+	}
     
-    public void SymbolicRemoveNodeFromComm(Integer node,Integer comm){
+    private void SymbolicRemoveNodeFromComm(Integer node,Integer comm){
         node2coms.get(node).remove(comm);
         com2nodes.get(comm).remove(node);        
     }
     
-	public void SymbolicAddNodeToComm(Integer node, Integer comm) {
+    private void SymbolicAddNodeToComm(Integer node, Integer comm) {
 		node2coms.get(node).add(comm);
 		com2nodes.get(comm).add(node);		
 	}
@@ -260,7 +270,7 @@ public class ModularityMetaData {
         m = m + K_v.get(node)*(c_v.size() - 1);
     }
     
-    public void Update_Weights_Add(Integer c, Integer node){
+    private void Update_Weights_Add(Integer c, Integer node){
     	if(com2nodes.get(c).contains(node)){
     		return;
     	}
@@ -269,7 +279,7 @@ public class ModularityMetaData {
     	Update_Weights_Add(c_v,node, true);
     }
     
-    public void Update_Weights_Remove(Integer c, Integer node){
+    private void Update_Weights_Remove(Integer c, Integer node){
     	if(!com2nodes.get(c).contains(node)){
     		return;
     	}
@@ -312,8 +322,7 @@ public class ModularityMetaData {
 		        lowCommDic.put(highComm, intersectionSize);
 			}
 		}
-	}
-    
+	}    
 }
     
 

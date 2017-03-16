@@ -117,15 +117,7 @@ public class ModularityMetaData implements ImetaData{
 		Update_Weights_Add(comms,node, false);
     	
 		Map<Integer[],Double> commsCouplesIntersectionRatio = new HashMap<Integer[],Double>();
-	    
-		// Find intersection ration for merge
-        Integer[] commsArray = new Integer[comms.size()];
-        int k = 0;
-        for(Integer comm : comms){
-        	commsArray[k] = comm;
-        	k++;      	
-        }        
-        
+	
 		// Symbolic add
 	    for (Integer comm : comms){
 	        com2nodes.get(comm).add(node);	        
@@ -133,24 +125,29 @@ public class ModularityMetaData implements ImetaData{
 	    
 	    node2coms.put(node, comms);
         
-	    for (int i = 0; i <commsArray.length ; i ++){
-	    	for (int j = i+1; j < commsArray.length ; j++){
-	    		int x = commsArray[i];
-	    		int y = commsArray[j];
-	    		Integer lowComm = Math.min(x, y);
-	    		Integer highComm = Math.max(x, y);
-		        double intersectionRatio = (double)Intersection_c1_c2.get(lowComm).get(highComm)/(double)Math.min(com2nodes.get(lowComm).size(), com2nodes.get(highComm).size());
-		        Integer[] sortedComms= new Integer[]{lowComm,highComm};
-		        commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
-	    	}
-	    }
-	    
-
+	    if (shouldMergeComms){
+	    	// Find intersection ratio for merge
+	        Integer[] commsArray = new Integer[comms.size()];
+	        int k = 0;
+	        for(Integer comm : comms){
+	        	commsArray[k] = comm;
+	        	k++;      	
+	        }    
+		    for (int i = 0; i <commsArray.length ; i ++){
+		    	for (int j = i+1; j < commsArray.length ; j++){
+		    		int x = commsArray[i];
+		    		int y = commsArray[j];
+		    		Integer lowComm = Math.min(x, y);
+		    		Integer highComm = Math.max(x, y);
+			        double intersectionRatio = (double)Intersection_c1_c2.get(lowComm).get(highComm)/(double)Math.min(com2nodes.get(lowComm).size(), com2nodes.get(highComm).size());
+			        Integer[] sortedComms= new Integer[]{lowComm,highComm};
+			        commsCouplesIntersectionRatio.put(sortedComms, intersectionRatio);
+		    	}
+		    }
+	    }	      
 	    return commsCouplesIntersectionRatio;
     }
 
-
-    
     public Set<Integer> getComsOfNode(Integer node) {
 		return node2coms.get(node);
 	}
@@ -166,13 +163,11 @@ public class ModularityMetaData implements ImetaData{
 	public void RemoveCommForNode(Integer node, Integer comm) {
 		Update_Weights_Remove(comm, node);
         SymbolicRemoveNodeFromComm(node, comm);
-        
-		
 	}
 
 	public void AddCommForNode(Integer node, Integer comm) {		
-        	Update_Weights_Add(comm, node);
-        	SymbolicAddNodeToComm(node,comm);		
+		Update_Weights_Add(comm, node);
+		SymbolicAddNodeToComm(node,comm);		
 	}
 	
 	public double CalcMetricImprovemant(Integer comm, Integer node) {
@@ -346,15 +341,7 @@ public class ModularityMetaData implements ImetaData{
 		        lowCommDic.put(highComm, intersectionSize);
 			}
 		}
-	}
-
-	// Deprecated
-    private void SymbolicClearComm(Integer comm){    	
-    	Set<Integer> nodes = new HashSet<Integer>(com2nodes.get(comm));
-    	for (Integer node: nodes){
-    		SymbolicRemoveNodeFromComm(node, comm);
-    	}
-    }    
+	}	
 }
     
 

@@ -35,8 +35,6 @@ def CalcPartialAverageF1Part1(Comms1,GroundTruth):
     ans = (float)(0)
     for c1 in Comms1:
         ans = ans + FindBestMatchingInGroundTruth(c1, GroundTruth)
-        print(c1)
-        print(ans)
     return (float)(ans) / (2*len(Comms1))
 
 def CalcPartialAverageF1Part2(Comms1, GroundTruth):
@@ -69,3 +67,16 @@ def AverageF1(Comms1Path,GroundTruthPath, outputPath):
     output = open(outputPath, 'a')
     output.write( 'AverageF1Score:\t' + str(ans))
     output.close()
+    print ans
+
+d="N30000/"
+a="5.0"
+print d
+
+AverageF1("C:/Temp/"+ d +"ST/" +  a+".txt","C:/Temp/"+ d +"MT/" +  a+".txt", "C:/Users/t-amirub/OneDrive/MA/net/b-om2-10-1/MT/F.txt")
+
+d="N50K/"
+a="5.0"
+print d
+
+AverageF1("C:/Temp/"+ d +"ST/" +  a+".txt","C:/Temp/"+ d +"MT/" +  a+".txt", "C:/Users/t-amirub/OneDrive/MA/net/b-om2-10-1/MT/F.txt")

@@ -172,7 +172,7 @@ public class NectarQ {
             amountOfScans++;
             
             // Find new comms for each node
-	        for (Integer node : g.nodes()){
+	        for (Integer node : g.nodes()){	        	
 				////////////////////////////////////Section 1
 				startTime = System.currentTimeMillis();
 	            Set<Integer> c_v_original = metaData.node2coms.get(node);
@@ -185,29 +185,31 @@ public class NectarQ {
 	                double inc= Calc_Modularity_Improvement(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);
 	            }
+	          
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
             	Sec1Time += (System.currentTimeMillis() - startTime);
 	            
 	            /////////////////////////////////////////    Section 2
             	startTime = System.currentTimeMillis();
-	             
-	            Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new,true);
+	            
+            	boolean shouldMergeComms = amountOfScans > iteratioNumToStartMerge;
+	            Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new,shouldMergeComms);
             	Sec2Time += (System.currentTimeMillis() - startTime);
 	            
         		///////////////////////////////////////    Section 3
             	startTime = System.currentTimeMillis();
 	            boolean haveMergedComms = false;
-	            if(amountOfScans>iteratioNumToStartMerge){
+	            if(shouldMergeComms){
 	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio);
 	            }
 	            if (!haveMergedComms && c_v_new.equals(c_v_original)){
 	            	numOfStableNodes++;
 	            }
 	            Sec3Time += (System.currentTimeMillis() - startTime);
-	        }
+	        }	        
 	    }
 	        
-	    System.out.println("Number of stable nodes: " + numOfStableNodes);   
+	    //System.out.println("Number of stable nodes: " + numOfStableNodes);   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
 	    }
@@ -274,11 +276,11 @@ public class NectarQ {
 	    }
 	    
 	    Set<Integer> bestComs = new HashSet<Integer>();
-		    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
-		    		 if (entry.getValue()*betta >= bestImp){
-		    				 bestComs.add(entry.getKey());
-		    		 }
-		    }
+	    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
+	    		 if (entry.getValue()*betta >= bestImp){
+	    				 bestComs.add(entry.getKey());
+	    		 }
+	    }
 	    return bestComs;
 	}	
 	
@@ -286,8 +288,7 @@ public class NectarQ {
 	    boolean haveMergedComms = false;	    
 	    for (Entry<Integer[],Double > c1c2intersectionRate : commsCouplesIntersectionRatio.entrySet()){	    	
 	        if(c1c2intersectionRate.getValue()>alpha){
-	        	Integer[] c1c2 = c1c2intersectionRate.getKey();
-	        	//System.out.println("          MERGED" + c1c2intersectionRate.getValue());
+	        	Integer[] c1c2 = c1c2intersectionRate.getKey();	        	
 	        	MergeComms(c1c2);
 	        	haveMergedComms = true;
 	        }
@@ -301,11 +302,9 @@ public class NectarQ {
 		List<Integer> copyOfC1= new ArrayList<>(metaData.com2nodes.get(c1));
 		List<Integer> copyOfC2= new ArrayList<>(metaData.com2nodes.get(c2));
 	    for (Integer node : copyOfC1){
-	        metaData.Update_Weights_Remove(c1, node);
-	        metaData.SymbolicRemoveNodeFromComm(node,c1);
+	    	metaData.RemoveCommForNode(node,c1);
 	        if(!copyOfC2.contains(node)){
-	        	metaData.Update_Weights_Add(c2, node);
-	        	metaData.SymbolicAddNodeToComm(node,c2);
+	        	metaData.AddCommForNode(node,c2);	        	
 	        }	        
 	    }
 	}

@@ -1,4 +1,5 @@
 package NECTAR;
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,13 +11,12 @@ public class RunNectar {
 
 	public static void main(String[] args) throws Exception {		
 		
-		long startTime = System.currentTimeMillis();
-		
+		long startTime = System.currentTimeMillis();		
 		if (args.length <2){
 			System.out.println("Input parameteres for NECTAR: "
 					+ "pathToGraph  "
 					+ "outputPath  "
-					+ "betas=1.1,1.2,2.0,3.0  "
+					+ "betas=1.1,1.2,2.0,3.0 "
 					+ "alpha=0.8  "
 					+ "iteratioNumToStartMerge=6  "
 					+ "maxIterationsToRun=20 "
@@ -29,18 +29,18 @@ public class RunNectar {
 					+ "debug=false");
 		}
 		else{
-			String pathToGraph = "";
-			String outputPath = "";
-			double[] betas = {1.1,1.2,2.0,3.0};				
+			boolean useModularity = true;
+			String pathToGraph = "C:/EclipseWorkspace/NECTAR/network.dat";
+			String outputPath = "C:/EclipseWorkspace/NECTAR/Regular/useModularity_" + useModularity +"/";
+			double[] betas = {1.2};
+			int firstPartMode = 0;
 			double alpha = 0.8;
 			int iteratioNumToStartMerge = 6;
 			int maxIterationsToRun = 20;
-			int firstPartMode = 0;
 			int percentageOfStableNodes = 95;
-			boolean runMultyThreaded = true;
-			int numOfThreads = 8;
-			boolean dynamicChoose = true;   
-			boolean useModularity = false;
+			boolean runMultyThreaded = false;
+			int numOfThreads = 1;
+			boolean dynamicChoose = false;
 			boolean debug = false;
 			
 			if (args.length > 0)
@@ -113,7 +113,12 @@ public class RunNectar {
 			
 
 			System.out.println("");
-						
+			
+		    File outputDirectory = new File(String.valueOf(outputPath));
+		    if (! outputDirectory.exists()){
+		    	outputDirectory.mkdirs();
+		    }
+		    
 			if(dynamicChoose){
 				double[] graphFeatures = CalcFeatures.processGraph(pathToGraph);
 			
@@ -128,7 +133,7 @@ public class RunNectar {
 			}
 			else{
 				System.out.println("                         Using Modularity.");
-				NectarQ nectarQ= new NectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun, percentageOfStableNodes, debug);
+				NectarQ nectarQ= new NectarQ(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun, percentageOfStableNodes, debug);								
 				nectarQ.FindCommunities(runMultyThreaded, numOfThreads);			
 			}
 		}
