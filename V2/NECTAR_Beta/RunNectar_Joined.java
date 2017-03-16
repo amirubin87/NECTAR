@@ -1,25 +1,29 @@
 package NECTAR_Beta;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 // Main class - running the NECTAR algorithm.
 public class RunNectar_Joined {
 
 	public static void main(String[] args) throws IOException {		
+		
 		if (args.length <2){
-			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2,2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 useModularity=false");
+			System.out.println("Input parameteres for NECTAR: pathToGraph  outputPath  betas={1.1,1.2,2.0,3.0}  alpha=0.8  iteratioNumToStartMerge=6  maxIterationsToRun=20 firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) percentageOfStableNodes=95 dynamicChoose=true UseWOCC=false");
 		}
 		else{
-			boolean useModularity = true;
-			String pathToGraph = "C:/EclipseWorkspace/NECTAR/network.dat";
-			String outputPath = "C:/EclipseWorkspace/NECTAR/Beta2/useModularity_" + useModularity +"/";
-			double[] betas = {1.2};
+			
+			String pathToGraph = "";
+			String outputPath = "";
+			double[] betas = {1.1,1.2,2.0,3.0};
 			int firstPartMode = 0;
 			double alpha = 0.8;
 			int iteratioNumToStartMerge = 6;
 			int maxIterationsToRun = 20;
 			int percentageOfStableNodes = 95;			 
-			
+			boolean dynamicChoose = true;
+			boolean UseWOCC = false;
 			
 			if (args.length > 0)
 				pathToGraph = args[0];		
@@ -50,7 +54,11 @@ public class RunNectar_Joined {
 			}
 			
 			if(args.length > 8){
-				useModularity = Boolean.parseBoolean(args[8]);	
+				dynamicChoose = Boolean.parseBoolean(args[8]);	
+			}
+			
+			if(args.length > 9){
+				UseWOCC = Boolean.parseBoolean(args[9]);	
 			}
 								
 			String betasString = "";
@@ -66,7 +74,8 @@ public class RunNectar_Joined {
 			System.out.println("first Part mode:         "+firstPartMode);
 			System.out.println("maxIterationsToRun:      "+maxIterationsToRun);
 			System.out.println("percentageOfStableNodes: "+percentageOfStableNodes);
-			System.out.println("useModularity:           "+useModularity);
+			System.out.println("dynamicChoose:           "+dynamicChoose);
+			System.out.println("UseWOCC      :           "+UseWOCC);
 			
 			System.out.println("");
 			
@@ -75,7 +84,7 @@ public class RunNectar_Joined {
 		    	outputDirectory.mkdirs();
 		    }
 			
-			Nectar nectar = new Nectar(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode,useModularity);		
+			Nectar nectar = new Nectar(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode,dynamicChoose,UseWOCC);		
 			
 			nectar.FindCommunities();
 		}

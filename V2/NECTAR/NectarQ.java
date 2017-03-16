@@ -3,6 +3,7 @@ import java.util.concurrent.ExecutorService;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -135,7 +136,8 @@ public class NectarQ {
             if (haveMergedComms){
         		numOfStableNodes.decrementAndGet();
             }            
-	    } 
+	    }
+	    
 	    System.out.println("Number of stable nodes: " + numOfStableNodes);	   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
@@ -176,18 +178,20 @@ public class NectarQ {
 				////////////////////////////////////Section 1
 				startTime = System.currentTimeMillis();
 	            Set<Integer> c_v_original = metaData.node2coms.get(node);
-
+	           
 	            // Remove from all comms
 	            metaData.ClearCommsOfNode(node);
 	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
 	            Set<Integer> neighborComms = Find_Neighbor_Comms(node);
 	            for (Integer neighborComm : neighborComms){
+	            	
 	                double inc= Calc_Modularity_Improvement(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);
-	            }
-	          
+	                
+	            }	
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
-            	Sec1Time += (System.currentTimeMillis() - startTime);
+	            
+	            Sec1Time += (System.currentTimeMillis() - startTime);
 	            
 	            /////////////////////////////////////////    Section 2
             	startTime = System.currentTimeMillis();
@@ -208,7 +212,7 @@ public class NectarQ {
 	            Sec3Time += (System.currentTimeMillis() - startTime);
 	        }	        
 	    }
-	        
+	    
 	    //System.out.println("Number of stable nodes: " + numOfStableNodes);   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));

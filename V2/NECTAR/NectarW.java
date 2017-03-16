@@ -66,7 +66,7 @@ public class NectarW {
 		}	
 		TakeTime();
 		System.out.println("Get meta data");
-		boolean commsMayOverlap = (firstPartMode != 0);
+		//boolean commsMayOverlap = (firstPartMode != 0);
 		//todo - use commsMayOverlap? Setting the param to "true" initielize the c1c2IntersectionRation.
 		this.ORIGINALmetaData = new WoccMetaData(g,firstPart, true);
 		TakeTime();
@@ -231,7 +231,7 @@ public class NectarW {
 	    
 	    long Sec1Time = 0;
 	    long Sec2Time = 0;
-	    long Sec3Time = 0;	    	    
+	    long Sec3Time = 0;
 	    
 	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){	    	
 	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iter: " + amountOfScans);
@@ -239,18 +239,21 @@ public class NectarW {
 	    	numOfStableNodes=0;
 	    	amountOfScans++;
 	    	for (Integer node : g.nodes()){	  
-	            
+	    		
 	    		////////////////////////////////////   Section 1
 	    		startTime = System.currentTimeMillis();
 	            Set<Integer> c_v_original = metaData.node2coms.get(node);	            
 	            metaData.ClearCommsOfNode(node);
 	            Map<Integer, Double> comms_inc = new HashMap<Integer, Double>();
 	            Set<Integer> neighborComms = Find_Neighbor_Comms(node);
+	            
+	            
 	            for (Integer neighborComm : neighborComms){	            	
 	                double inc= Calc_WCC(neighborComm, node);
 	                comms_inc.put(neighborComm, inc);
-	              
-	            }	            
+	                
+	            }	
+	            
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	            
 	            Sec1Time += (System.currentTimeMillis() - startTime);
@@ -275,6 +278,7 @@ public class NectarW {
 	            
 	        }
         }    
+	    
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
 	    }	   

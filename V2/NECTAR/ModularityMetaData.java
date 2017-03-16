@@ -33,7 +33,6 @@ public class ModularityMetaData {
     	g=graph;
     	Integer count = 0;        
         m = graph.size();
-    
         for (Integer node : graph.nodes()){
             Intersection_c1_c2.put(node, new ConcurrentHashMap<Integer, Integer>());
             Set<Integer> comm = Collections.synchronizedSet(new HashSet<Integer>());
@@ -146,8 +145,8 @@ public class ModularityMetaData {
 	}
 
 	public void AddCommForNode(Integer node, Integer comm) {		
-			Update_Weights_Add(comm, node);
-			SymbolicAddNodeToComm(node,comm);		
+		Update_Weights_Add(comm, node);
+		SymbolicAddNodeToComm(node,comm);		
 	}
     
     private void SymbolicRemoveNodeFromComm(Integer node,Integer comm){

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 // Meta data to be used when maximizing modularity.
-public class ModularityMetaData implements ImetaData{
+public class MODMetaData implements ImetaData{
 	
 	//================================================================================
     // Properties
@@ -39,7 +39,7 @@ public class ModularityMetaData implements ImetaData{
     // Constructors
     //================================================================================
 
-    public ModularityMetaData(){
+    public MODMetaData(){
     	m=0;
     	K_v = new HashMap<Integer, Double>();
     	K_v_c = new HashMap<Integer, Map<Integer,Double>>();
@@ -49,13 +49,12 @@ public class ModularityMetaData implements ImetaData{
     	node2coms = new HashMap<Integer, Set<Integer>>();
     }
     
-    public ModularityMetaData(UndirectedUnweightedGraph graph){        
+    public MODMetaData(UndirectedUnweightedGraph graph){        
         //VerifyNodesNumbers(graph);
     	this(); 
     	g=graph;
     	Integer count = 0;        
         m = graph.size();
-    
         for (Integer node : graph.nodes()){
             Intersection_c1_c2.put(node, new HashMap<Integer, Integer>());
             Set<Integer> comm = new HashSet<Integer>();
@@ -84,7 +83,7 @@ public class ModularityMetaData implements ImetaData{
     }
     
     // Copy - constructor
-    public ModularityMetaData(ModularityMetaData ORIGINALmetaData) {
+    public MODMetaData(MODMetaData ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
     	m= ORIGINALmetaData.m;
     	K_v = Utills.CopyMapIntDouble(ORIGINALmetaData.K_v);

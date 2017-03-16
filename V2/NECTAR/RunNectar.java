@@ -1,5 +1,7 @@
 package NECTAR;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +12,6 @@ import java.util.Set;
 public class RunNectar {
 
 	public static void main(String[] args) throws Exception {		
-		
 		long startTime = System.currentTimeMillis();		
 		if (args.length <2){
 			System.out.println("Input parameteres for NECTAR: "
@@ -32,12 +33,12 @@ public class RunNectar {
 			boolean useModularity = true;
 			String pathToGraph = "C:/EclipseWorkspace/NECTAR/network.dat";
 			String outputPath = "C:/EclipseWorkspace/NECTAR/Regular/useModularity_" + useModularity +"/";
-			double[] betas = {1.2};
+			double[] betas = {1.2,2.0,3.0};
 			int firstPartMode = 0;
 			double alpha = 0.8;
-			int iteratioNumToStartMerge = 6;
+			int iteratioNumToStartMerge = 1;
 			int maxIterationsToRun = 20;
-			int percentageOfStableNodes = 95;
+			int percentageOfStableNodes = 100;
 			boolean runMultyThreaded = false;
 			int numOfThreads = 1;
 			boolean dynamicChoose = false;
