@@ -38,7 +38,9 @@ Parameters:
 				4: 4-sized non-overlapping cliques are used.
 			Notice that using '3' or '4' may cost with a long initialization time.			
 		percentageOfStableNodes (95) - the algorithm will stop when this percentage of nodes have stabled (e.g. haven't changed any community in the last iteration).
-
+		dynamicChoose (true) - when set to true, the algorithm will choose which objective function to optimize, based on the graph at hand.
+		UseWOCC (false) - if dynamicChoose is set to false, this parameter controls which objective function to optimize (when false, Modularity is used).
+					
 Usage examples:
 	java -jar NECTAR./net.txt ./
 			These  are examples with the minimum parameters needed.
