@@ -1,4 +1,4 @@
-package NECTAR;
+package NECTAR_Beta;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,9 +13,10 @@ import java.util.Set;
 public class CalcFeatures {
 	
 	public static void main(String[] args) throws Exception {
+		System.out.println("TODO remove 1");
 		double[] featuresA = processGraph(args[0]);
 		String features ="";
-		for (double f : featuresA) {features = features + f + ",";}
+		for (double f : featuresA) {features = features + f + ",";}	
 		System.out.println(features);
 	}
 	

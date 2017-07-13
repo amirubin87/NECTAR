@@ -11,6 +11,10 @@ import java.util.Set;
 
 public class RunNectar {
 
+	public static Boolean ShouldUseModularity(String pathToGraph) throws Exception{
+		double[] graphFeatures = CalcFeatures.processGraph(pathToGraph);		
+		return DynamicFunctionChoose.shouldUseModularity(graphFeatures);
+	}
 	public static void main(String[] args) throws Exception {		
 		long startTime = System.currentTimeMillis();		
 		if (args.length <2){
@@ -31,14 +35,14 @@ public class RunNectar {
 		}
 		else{
 			boolean useModularity = true;
-			String pathToGraph = "C:/EclipseWorkspace/NECTAR/network.dat";
-			String outputPath = "C:/EclipseWorkspace/NECTAR/Regular/useModularity_" + useModularity +"/";
-			double[] betas = {1.2,2.0,3.0};
+			String pathToGraph = "C:/Temp/WD/Chrome1_merge/Level_4_Entry_95_ParentEntry_49_ParentLine_1_TH_0.11000000000000001_Edges.txt";
+			String outputPath = "C:/Temp/WD/Chrome1_merge/";
+			double[] betas = {1};
 			int firstPartMode = 0;
 			double alpha = 0.8;
-			int iteratioNumToStartMerge = 1;
+			int iteratioNumToStartMerge = 6;
 			int maxIterationsToRun = 20;
-			int percentageOfStableNodes = 100;
+			int percentageOfStableNodes = 99;
 			boolean runMultyThreaded = false;
 			int numOfThreads = 1;
 			boolean dynamicChoose = false;

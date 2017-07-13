@@ -30,12 +30,13 @@ public class Nectar {
 	public String pathToGraph;
 	public ImetaData OriginalMetaData;
 	public ImetaData metaData;
+	public int verboseLevel;
 	
 	//================================================================================
     // Constructors
     //================================================================================
 	
-	private Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean dynamicChoose, boolean givenUseWOCC) throws IOException{
+	private Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean dynamicChoose, boolean givenUseWOCC, int verboseLevel) throws IOException{
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.betas= betas;
 		this.alpha = alpha;
@@ -43,16 +44,19 @@ public class Nectar {
 		this.iteratioNumToStartMerge = iteratioNumToStartMerge;
 		this.maxIterationsToRun = maxIterationsToRun;
 		this.pathToGraph = pathToGraph;
+		this.verboseLevel = verboseLevel;
 		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));
 		
 		// If we are to dynamicly choose objective function, we check if it should be used.
 		this.UseWOCC = dynamicChoose ? CheckIfShouldUseWOCC() : givenUseWOCC;		
 		
-		if(UseWOCC) {
-			System.out.println("                  Using WOCC");
-		}
-		else{
-			System.out.println("                  Using Modularity");
+		if(verboseLevel>0) {
+			if(UseWOCC) {		
+				System.out.println("                  Using WOCC");
+			}
+			else{
+				System.out.println("                  Using Modularity");
+			}
 		}
 		
 		if ( UseWOCC ){
@@ -60,8 +64,8 @@ public class Nectar {
 		}
 	}
 
-	public Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean dynamicChoose, boolean givenUseWOCC) throws IOException{
-		this(pathToGraph,betas,alpha,outputPath,iteratioNumToStartMerge,maxIterationsToRun, percentageOfStableNodes, dynamicChoose, givenUseWOCC);
+	public Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean dynamicChoose, boolean givenUseWOCC, int verboseLevel) throws IOException{
+		this(pathToGraph,betas,alpha,outputPath,iteratioNumToStartMerge,maxIterationsToRun, percentageOfStableNodes, dynamicChoose, givenUseWOCC, verboseLevel);
 		
 		if(!UseWOCC){	
 			this.OriginalMetaData = new MODMetaData(g);			
@@ -69,7 +73,7 @@ public class Nectar {
 		
 		else{
 			Map<Integer, Set<Integer>> firstPart;
-			System.out.println("Get first part");
+			if(verboseLevel==2) {System.out.println("Get first part");}
 			if (firstPartMode == 0){
 				firstPart = GetFirstPartition(g);
 			}
@@ -83,7 +87,7 @@ public class Nectar {
 				throw new RuntimeException("param firstPartMode must be on of 0=CC, 3=clique 3, 4=clique 4");
 			}
 			
-			System.out.println("Get meta data");
+			if(verboseLevel==2) {System.out.println("Get meta data");}
 			this.OriginalMetaData = new WOCCMetaData(g,firstPart,true);			
 		}
 		
@@ -95,9 +99,11 @@ public class Nectar {
 	
 	public void FindCommunities() throws IOException{
 		for (double betta : betas){
-			System.out.println("");
-			System.out.println("                       Input: " + pathToGraph);
-			System.out.println("                       betta: " + betta);
+			if(verboseLevel==2) {
+				System.out.println("");
+				System.out.println("                       Input: " + pathToGraph);
+				System.out.println("                       betta: " + betta);
+			}
 			// Create a copy of the original meta data
 			if(UseWOCC)	{metaData = new WOCCMetaData((WOCCMetaData)OriginalMetaData);}
 			else {metaData= new MODMetaData((MODMetaData)OriginalMetaData);}
@@ -115,8 +121,10 @@ public class Nectar {
 
 	    
 	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){	    	
-	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "            Num of iter: " + amountOfScans);
-	    	System.out.println(" Number of stable nodes: " + numOfStableNodes);
+	    	if(verboseLevel==2) {
+	    		System.out.print("Input: " +pathToGraph + " betta: " + betta + "            Num of iter: " + amountOfScans);
+	    		System.out.println(" Number of stable nodes: " + numOfStableNodes);
+	    	}
 	    	numOfStableNodes=0;
 	    	amountOfScans++;
 	    	for (Integer node : g.nodes()){	    		
@@ -147,7 +155,7 @@ public class Nectar {
 	        }
         }
 	   
-	    if (amountOfScans >= maxIterationsToRun){
+	    if (amountOfScans >= maxIterationsToRun & verboseLevel>0){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
 	    }	  
 	    return metaData.getCom2nodes();
@@ -205,7 +213,9 @@ public class Nectar {
 		PrintWriter writer = new PrintWriter(outputPath + betta + ".txt", "UTF-8");
 		for ( Set<Integer> listOfNodes : comms.values()){
 			if(listOfNodes.size()>2){
-				for(int node : listOfNodes){
+				//writer.print(listOfNodes.size() + ": ");
+				List<Integer> sorted = Utills.asSortedList(listOfNodes);
+				for(int node : sorted){
 					writer.print(node + " ");
 				}
 				writer.println("");

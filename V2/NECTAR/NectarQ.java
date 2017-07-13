@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -99,8 +100,15 @@ public class NectarQ {
 
 	private void WriteToFile(Map<Integer, Set<Integer>> comms, double betta) throws FileNotFoundException, UnsupportedEncodingException {
 		PrintWriter writer = new PrintWriter(outputPath + betta + ".txt", "UTF-8");
-		for ( Set<Integer> listOfNodes : comms.values()){
-			if(listOfNodes.size()>2){
+		
+		for ( Set<Integer> setOfNodes : comms.values()){
+			
+			if(setOfNodes.size()>2){
+				List<Integer> listOfNodes = new LinkedList<>();
+				for(Integer node : setOfNodes){
+					listOfNodes.add(node);
+				}
+				Collections.sort( listOfNodes);				
 				for(int node : listOfNodes){
 					writer.print(node + " ");
 				}
@@ -166,7 +174,7 @@ public class NectarQ {
 	    long Sec1Time = 0;
 	    long Sec2Time = 0;
 	    long Sec3Time = 0;	    
-	    
+	    Map<Integer[],Double> commsCouplesIntersectionRatio = null;
 	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){
 	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iterations: " + amountOfScans);
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
@@ -197,7 +205,7 @@ public class NectarQ {
             	startTime = System.currentTimeMillis();
 	            
             	boolean shouldMergeComms = amountOfScans > iteratioNumToStartMerge;
-	            Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new,shouldMergeComms);
+	            commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new,true);
             	Sec2Time += (System.currentTimeMillis() - startTime);
 	            
         		///////////////////////////////////////    Section 3
@@ -225,6 +233,8 @@ public class NectarQ {
 		    //4
 		    runTimeLog.println(Sec3Time/(1000));
 	    }
+	    
+	    MergeCommsBeforeOutput();
 	    
 	    return metaData.com2nodes;
 	}
@@ -300,6 +310,21 @@ public class NectarQ {
 	    return haveMergedComms;
 	}
 
+	private void MergeCommsBeforeOutput(){		
+		Set<Integer> commIds = metaData.com2nodes.keySet();
+		for (Integer c1 : commIds){
+			for (Integer c2 : commIds){
+				if(c1<c2 && 
+						((double)(UtillsQ.IntersectionSize(metaData.com2nodes.get(c1), metaData.com2nodes.get(c2))))
+								/(Math.max(metaData.com2nodes.get(c1).size(), metaData.com2nodes.get(c2).size())) >= alpha){
+					MergeComms(new Integer[]{c1,c2});
+					MergeCommsBeforeOutput();
+					return;
+				}
+			}
+		}
+		
+	}
 	private void MergeComms(Integer[] commsToMerge){
 		Integer c1 = commsToMerge[0];
 		Integer c2 = commsToMerge[1];
