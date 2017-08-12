@@ -19,7 +19,7 @@ public class Nectar {
     // Properties
     //================================================================================
 	
-	public boolean UseWOCC = false;
+	//public boolean UseWOCC = false;
 	UndirectedUnweightedGraph g;
 	public double[] betas;
 	public double alpha;
@@ -36,7 +36,7 @@ public class Nectar {
     // Constructors
     //================================================================================
 	
-	private Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean dynamicChoose, boolean givenUseWOCC, int verboseLevel) throws IOException{
+	private Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, boolean dynamicChoose, boolean useModularity, boolean useWOCC, boolean useConductance, int verboseLevel) throws IOException{
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.betas= betas;
 		this.alpha = alpha;
@@ -47,30 +47,36 @@ public class Nectar {
 		this.verboseLevel = verboseLevel;
 		this.g = new UndirectedUnweightedGraph(Paths.get(pathToGraph));
 		
-		// If we are to dynamicly choose objective function, we check if it should be used.
-		this.UseWOCC = dynamicChoose ? CheckIfShouldUseWOCC() : givenUseWOCC;		
-		
 		if(verboseLevel>0) {
-			if(UseWOCC) {		
+			if(useWOCC) {		
 				System.out.println("                  Using WOCC");
 			}
-			else{
+			else if(useModularity){
 				System.out.println("                  Using Modularity");
+			}
+			else {
+				System.out.println("                  Using Conductance");
 			}
 		}
 		
-		if ( UseWOCC ){
+		// TODO - this should be refactored...
+		if ( useWOCC ){
 			this.g.CalcTrianglesAndVT();
 		}
 	}
 
-	public Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean dynamicChoose, boolean givenUseWOCC, int verboseLevel) throws IOException{
-		this(pathToGraph,betas,alpha,outputPath,iteratioNumToStartMerge,maxIterationsToRun, percentageOfStableNodes, dynamicChoose, givenUseWOCC, verboseLevel);
+	public Nectar(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean dynamicChoose, boolean useModularity, boolean useWOCC, boolean useConductance, int verboseLevel) throws IOException{
+		this(pathToGraph,betas,alpha,outputPath,iteratioNumToStartMerge,maxIterationsToRun, percentageOfStableNodes, dynamicChoose, useModularity, useWOCC, useConductance, verboseLevel);
 		
-		if(!UseWOCC){	
+		if(useModularity){	
 			this.OriginalMetaData = new MODMetaData(g);			
 		}
+		else if(useConductance){	
+			
+			this.OriginalMetaData = new MetaData_Base(g, new ConductanceMetricHendler());			
+		}
 		
+		// TODO refactor this into WOCCMetricHandler
 		else{
 			Map<Integer, Set<Integer>> firstPart;
 			if(verboseLevel==2) {System.out.println("Get first part");}
@@ -104,10 +110,11 @@ public class Nectar {
 				System.out.println("                       Input: " + pathToGraph);
 				System.out.println("                       betta: " + betta);
 			}
-			// Create a copy of the original meta data
-			if(UseWOCC)	{metaData = new WOCCMetaData((WOCCMetaData)OriginalMetaData);}
-			else {metaData= new MODMetaData((MODMetaData)OriginalMetaData);}
-			
+			// TODO refactor this.. Create a copy of the original meta data
+			//if(useWOCC)	{metaData = new WOCCMetaData((WOCCMetaData)OriginalMetaData);}
+			//else if (useModularity){metaData= new MODMetaData((MODMetaData)OriginalMetaData);}
+			//else{
+			metaData= OriginalMetaData.deepCopy();		
 			Map<Integer,Set<Integer>> comms = FindCommunities(betta);
 			WriteToFile(comms, betta);
 		}
@@ -224,7 +231,7 @@ public class Nectar {
 		writer.close();	
 	}
 
-	private boolean CheckIfShouldUseWOCC() {
+	/*private boolean CheckIfShouldUseWOCC() {
 		return  getNumberOfTriangles() / (double)g.number_of_nodes() > 5.0;
 	}
 			
@@ -244,7 +251,7 @@ public class Nectar {
 		}		
 		return (triangles/6);
 	}
-	
+	*/
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////

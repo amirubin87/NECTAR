@@ -340,6 +340,11 @@ public class MODMetaData implements ImetaData{
 		        lowCommDic.put(highComm, intersectionSize);
 			}
 		}
+	}
+
+	@Override 
+	public ImetaData deepCopy() {		
+		return new MODMetaData(this);
 	}	
 }
     

@@ -13,26 +13,26 @@ public class RunNectar_Joined {
 	public static void main(String[] args) throws Exception {			
 		if (args.length <2){
 			System.out.println("Input parameteres for NECTAR: "
-					+ "pathToGraph  "
-					+ "outputPath  "
-					+ "betas=1.1,1.2,2.0,3.0 "
+					+ "pathToGraph  MANDATORY"
+					+ "outputPath  MANDATORY"
+					+ "betas=1 (possibly a list: 1.1,1.2,2.0,3.0) "
 					+ "alpha=0.8  "
 					+ "iteratioNumToStartMerge=6  "
 					+ "maxIterationsToRun=20 "
 					+ "firstPartMode=0(0=CC, 3=clique 3, 4=clique 4) "
 					+ "percentageOfStableNodes=95 "
-					//+ "runMultyThreaded=false "
-					//+ "numOfThreads=8 "
-					+ "dynamicChoose=true "
+					+ "dynamicChoose=false "
 					+ "useModularity=false "
-					+ "verboseLevel=0 (0=no output 1=minimal 2=full)"
+					+ "useWOCC=false "					
+					+ "useConductance=true "
+					+ "verboseLevel=2 (0=no output 1=minimal 2=full)"
 					);
 		}
 		else{
 			int index = 0;
-			String pathToGraph = (args.length > index) ? args[index] : "C:/Temp/WD/Chrome1_merge/Level_4_Entry_95_ParentEntry_49_ParentLine_1_TH_0.11000000000000001_Edges.txt";
+			String pathToGraph = (args.length > index) ? args[index] : "C:/EclipseWorkspace/NECTAR/V2/NECTAR_Beta/DummyNet.txt";
 			index++;
-			String outputPath = (args.length > index) ? args[index] : "C:/Temp/WD/Chrome1_merge/";
+			String outputPath = (args.length > index) ? args[index] : "C:/EclipseWorkspace/NECTAR/V2/NECTAR_Beta/output/";//"C:/Temp/WD/Chrome1_merge/";
 			index++;			
 			double[] betas =  (args.length > index) ? Utills.ParseDoubleArray(args[index]) : new double[]{1};		
 			index++;
@@ -46,21 +46,26 @@ public class RunNectar_Joined {
 			index++;
 			int percentageOfStableNodes =  (args.length > index) ? Integer.parseInt(args[index]) : 95;
 			if(percentageOfStableNodes<1 || percentageOfStableNodes>100){throw(new RuntimeException("param at location 7 is percentageOfStableNodes. You gave: " + percentageOfStableNodes +"  which is not <1 or >100."));}
-			//index++;
-			//boolean runMultyThreaded =  (args.length > index) ? Boolean.parseBoolean(args[index]) : false;
-			//index++;
-			//int numOfThreads =  (args.length > index) ? Integer.parseInt(args[index]) : 8;
 			index++;
-			boolean dynamicChoose =  (args.length > index) ? Boolean.parseBoolean(args[index]) : true;
+			boolean dynamicChoose =  (args.length > index) ? Boolean.parseBoolean(args[index]) : false;
 			index++;
 			boolean useModularity =  (args.length > index) ? Boolean.parseBoolean(args[index]) : false;
 			index++;
-			int verboseLevel =  (args.length > index) ? Integer.parseInt(args[index]) : 0;						
+			boolean useWOCC =  (args.length > index) ? Boolean.parseBoolean(args[index]) : false;
+			index++;
+			boolean useConductance =  (args.length > index) ? Boolean.parseBoolean(args[index]) : true;
+			index++;
+			int verboseLevel =  (args.length > index) ? Integer.parseInt(args[index]) : 2;						
+			
+			if(!dynamicChoose & ((useModularity & useWOCC) | (useModularity & useConductance) | (useWOCC & useConductance)) ){
+				throw new RuntimeException("Only one of @useModularity, @useConductance, @useWOCC can be true if @dynamicChoose is false.");
+			}
 			
 			if(dynamicChoose){
+				useConductance = false;
 				useModularity = ShouldUseModularity(pathToGraph);
+				useWOCC = !useModularity;
 			}
-			boolean useWocc = !useModularity;
 			
 			String betasString = "";
 			for (double d: betas){
@@ -77,7 +82,9 @@ public class RunNectar_Joined {
 					System.out.println("maxIterationsToRun:      "+maxIterationsToRun);
 					System.out.println("percentageOfStableNodes: "+percentageOfStableNodes);
 					System.out.println("dynamicChoose:           "+dynamicChoose);
-					System.out.println("UseWOCC      :           "+useWocc);				
+					System.out.println("useModularity:           "+useModularity);				
+					System.out.println("useWOCC:                 "+useWOCC);
+					System.out.println("useConductance:          "+useConductance);
 					System.out.println("");
 			}
 		    //File outputDirectory = new File(String.valueOf(outputPath));
@@ -85,7 +92,7 @@ public class RunNectar_Joined {
 		    //	outputDirectory.mkdirs();
 		    //}
 			
-			Nectar nectar = new Nectar(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode,dynamicChoose,useWocc,verboseLevel);		
+			Nectar nectar = new Nectar(pathToGraph,betas,alpha,outputPath, iteratioNumToStartMerge, maxIterationsToRun,percentageOfStableNodes,firstPartMode,dynamicChoose,useModularity,useWOCC,useConductance,verboseLevel);		
 			
 			nectar.FindCommunities();
 			}

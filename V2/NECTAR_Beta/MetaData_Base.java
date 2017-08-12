@@ -1,14 +1,11 @@
 package NECTAR_Beta;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
-// Meta data to be used when maximizing WOCC.
-public class WOCCMetaData implements ImetaData{
+public class MetaData_Base implements ImetaData{
 
 	//================================================================================
     // Properties
@@ -16,12 +13,8 @@ public class WOCCMetaData implements ImetaData{
 	
 	UndirectedUnweightedGraph g;    
     
-	// A mapping between a node and the amount of triangles in which he participants.
-	public Map<Integer, Long> T;
+	public ImetricHandler metricHandler;
 	
-	// A mapping between a node and all nodes which closes a triangle with him.
-    public Map<Integer, Set<Integer>> VT;  
-    
     // A mapping of communities IDs (sorted!) to the intersection size between them.   
     public Map<Integer, Map<Integer, Integer>> Intersection_c1_c2;        
 
@@ -35,20 +28,18 @@ public class WOCCMetaData implements ImetaData{
     // Constructors
     //================================================================================
 
-    public WOCCMetaData(){
+    public MetaData_Base(ImetricHandler metricHandler){
+    	this.metricHandler = metricHandler;
     	Intersection_c1_c2 = new HashMap<Integer, Map<Integer, Integer>>();
-    	T = new HashMap<Integer, Long>();
-    	VT = new HashMap<Integer, Set<Integer>>();
+    	metricHandler.Init();
     	com2nodes = new HashMap<Integer, Set<Integer>>();
     	node2coms = new HashMap<Integer, Set<Integer>>();
     }
     
-    public WOCCMetaData(UndirectedUnweightedGraph graph){        
-        //VerifyNodesNumbers(graph);
-    	this(); 
+    public MetaData_Base(UndirectedUnweightedGraph graph, ImetricHandler metricHandler){
+    	this(metricHandler); 
+    	metricHandler.Init(graph);
     	g = graph;
-    	T = graph.Triangles();
-    	VT = graph.VTriangles();
     	Integer count = 0;
     
         for (Integer node : graph.nodes()){
@@ -62,82 +53,12 @@ public class WOCCMetaData implements ImetaData{
             count++;
         }
 
-    }
-
-    /*public WOCCMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms){
-    	this(); 
-    	g = graph;
-    	T = graph.Triangles();   
-    	VT = graph.VTriangles(); 	
-        for (Entry<Integer, Set<Integer>> comm :comms.entrySet()){
-        	int commID =comm.getKey();
-        	Set<Integer> nodes =comm.getValue();        
-            com2nodes.put(commID,nodes);
-            Intersection_c1_c2.put(commID,new HashMap<>());
-            for (int node : nodes){
-            		Set<Integer> commInSet = new HashSet<>();
-            		commInSet.add(commID);
-	                node2coms.put(node,commInSet);
-            }
-        }
-    }*/
-    
-    public WOCCMetaData(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> comms, boolean partitionIsFromFile){
-    	this(); 
-    	g = graph;
-    	T = graph.Triangles();   
-    	VT = graph.VTriangles(); 
-    	int maxCommIDSeen = 0;
-    	int commID = 0;
-        for (Entry<Integer, Set<Integer>> comm :comms.entrySet()){
-        	commID =comm.getKey();
-        	maxCommIDSeen = Math.max(maxCommIDSeen, commID);
-        	Set<Integer> nodes =comm.getValue();        
-            com2nodes.put(commID,nodes);
-            Intersection_c1_c2.put(commID,new HashMap<>());
-            for (int node : nodes){
-            		Set<Integer> commsNodeIsIn = node2coms.get(node);
-            		if(commsNodeIsIn == null){
-	            		commsNodeIsIn = new HashSet<>();	            		
-		                node2coms.put(node,commsNodeIsIn);
-            		}
-        			commsNodeIsIn.add(commID);            		
-            }
-        }
-        
-        if(partitionIsFromFile){
-        	for( Entry<Integer, Set<Integer>> AcommIdAndNodes: com2nodes.entrySet()){
-        		for( Entry<Integer, Set<Integer>> BcommIdAndNodes: com2nodes.entrySet()){
-        			int AcommId = AcommIdAndNodes.getKey();
-        			int BcommId = BcommIdAndNodes.getKey();
-        			if (AcommId < BcommId){
-        				int intersectionSize = Utills.IntersectionSize(AcommIdAndNodes.getValue(), BcommIdAndNodes.getValue());
-        				Map<Integer, Integer> AcommDictionary = Intersection_c1_c2.get(AcommId);
-        				AcommDictionary.put(BcommId, intersectionSize);
-        			}
-        		}
-        	}
-        	commID = maxCommIDSeen +1;
-        	for(int node : g.nodes()){
-        		Set<Integer> nodesComms = node2coms.get(node);
-        		if(nodesComms == null){
-        			nodesComms = new HashSet<>();
-        			nodesComms.add(commID);
-        			node2coms.put(node,nodesComms);
-        			Set<Integer> nodeInSet = new HashSet<>();
-        			nodeInSet.add(node);
-        			com2nodes.put(commID, nodeInSet);
-        			commID++;
-        		}
-        	}
-        }
-    }
-    
+    }  
+       
     // Copy - constructor
-	public WOCCMetaData(WOCCMetaData ORIGINALmetaData) {
+	public MetaData_Base(MetaData_Base ORIGINALmetaData) {
     	g=ORIGINALmetaData.g;
-    	T=Utills.CopyMapIntLong(ORIGINALmetaData.T);
-    	VT=Utills.CopyMapIntSet(ORIGINALmetaData.VT);
+    	metricHandler= metricHandler.deepCopy();
     	Intersection_c1_c2 = Utills.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
     	com2nodes = Utills.CopyMapIntSet(ORIGINALmetaData.com2nodes);
     	node2coms = Utills.CopyMapIntSet(ORIGINALmetaData.node2coms);
@@ -151,10 +72,11 @@ public class WOCCMetaData implements ImetaData{
     	Set<Integer> commsSet = node2coms.get(node); 
     	
     	//update intersection ratio
-    	UpdateIntersectionRatioRemove(commsSet);   
+    	UpdateIntersectionRatioRemoveSingleNode(commsSet);   
     	
     	//Symbolic change
         for(Integer comm : commsSet){
+        	metricHandler.UpdateRemoveNodeFromComm(node,comm);
             com2nodes.get(comm).remove(node);
         }
 
@@ -163,7 +85,7 @@ public class WOCCMetaData implements ImetaData{
  	
 	public Map<Integer[],Double> SetCommsForNode(Integer node, Set<Integer> comms, boolean shouldMergeComms){		
     	
-		UpdateIntersectionRatioAdd(comms);
+		UpdateIntersectionRatioAddSingleNode(comms);
 		
 		Map<Integer[],Double> commsCouplesIntersectionRatio = new HashMap<Integer[],Double>();
 	    
@@ -176,7 +98,8 @@ public class WOCCMetaData implements ImetaData{
         }        
         
 		// Symbolic add
-	    for (Integer comm : comms){	    	
+	    for (Integer comm : comms){	  
+	    	metricHandler.UpdateAddNodeToComm(node,comm);
 	        com2nodes.get(comm).add(node);	        
 	    }
 	    
@@ -223,6 +146,7 @@ public class WOCCMetaData implements ImetaData{
 	        intersectionSize++;
 	        lowCommDic.put(highComm,intersectionSize);
         }
+        metricHandler.UpdateAddNodeToComm(node,comm);
         node2coms.get(node).add(comm);
         com2nodes.get(comm).add(node);
 	}
@@ -231,7 +155,7 @@ public class WOCCMetaData implements ImetaData{
         if(!node2coms.get(node).contains(comm)){
         	return;
         }        
-        
+        metricHandler.UpdateRemoveNodeFromComm(node,comm);
         node2coms.get(node).remove(comm);
         com2nodes.get(comm).remove(node);
         Set<Integer> comms = node2coms.get(node);
@@ -265,53 +189,10 @@ public class WOCCMetaData implements ImetaData{
 	}
 	
 	public double CalcMetricImprovemant(Integer comm, Integer node) {	    
-		Set<Integer> commMembers = com2nodes.get(comm);
-		long TxV = T.get(node);	    
-	    if (TxV==0){
-	        return 0;
-	    }
-	    
-		long TxC = calcT(commMembers, node);	    
-		if(TxC == 0){
-			return 0;
-		}
-		BigDecimal partA = new BigDecimal(TxC).divide(new BigDecimal(TxV),10, BigDecimal.ROUND_DOWN); 
-	    
-	    int VTxV = VT.get(node).size();
-	    if(VTxV == 0){
-			return 0;
-		}
-	    int VTxVnoC = calcVTWithoutComm(commMembers, node);	    
-	    double divesor = (double)(commMembers.size() +(VTxVnoC));	    
-	    if (divesor==0){
-	        return 0;
-	    }	    
-	    BigDecimal partB = new BigDecimal(VTxV).divide(new BigDecimal(divesor),10, BigDecimal.ROUND_DOWN);	
-	    double ans = (partA.multiply(partB)).doubleValue();
-	    
-	    return ans;    
+		return metricHandler.CalcMetricImprovemant(comm,node);
 	}
-
-	private int calcVTWithoutComm(Set<Integer> commMembers, int node) {		
-		Set<Integer> nodesWithTriangle = VT.get(node);
-		return nodesWithTriangle.size() - Utills.IntersectionSize(nodesWithTriangle, commMembers);
-	}
-
-	private long calcT(Set<Integer> commMembers, int node) {
-		long t=0;
-	    Set<Integer> neighbours = g.neighbors(node);
-	    Set<Integer> neighInComm = Utills.Intersection(commMembers, neighbours);
-	    for (int v : neighInComm){
-	        for (int u : neighInComm){
-	            if (u > v && g.get_edge_weight(u,v)>0){
-	                t++;
-	            }
-	        }
-	    }
-	    return t;
-	}
-
-	private void UpdateIntersectionRatioRemove(Set<Integer> c_v) {
+	
+	private void UpdateIntersectionRatioRemoveSingleNode(Set<Integer> c_v) {
 		// Intersection size update
         Integer[] comms = new Integer[c_v.size()];
         int k = 0;
@@ -332,7 +213,7 @@ public class WOCCMetaData implements ImetaData{
         }		
 	}
 	
-	private void UpdateIntersectionRatioAdd(Set<Integer> c_v) {
+	private void UpdateIntersectionRatioAddSingleNode(Set<Integer> c_v) {
 		// Update Intersection_c1_c2
         Integer[] commsArray = new Integer[c_v.size()];
         int k = 0;
@@ -367,7 +248,6 @@ public class WOCCMetaData implements ImetaData{
 
 	@Override
 	public ImetaData deepCopy() {
-		// TODO Auto-generated method stub
-		return new WOCCMetaData(this);
-	}
+		return new MetaData_Base(this);
+	}	
 }

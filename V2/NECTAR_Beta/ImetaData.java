@@ -7,6 +7,8 @@ import java.util.Set;
 // Used to react with the community structure.
 public interface ImetaData {
 	
+	ImetaData deepCopy();
+	
 	// Getter for the set of communities IDs to which the node belongs.
 	public Set<Integer> getComsOfNode(Integer node);	        
 	
