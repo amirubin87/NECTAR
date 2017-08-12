@@ -5,10 +5,10 @@ public interface ImetricHandler {
 	// Used for copy constructures
 	ImetricHandler deepCopy();
 	
-	// Initiate the data structure you need
+	// Initiate the data structures you need
 	void Init();
 	
-	// Initiate the data structure you need based on the @graph. 
+	// Initiate the data structures you need based on the @graph. 
 	// NOTE - may be called by the used after a call to Init().
 	void Init(UndirectedUnweightedGraph graph);
 	

@@ -1,6 +1,6 @@
 package NECTAR_Beta;
 
-public class ConductanceMetricHendler implements ImetricHandler {
+public class ConductanceMetricHandler implements ImetricHandler {
 
 	@Override
 	public ImetricHandler deepCopy() {

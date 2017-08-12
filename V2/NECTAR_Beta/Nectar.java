@@ -73,7 +73,7 @@ public class Nectar {
 		}
 		else if(useConductance){	
 			
-			this.OriginalMetaData = new MetaData_Base(g, new ConductanceMetricHendler());			
+			this.OriginalMetaData = new MetaData_Base(g, new ConductanceMetricHandler());			
 		}
 		
 		// TODO refactor this into WOCCMetricHandler
