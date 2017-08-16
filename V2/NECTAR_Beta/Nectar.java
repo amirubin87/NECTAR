@@ -126,7 +126,8 @@ public class Nectar {
 	    int n = g.number_of_nodes();
 	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;
 
-	    
+	    Map<Integer[],Double> commsCouplesIntersectionRatio = null;
+	    boolean shouldMergeComms = false;
 	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){	    	
 	    	if(verboseLevel==2) {
 	    		System.out.print("Input: " +pathToGraph + " betta: " + betta + "            Num of iter: " + amountOfScans);
@@ -149,9 +150,9 @@ public class Nectar {
 	           
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	            
-	            boolean shouldMergeComms = amountOfScans > iteratioNumToStartMerge;
-				Map<Integer[],Double> commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, shouldMergeComms );
-	            boolean haveMergedComms = false;
+	            shouldMergeComms = amountOfScans > iteratioNumToStartMerge;
+				commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, true);
+				boolean haveMergedComms = false;
 	            if(shouldMergeComms){
 	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio);
 	            }	            
@@ -164,7 +165,12 @@ public class Nectar {
 	   
 	    if (amountOfScans >= maxIterationsToRun & verboseLevel>0){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
-	    }	  
+	    }
+	    //TODO verify!
+	    // We merge comms before ourputting, in case we havent so far.
+	    if(!shouldMergeComms  && commsCouplesIntersectionRatio!=null){
+	    	FindAndMergeComms(commsCouplesIntersectionRatio);
+	    }
 	    return metaData.getCom2nodes();
 	}	  
 	
@@ -203,8 +209,12 @@ public class Nectar {
 	    for(Entry<Integer, Double> entry: comms_imps.entrySet()){
 	    		 if (entry.getValue()*betta >= bestImp){
 	    				 bestComs.add(entry.getKey());
+	    				 // When betta is one, we dont allow overlapping
+	    				 if(betta==1.0){
+	    					 return bestComs;
+	    				 }
 	    		 }
-	    }
+	    }	    
 	    return bestComs;
 	}	
 
