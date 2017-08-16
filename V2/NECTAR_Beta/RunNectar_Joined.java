@@ -10,7 +10,7 @@ public class RunNectar_Joined {
 		return DynamicFunctionChoose.shouldUseModularity(graphFeatures);
 	}
 	
-	public static void main(String[] args) throws Exception {			
+	public static void main(String[] args) throws Exception {	
 		if (args.length <2){
 			System.out.println("Input parameteres for NECTAR: "
 					+ "pathToGraph  MANDATORY"
@@ -30,9 +30,9 @@ public class RunNectar_Joined {
 		}
 		else{
 			int index = 0;
-			String pathToGraph = (args.length > index) ? args[index] : "C:/EclipseWorkspace/NECTAR/V2/NECTAR_Beta/DummyNet.txt";
+			String pathToGraph = (args.length > index) ? args[index] : "C:/Temp/test.txt";
 			index++;
-			String outputPath = (args.length > index) ? args[index] : "C:/EclipseWorkspace/NECTAR/V2/NECTAR_Beta/output/";//"C:/Temp/WD/Chrome1_merge/";
+			String outputPath = (args.length > index) ? args[index] : "C:/Temp/";//"C:/Temp/WD/Chrome1_merge/";
 			index++;			
 			double[] betas =  (args.length > index) ? Utills.ParseDoubleArray(args[index]) : new double[]{1};		
 			index++;
@@ -51,9 +51,9 @@ public class RunNectar_Joined {
 			index++;
 			boolean useModularity =  (args.length > index) ? Boolean.parseBoolean(args[index]) : false;
 			index++;
-			boolean useWOCC =  (args.length > index) ? Boolean.parseBoolean(args[index]) : false;
+			boolean useWOCC =  (args.length > index) ? Boolean.parseBoolean(args[index]) : true;
 			index++;
-			boolean useConductance =  (args.length > index) ? Boolean.parseBoolean(args[index]) : true;
+			boolean useConductance =  (args.length > index) ? Boolean.parseBoolean(args[index]) : false;
 			index++;
 			int verboseLevel =  (args.length > index) ? Integer.parseInt(args[index]) : 2;						
 			

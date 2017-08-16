@@ -151,7 +151,7 @@ public class Nectar {
 	            Set<Integer> c_v_new =Keep_Best_Communities(comms_inc, betta);
 	            
 	            shouldMergeComms = amountOfScans > iteratioNumToStartMerge;
-				commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, true);
+				commsCouplesIntersectionRatio = metaData.SetCommsForNode(node, c_v_new, betta >1.0);
 				boolean haveMergedComms = false;
 	            if(shouldMergeComms){
 	            	haveMergedComms = FindAndMergeComms(commsCouplesIntersectionRatio);
@@ -166,8 +166,7 @@ public class Nectar {
 	    if (amountOfScans >= maxIterationsToRun & verboseLevel>0){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
 	    }
-	    //TODO verify!
-	    // We merge comms before ourputting, in case we havent so far.
+	    // We merge comms before outputting, in case we havent so far.
 	    if(!shouldMergeComms  && commsCouplesIntersectionRatio!=null){
 	    	FindAndMergeComms(commsCouplesIntersectionRatio);
 	    }
@@ -210,9 +209,7 @@ public class Nectar {
 	    		 if (entry.getValue()*betta >= bestImp){
 	    				 bestComs.add(entry.getKey());
 	    				 // When betta is one, we dont allow overlapping
-	    				 if(betta==1.0){
-	    					 return bestComs;
-	    				 }
+	    				 if(betta==1.0){return bestComs;}
 	    		 }
 	    }	    
 	    return bestComs;
