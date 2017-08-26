@@ -1,5 +1,8 @@
 package NECTAR_Beta;
 
+import java.util.Map;
+import java.util.Set;
+
 public interface ImetricHandler {
 	
 	// Used for copy constructures
@@ -11,6 +14,11 @@ public interface ImetricHandler {
 	// Initiate the data structures you need based on the @graph. 
 	// NOTE - may be called by the used after a call to Init().
 	void Init(UndirectedUnweightedGraph graph);
+	
+	// Initiate the data structures you need based on the @graph and the @firstPart - a mapping of community id and list of nodes.
+	// There is no optino for overlapping in the firstPart!
+	// NOTE - may be called by the used after a call to Init().
+	void Init(UndirectedUnweightedGraph graph, Map<Integer,Set<Integer>> firstPart);
 	
 	// Update the data strcutures with respect to removing the node @node from the comm @comm.
 	void UpdateRemoveNodeFromComm(Integer node, Integer comm);

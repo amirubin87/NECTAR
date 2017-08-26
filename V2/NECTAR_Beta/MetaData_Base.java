@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 public class MetaData_Base implements ImetaData{
 
@@ -52,16 +53,37 @@ public class MetaData_Base implements ImetaData{
             node2coms.put(node, commId);          
             count++;
         }
-
+    }  
+    
+    public MetaData_Base(UndirectedUnweightedGraph graph, ImetricHandler metricHandler, Map<Integer,Set<Integer>> firstPart){
+    	this(metricHandler); 
+    	metricHandler.Init(graph, firstPart);
+    	g = graph;   
+    	
+    	int commID = 0;
+        for (Entry<Integer, Set<Integer>> comm :firstPart.entrySet()){
+        	commID =comm.getKey();
+        	Set<Integer> nodes =comm.getValue();        
+            com2nodes.put(commID,nodes);
+            Intersection_c1_c2.put(commID,new HashMap<>());
+            for (int node : nodes){
+            		Set<Integer> commsNodeIsIn = node2coms.get(node);
+            		if(commsNodeIsIn == null){
+	            		commsNodeIsIn = new HashSet<>();	            		
+		                node2coms.put(node,commsNodeIsIn);
+            		}
+        			commsNodeIsIn.add(commID);            		
+            }
+        }    
     }  
        
     // Copy - constructor
 	public MetaData_Base(MetaData_Base ORIGINALmetaData) {
-    	g=ORIGINALmetaData.g;
-    	metricHandler= metricHandler.deepCopy();
-    	Intersection_c1_c2 = Utills.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
-    	com2nodes = Utills.CopyMapIntSet(ORIGINALmetaData.com2nodes);
-    	node2coms = Utills.CopyMapIntSet(ORIGINALmetaData.node2coms);
+    	this.g=ORIGINALmetaData.g;
+    	this.metricHandler= ORIGINALmetaData.metricHandler.deepCopy();
+    	this.Intersection_c1_c2 = Utills.CopyMapIntMapIntInt(ORIGINALmetaData.Intersection_c1_c2);
+    	this.com2nodes = Utills.CopyMapIntSet(ORIGINALmetaData.com2nodes);
+    	this.node2coms = Utills.CopyMapIntSet(ORIGINALmetaData.node2coms);
 	}
 
 	//================================================================================
