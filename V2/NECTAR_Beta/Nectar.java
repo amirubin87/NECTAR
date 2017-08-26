@@ -72,8 +72,9 @@ public class Nectar {
 			this.OriginalMetaData = new MODMetaData(g);			
 		}
 		else if(useConductance){	
-			
-			this.OriginalMetaData = new MetaData_Base(g, new ConductanceMetricHandler());			
+			Map<Integer, Set<Integer>> firstPart;
+			firstPart = GetFirstPartition(g);
+			this.OriginalMetaData = new MetaData_Base(g, new ConductanceMetricHandler(), firstPart);			
 		}
 		
 		// TODO refactor this into WOCCMetricHandler
@@ -167,7 +168,7 @@ public class Nectar {
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR %1$d TIMES.",maxIterationsToRun));
 	    }
 	    // We merge comms before outputting, in case we havent so far.
-	    if(!shouldMergeComms  && commsCouplesIntersectionRatio!=null){
+	    if(!shouldMergeComms  && commsCouplesIntersectionRatio!=null){	    	
 	    	FindAndMergeComms(commsCouplesIntersectionRatio);
 	    }
 	    return metaData.getCom2nodes();
