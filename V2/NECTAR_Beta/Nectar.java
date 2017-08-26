@@ -60,7 +60,7 @@ public class Nectar {
 		}
 		
 		// TODO - this should be refactored...
-		if ( useWOCC ){
+		if ( useWOCC || useConductance ){
 			this.g.CalcTrianglesAndVT();
 		}
 	}
