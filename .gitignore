@@ -46,18 +46,4 @@ Network Trash Folder
 Temporary Items
 .apdisk
 .settings/org.eclipse.jdt.core.prefs
-.classpath
-Triangles.txt
-NectarQ-runTime.log
-NectarW-runTime.log
-V1/LevelQ/GraphMetaData.java
-V1/LevelQ/NectarQL.java
-V1/LevelQ/RunNectarQL.java
-V1/LevelQ/UndirectedGraph.java
-V1/LevelQ/Utills.java
-V1/q/RunNectarQ.java
-V1/q/RunNectarQ.java
-V1/w/RunNectarW.java
-V1/w/RunNectarW.java
 *.class
-Beta2/*
