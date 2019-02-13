@@ -5,7 +5,9 @@ This repository contains implementations of the NECTAR algorithm as described in
 
 If you use this project in your work please cite: 
 > "Node-Centric Detection of Overlapping Communities in Social Networks",
+>
 > by Cohen, Yehonatan and Hendler, Danny and Rubin, Amir,
+>
 > 3rd International Winter School and Conference on Network Science, 2017.
 
 # Requirments
