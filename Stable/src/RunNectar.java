@@ -10,8 +10,6 @@ public class RunNectar {
 	
 	public static void main(String[] args) throws Exception {		
 		long startTime = System.currentTimeMillis();
-		System.out.println(args[0]);
-		System.out.println(args.length );
 		if (
 				!(args.length == 1 && args[0].equals("Dummy"))
 				&&
@@ -32,10 +30,9 @@ public class RunNectar {
 					+ "useModularity=false "
 					+ "debug=false");
 		}
-		else{
-			boolean useModularity = true;
-			String pathToGraph = "./DummyNet.txt";
-			String outputPath = "./";
+		else{			
+			String pathToGraph = "./lib/DummyNet.txt";
+			String outputPath = "./DummyOutput/";
 			double[] betas = {1};
 			int firstPartMode = 0;
 			double alpha = 0.8;
@@ -45,7 +42,8 @@ public class RunNectar {
 			boolean runMultyThreaded = false;
 			int numOfThreads = 1;
 			boolean dynamicChoose = false;
-			boolean debug = false;
+			boolean useModularity = true;
+			boolean debug = true;
 			
 			if (args.length > 0 && !args[0].equals("Dummy"))
 				pathToGraph = args[0];		
@@ -144,7 +142,7 @@ public class RunNectar {
 		
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
-		System.out.println(totalTime/1000);
+		System.out.println("Total run time: " + totalTime/1000);
 	}
 
 	private static double[] ParseDoubleArray(String string) {

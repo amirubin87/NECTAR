@@ -36,7 +36,7 @@ public class NectarW {
 	private boolean debug;
 	
 	public NectarW(String pathToGraph, double[]betas, double alpha, String outputPath, int iteratioNumToStartMerge, int maxIterationsToRun, int percentageOfStableNodes, int firstPartMode, boolean debug) throws IOException{
-		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarW-runTime.log", true)));		
+		this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter(outputPath + "NectarW-runTime.log", true)));		
 		this.startTime = System.currentTimeMillis();
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.betas= betas;

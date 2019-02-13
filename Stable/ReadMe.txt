@@ -38,12 +38,18 @@ Parameters:
 			Notice that using '3' or '4' may cost with a long initialization time.			
 		percentageOfStableNodes (95) - only supported when WOCC is used. The algorithm will stop when this percentage of nodes have stabled (e.g. haven't changed any community in the last iteration).
 		* this version includes additional debug parameters and outputs.
+
 Usage examples:
-	java -jar NECTAR./net.txt ./
-			These  are examples with the minimum parameters needed.
-	java -jar NECTAR ./net.txt ./ 1.1,1.2,1.3,1.4,1.5,2.0,2.5,3.0,3.5,4.0 0.8 3 30
-		NECTAR runs with 10 different beta values. After the third iteration communities which share 70% of their nodes will be merged.
-		The algorithm will stop after 30 iterations.
-	java -jar NECTAR ./net.txt ./ 1.5,3.5,5.0,10.0 0.7 4 30 3 99
-		NECTAR runs with 4 different beta values. The first partitioning is all 3-sized cliques. After the forth iteration communities which share 70% of their nodes will be merged.
-		The algorithm will stop after 30 iterations or when 99% of the nodes have stabled. 
+	These  are examples with the minimum parameters needed.
+		java -jar NECTAR.1.0.jar Dummy
+		(Same as running:)
+		java -jar NECTAR.1.0.jar ./lib/DummyNet.txt ./DummyOutput
+
+	NECTAR run with 10 different beta values. After the third iteration communities which share 70% of their nodes will be merged.
+	The algorithm will stop after 30 iterations.
+		java -jar NECTAR.1.0.jar ./lib/DummyNet.txt ./DummyOutput 1.1,1.2,1.3,1.4,1.5,2.0,2.5,3.0,3.5,4.0 0.8 3 30
+	
+	NECTAR run with 4 different beta values. The first partitioning is all 3-sized cliques. After the forth iteration communities which share 70% of their nodes will be merged.
+	The algorithm will stop after 30 iterations or when 99% of the nodes have stabled. 
+		java -jar NECTAR.1.0.jar ./lib/DummyNet.txt ./DummyOutput 1.5,3.5,5.0,10.0 0.7 4 30 3 99
+		

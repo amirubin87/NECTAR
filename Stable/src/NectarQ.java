@@ -48,7 +48,7 @@ public class NectarQ {
 		this.percentageOfStableNodes= percentageOfStableNodes;
 		this.debug = debug;
 		if (debug)
-			this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter("./NectarQ-runTime.log", true)));
+			this.runTimeLog = new PrintWriter(new BufferedWriter(new FileWriter(outputPath + "NectarQ-runTime.log", true)));
 		this.g = new UndirectedUnweightedGraphQ(Paths.get(pathToGraph));
 		TakeTime();
 		TakeTime();
