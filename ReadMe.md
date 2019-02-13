@@ -4,21 +4,26 @@
 This repository contains implementations of the NECTAR algorithm as described in: Node-centric detection of overlapping communities in social networks (https://arxiv.org/pdf/1607.01683)
 
 If you use this project in your work please cite: 
-    "Node-Centric Detection of Overlapping Communities in Social Networks",
-    by Cohen, Yehonatan and Hendler, Danny and Rubin, Amir,
-    3rd International Winter School and Conference on Network Science, 
-    2017.
+> "Node-Centric Detection of Overlapping Communities in Social Networks",
+> by Cohen, Yehonatan and Hendler, Danny and Rubin, Amir,
+> 3rd International Winter School and Conference on Network Science, 2017.
 
 # Requirments
 You will need JRE to run the jar.
 
 # Example
 For a simple execution on a dummy input, cd to stable:
-    cd Stable
+```sh
+$ cd Stable
+```
 and run:
-    java -jar NECTAR.1.0.jar Dummy
+```sh
+$ java -jar NECTAR.1.0.jar Dummy
+```
 (Same as running:)
-	java -jar NECTAR.1.0.jar ./lib/DummyNet.txt ./DummyOutput
+```sh
+$ java -jar NECTAR.1.0.jar ./lib/DummyNet.txt ./DummyOutput
+```
 
 # What's in this repo?
 
