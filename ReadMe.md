@@ -42,7 +42,7 @@ Under 'Tools/ML' you can find the training set used to train the Random Forst us
 ## Older versions
 Under 'Versions' you will find old various versions of NECTAR, supporting threads and weighted graphs. 
 
-We will not continue to devolop them one.
+We will not continue to devolop them.
 
 For instance, under 'V1' you can find two java implemented version to the NECTAR algorithm (one with modularity, one with WOCC).
 
