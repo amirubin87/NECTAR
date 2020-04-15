@@ -71,7 +71,7 @@ public class NectarQ {
 			System.out.println("                       Input: " + pathToGraph);
 			System.out.println("                       betta: " + betta);
 			// Create a copy of the original meta data
-			metaData = new ModularityMetaData(ORIGINALmetaData);
+			 metaData = new ModularityMetaData(ORIGINALmetaData);
 			Map<Integer,Set<Integer>> comms;
 			if(runMultyThreaded){
 				//1
@@ -169,17 +169,17 @@ public class NectarQ {
 	    int amountOfScans = 0;
 	    int n = g.number_of_nodes();
 	    int numOfStableNodesToReach = n*percentageOfStableNodes/100;
-	    
+
 	    long Sec1Time = 0;
 	    long Sec2Time = 0;
-	    long Sec3Time = 0;	    
+	    long Sec3Time = 0;
 	    Map<Integer[],Double> commsCouplesIntersectionRatio = null;
 	    while (numOfStableNodes < numOfStableNodesToReach && amountOfScans < maxIterationsToRun){
 	    	System.out.print("Input: " +pathToGraph + " betta: " + betta + "  Num of iterations: " + amountOfScans);
 	    	System.out.println("  Number of stable nodes: " + numOfStableNodes);
             numOfStableNodes = 0;
             amountOfScans++;
-            
+
             // Find new comms for each node
 	        for (Integer node : g.nodes()){	        	
 				////////////////////////////////////Section 1
@@ -217,9 +217,9 @@ public class NectarQ {
 	            	numOfStableNodes++;
 	            }
 	            Sec3Time += (System.currentTimeMillis() - startTime);
-	        }	        
+			}
 	    }
-	    
+
 	    //System.out.println("Number of stable nodes: " + numOfStableNodes);   
 	    if (amountOfScans >= maxIterationsToRun){
 	        System.out.println(String.format("NOTICE - THE ALGORITHM HASNT STABLED. IT STOPPED AFTER SCANNING ALL NODES FOR  %1$d TIMES.",maxIterationsToRun));
@@ -309,21 +309,25 @@ public class NectarQ {
 	    return haveMergedComms;
 	}
 
-	private void MergeCommsBeforeOutput(){		
-		Set<Integer> commIds = metaData.com2nodes.keySet();
-		for (Integer c1 : commIds){
-			for (Integer c2 : commIds){
-				if(c1<c2 && 
-						((double)(UtillsQ.IntersectionSize(metaData.com2nodes.get(c1), metaData.com2nodes.get(c2))))
-								/(Math.max(metaData.com2nodes.get(c1).size(), metaData.com2nodes.get(c2).size())) >= alpha){
-					MergeComms(new Integer[]{c1,c2});
-					MergeCommsBeforeOutput();
-					return;
+	private void MergeCommsBeforeOutput(){
+		boolean continueToMerge = true;
+		while(continueToMerge) {
+			metaData.com2nodes.values().removeIf(value -> value.isEmpty());
+			Set<Integer> commIds = metaData.com2nodes.keySet();
+			for (Integer c1 : commIds){
+				for (Integer c2 : commIds){
+					continueToMerge = (c1<c2 &&
+							((double)(UtillsQ.IntersectionSize(metaData.com2nodes.get(c1), metaData.com2nodes.get(c2))))
+									/(Math.max(metaData.com2nodes.get(c1).size(), metaData.com2nodes.get(c2).size())) >= alpha);
+					if (continueToMerge) {
+						MergeComms(new Integer[]{c1,c2});
+						break;
+					}
 				}
 			}
 		}
-		
 	}
+
 	private void MergeComms(Integer[] commsToMerge){
 		Integer c1 = commsToMerge[0];
 		Integer c2 = commsToMerge[1];

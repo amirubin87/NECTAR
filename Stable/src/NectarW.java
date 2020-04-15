@@ -304,20 +304,23 @@ public class NectarW {
 	    return haveMergedComms;
 	}*/
 
-	private void MergeCommsBeforeOutput(){		
-		Set<Integer> commIds = metaData.com2nodes.keySet();
-		for (Integer c1 : commIds){
-			for (Integer c2 : commIds){
-				if(c1<c2 && 
-						((double)(UtillsW.IntersectionSize(metaData.com2nodes.get(c1), metaData.com2nodes.get(c2))))
-								/(Math.max(metaData.com2nodes.get(c1).size(), metaData.com2nodes.get(c2).size())) >= alpha){
-					MergeComms(new Integer[]{c1,c2});
-					MergeCommsBeforeOutput();
-					return;
+	private void MergeCommsBeforeOutput(){
+		boolean continueToMerge = true;
+		while(continueToMerge) {
+			metaData.com2nodes.values().removeIf(value -> value.isEmpty());
+			Set<Integer> commIds = metaData.com2nodes.keySet();
+			for (Integer c1 : commIds){
+				for (Integer c2 : commIds){
+					continueToMerge = (c1<c2 &&
+							((double)(UtillsQ.IntersectionSize(metaData.com2nodes.get(c1), metaData.com2nodes.get(c2))))
+									/(Math.max(metaData.com2nodes.get(c1).size(), metaData.com2nodes.get(c2).size())) >= alpha);
+					if (continueToMerge) {
+						MergeComms(new Integer[]{c1,c2});
+						break;
+					}
 				}
 			}
 		}
-		
 	}
 	
 	private void MergeComms(Integer[] commsToMerge){
